@@ -1,0 +1,282 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Dentist",
+      "@id": "https://www.CLINICA.es/CIUDAD/#Dentist",
+      "name": "NOMBRE CLINICA — CIUDAD",
+      "legalName": "RAZON SOCIAL S.L.",
+      "description": "Clínica dental en CIUDAD especializada en implantes dentales, ortodoncia y estética dental. Aceptamos nuevos pacientes.",
+      "url": "https://www.CLINICA.es/CIUDAD/",
+      "telephone": "+34 9X XXX XXXX",
+      "email": "info@CLINICA.es",
+      "priceRange": "€€",
+      "isAcceptingNewPatients": true,
+      "medicalSpecialty": "Dentistry",
+
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.CLINICA.es/logo.png",
+        "width": 300,
+        "height": 100
+      },
+      "image": [
+        "https://www.CLINICA.es/images/clinica-CIUDAD-exterior.jpg",
+        "https://www.CLINICA.es/images/clinica-CIUDAD-interior.jpg"
+      ],
+
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Calle NOMBRE, NUM, PISO",
+        "addressLocality": "CIUDAD",
+        "addressRegion": "Comunidad de Madrid",
+        "postalCode": "28XXX",
+        "addressCountry": "ES"
+      },
+
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "40.XXXXX",
+        "longitude": "-3.XXXXX"
+      },
+
+      "hasMap": "https://goo.gl/maps/XXXXXXX",
+
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "09:00",
+          "closes": "20:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Saturday",
+          "opens": "09:00",
+          "closes": "14:00"
+        }
+      ],
+
+      "paymentAccepted": "Cash, Credit Card, Bank Transfer, Financing",
+      "currenciesAccepted": "EUR",
+
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "312",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+
+      "review": [
+        {
+          "@type": "Review",
+          "author": {
+            "@type": "Person",
+            "name": "NOMBRE PACIENTE"
+          },
+          "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": "5",
+            "bestRating": "5"
+          },
+          "reviewBody": "Excelente atención y resultados perfectos. Muy recomendable.",
+          "datePublished": "2026-01-15"
+        }
+      ],
+
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Tratamientos Dentales",
+        "itemListElement": [
+          {
+            "@type": "OfferCatalog",
+            "name": "Implantología",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Implante Dental",
+                  "description": "Implante de titanio con corona de cerámica. Solución permanente para dientes perdidos.",
+                  "url": "https://www.CLINICA.es/CIUDAD/implantes-dentales/"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Implantes All-on-4",
+                  "description": "Rehabilitación completa de arcada con 4 implantes.",
+                  "url": "https://www.CLINICA.es/CIUDAD/all-on-4/"
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Ortodoncia",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Ortodoncia Invisible (Alineadores)",
+                  "description": "Corrección dental sin brackets con alineadores transparentes removibles.",
+                  "url": "https://www.CLINICA.es/CIUDAD/ortodoncia-invisible/"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Brackets Metálicos",
+                  "url": "https://www.CLINICA.es/CIUDAD/ortodoncia-brackets/"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Brackets de Zafiro",
+                  "url": "https://www.CLINICA.es/CIUDAD/ortodoncia-zafiro/"
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Estética Dental",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Blanqueamiento Dental",
+                  "url": "https://www.CLINICA.es/CIUDAD/blanqueamiento-dental/"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Carillas de Porcelana",
+                  "url": "https://www.CLINICA.es/CIUDAD/carillas-porcelana/"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Diseño de Sonrisa",
+                  "url": "https://www.CLINICA.es/CIUDAD/diseno-sonrisa/"
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Odontología General",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Revisión y Limpieza Dental",
+                  "url": "https://www.CLINICA.es/CIUDAD/limpieza-dental/"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Empastes y Restauraciones",
+                  "url": "https://www.CLINICA.es/CIUDAD/empastes/"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Endodoncia (Tratamiento de Conductos)",
+                  "url": "https://www.CLINICA.es/CIUDAD/endodoncia/"
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Periodoncia",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Tratamiento de Periodontitis",
+                  "url": "https://www.CLINICA.es/CIUDAD/periodoncia/"
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Odontopediatría",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Dentista para Niños",
+                  "url": "https://www.CLINICA.es/CIUDAD/dentista-ninos/"
+                }
+              }
+            ]
+          }
+        ]
+      },
+
+      "employee": [
+        {
+          "@type": ["Person", "Physician"],
+          "@id": "https://www.CLINICA.es/equipo/DR-NOMBRE/#Person",
+          "name": "Dr. NOMBRE APELLIDO",
+          "honorificPrefix": "Dr.",
+          "jobTitle": "Director Clínico — Implantología y Cirugía Oral",
+          "medicalSpecialty": "Dentistry",
+          "image": "https://www.CLINICA.es/equipo/dr-nombre.jpg",
+          "url": "https://www.CLINICA.es/equipo/dr-nombre/",
+          "worksFor": {
+            "@id": "https://www.CLINICA.es/CIUDAD/#Dentist"
+          },
+          "sameAs": [
+            "https://www.topdoctors.es/dr-nombre-apellido",
+            "https://www.doctoralia.es/dr-nombre-apellido"
+          ]
+        }
+      ],
+
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "CIUDAD"
+        },
+        {
+          "@type": "PostalAddress",
+          "addressLocality": "BARRIO O ZONA"
+        }
+      ],
+
+      "sameAs": [
+        "https://www.google.com/maps?cid=XXXXXXXXXXXXXXXXXXX",
+        "https://www.doctoralia.es/CLINICA-CIUDAD",
+        "https://www.topdoctors.es/CLINICA-CIUDAD",
+        "https://www.facebook.com/CLINICA",
+        "https://www.instagram.com/CLINICA"
+      ],
+
+      "parentOrganization": {
+        "@id": "https://www.CLINICA.es/#Organization"
+      }
+    }
+  ]
+}

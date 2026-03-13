@@ -1,0 +1,57 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.cleardent.es/#Organization",
+      "name": "Cleardent",
+      "legalName": "Cleardent Dental S.L.",
+      "description": "Cadena de clínicas dentales en Madrid especializada en implantes, ortodoncia invisible y estética dental.",
+      "url": "https://www.cleardent.es/",
+      "telephone": "+34 91 XXX XXXX",
+      "email": "salamanca@cleardent.es",
+      "foundingDate": "20XX",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.cleardent.es/logo.png",
+        "width": 300,
+        "height": 100
+      },
+      "subOrganization": [
+        {
+          "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist",
+          "url": "https://www.cleardent.es/madrid-barrio-salamanca/",
+          "name": "Cleardent — Barrio de Salamanca"
+        },
+        {
+          "@id": "https://www.cleardent.es/[otra-sucursal]/#Dentist",
+          "url": "https://www.cleardent.es/[otra-sucursal]/",
+          "name": "Cleardent — [OTRA SUCURSAL]"
+        }
+      ],
+      "sameAs": [
+        "https://www.facebook.com/cleardent",
+        "https://www.instagram.com/cleardent",
+        "https://www.linkedin.com/company/cleardent"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.cleardent.es/#WebSite",
+      "url": "https://www.cleardent.es/",
+      "name": "Cleardent",
+      "inLanguage": "es",
+      "publisher": {
+        "@id": "https://www.cleardent.es/#Organization"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.cleardent.es/?s={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ]
+}

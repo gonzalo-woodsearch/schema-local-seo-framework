@@ -1,0 +1,81 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/ortodoncia-invisible/#WebPage",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/ortodoncia-invisible/",
+      "name": "Ortodoncia Invisible (Alineadores) en Madrid | Cleardent — Barrio de Salamanca, Madrid",
+      "description": "Corrección dental sin brackets con alineadores transparentes removibles.",
+      "inLanguage": "es",
+      "isPartOf": {
+        "@id": "https://www.cleardent.es/#WebSite"
+      },
+      "about": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/ortodoncia-invisible/#Service"
+      },
+      "provider": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/ortodoncia-invisible/#Service",
+      "name": "Ortodoncia Invisible (Alineadores)",
+      "serviceType": "Ortodoncia",
+      "description": "Corrección dental sin brackets con alineadores transparentes removibles.",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/ortodoncia-invisible/",
+      "provider": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Madrid"
+        },
+        {
+          "@type": "City",
+          "name": "Barrio de Salamanca"
+        },
+        {
+          "@type": "City",
+          "name": "Retiro"
+        },
+        {
+          "@type": "City",
+          "name": "Goya"
+        },
+        {
+          "@type": "City",
+          "name": "Velázquez"
+        },
+        {
+          "@type": "City",
+          "name": "Príncipe de Vergara"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/ortodoncia-invisible/#FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Son efectivos los alineadores invisibles?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. Los alineadores invisibles son efectivos para corregir la mayoría de maloclusiones, desde casos leves a moderados. El tratamiento dura entre 6 y 18 meses según la complejidad del caso."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cuánto cuesta la ortodoncia invisible en el Barrio de Salamanca?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "El precio de la ortodoncia invisible en nuestra clínica de Salamanca varía según la complejidad del caso. Disponemos de financiación sin intereses."
+          }
+        }
+      ]
+    }
+  ]
+}

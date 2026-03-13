@@ -1,0 +1,270 @@
+{
+  "_comentario": "Archivo de configuración para Schema JSON-LD Generator CLI",
+  "_uso": "node schema-gen.js config-cleardent-salamanca.json --output ./output-salamanca",
+
+  "name": "Cleardent — Barrio de Salamanca, Madrid",
+  "legalName": "Cleardent Dental S.L.",
+  "description": "Clínica dental Cleardent en el Barrio de Salamanca, Madrid. Especialistas en implantes dentales, ortodoncia invisible y estética dental. Aceptamos nuevos pacientes.",
+  "url": "https://www.cleardent.es/madrid-barrio-salamanca/",
+  "telephone": "+34 91 XXX XXXX",
+  "email": "salamanca@cleardent.es",
+  "priceRange": "€€",
+  "isAcceptingNewPatients": true,
+  "logoUrl": "https://www.cleardent.es/logo.png",
+
+  "images": [
+    "https://www.cleardent.es/images/clinica-salamanca-exterior.jpg",
+    "https://www.cleardent.es/images/clinica-salamanca-interior.jpg"
+  ],
+
+  "address": {
+    "street": "Calle [NOMBRE], [NUM]",
+    "city": "Madrid",
+    "region": "Comunidad de Madrid",
+    "postalCode": "28006",
+    "country": "ES"
+  },
+
+  "geo": {
+    "lat": "40.42735",
+    "lng": "-3.68026"
+  },
+
+  "mapsUrl": "https://www.google.com/maps?cid=[GBP_CID_SALAMANCA]",
+
+  "openingHours": [
+    {
+      "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "09:00",
+      "closes": "20:00"
+    },
+    {
+      "days": ["Saturday"],
+      "opens": "09:00",
+      "closes": "14:00"
+    }
+  ],
+
+  "rating": {
+    "value": 4.9,
+    "count": 312,
+    "best": 5,
+    "worst": 1
+  },
+
+  "reviews": [
+    {
+      "author": "María G.",
+      "rating": 5,
+      "body": "Excelente clínica. Trato muy profesional y resultados perfectos en mi ortodoncia.",
+      "date": "2026-01-15"
+    }
+  ],
+
+  "serviceCatalogName": "Tratamientos Dentales — Cleardent Salamanca",
+  "services": [
+    {
+      "category": "Implantología",
+      "items": [
+        {
+          "name": "Implante Dental",
+          "description": "Implante de titanio con corona de cerámica. Solución permanente para dientes perdidos.",
+          "url": "https://www.cleardent.es/madrid-barrio-salamanca/implantes-dentales/",
+          "faqs": [
+            {
+              "q": "¿Cuánto cuesta un implante dental en el Barrio de Salamanca?",
+              "a": "El precio de un implante dental en nuestra clínica del Barrio de Salamanca parte desde XXX€ (implante + corona). Ofrecemos financiación a 0% de interés. Solicita tu valoración gratuita."
+            },
+            {
+              "q": "¿Es doloroso el tratamiento de implantes?",
+              "a": "No. Se realiza bajo anestesia local. El postoperatorio es muy leve y la mayoría de pacientes se incorpora al trabajo al día siguiente."
+            },
+            {
+              "q": "¿Cuánto dura un implante dental?",
+              "a": "Con un mantenimiento correcto los implantes pueden durar toda la vida. La tasa de éxito a 10 años supera el 95%."
+            },
+            {
+              "q": "¿Cuánto tiempo dura el tratamiento completo?",
+              "a": "Entre 3 y 6 meses desde la colocación hasta la corona definitiva. En casos favorables se puede realizar en un solo día."
+            }
+          ]
+        },
+        {
+          "name": "Implantes All-on-4",
+          "description": "Arcada completa fija con solo 4 implantes. Solución definitiva para edéntulos.",
+          "url": "https://www.cleardent.es/madrid-barrio-salamanca/all-on-4/",
+          "faqs": [
+            {
+              "q": "¿Qué es el tratamiento All-on-4?",
+              "a": "All-on-4 es una técnica de implantología avanzada que permite rehabilitar una arcada dental completa con solo 4 implantes. En muchos casos se puede salir de la clínica con los dientes fijos el mismo día."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Ortodoncia",
+      "items": [
+        {
+          "name": "Ortodoncia Invisible (Alineadores)",
+          "description": "Corrección dental sin brackets con alineadores transparentes removibles.",
+          "url": "https://www.cleardent.es/madrid-barrio-salamanca/ortodoncia-invisible/",
+          "faqs": [
+            {
+              "q": "¿Son efectivos los alineadores invisibles?",
+              "a": "Sí. Los alineadores invisibles son efectivos para corregir la mayoría de maloclusiones, desde casos leves a moderados. El tratamiento dura entre 6 y 18 meses según la complejidad del caso."
+            },
+            {
+              "q": "¿Cuánto cuesta la ortodoncia invisible en el Barrio de Salamanca?",
+              "a": "El precio de la ortodoncia invisible en nuestra clínica de Salamanca varía según la complejidad del caso. Disponemos de financiación sin intereses."
+            }
+          ]
+        },
+        {
+          "name": "Brackets Estéticos (Zafiro)",
+          "description": "Ortodoncia con brackets de zafiro, casi invisibles.",
+          "url": "https://www.cleardent.es/madrid-barrio-salamanca/ortodoncia-zafiro/"
+        }
+      ]
+    },
+    {
+      "category": "Estética Dental",
+      "items": [
+        {
+          "name": "Blanqueamiento Dental",
+          "description": "Blanqueamiento dental profesional. Resultados visibles desde la primera sesión.",
+          "url": "https://www.cleardent.es/madrid-barrio-salamanca/blanqueamiento-dental/"
+        },
+        {
+          "name": "Carillas de Porcelana",
+          "description": "Carillas ultrafinas de porcelana para una sonrisa perfecta.",
+          "url": "https://www.cleardent.es/madrid-barrio-salamanca/carillas-porcelana/"
+        },
+        {
+          "name": "Diseño de Sonrisa",
+          "description": "Planificación digital completa de tu nueva sonrisa.",
+          "url": "https://www.cleardent.es/madrid-barrio-salamanca/diseno-sonrisa/"
+        }
+      ]
+    },
+    {
+      "category": "Odontología General",
+      "items": [
+        {
+          "name": "Revisión y Limpieza Dental",
+          "description": "Revisión completa y tartrectomía profesional.",
+          "url": "https://www.cleardent.es/madrid-barrio-salamanca/limpieza-dental/"
+        },
+        {
+          "name": "Empastes y Restauraciones",
+          "url": "https://www.cleardent.es/madrid-barrio-salamanca/empastes/"
+        },
+        {
+          "name": "Endodoncia (Tratamiento de Conductos)",
+          "url": "https://www.cleardent.es/madrid-barrio-salamanca/endodoncia/"
+        }
+      ]
+    },
+    {
+      "category": "Periodoncia",
+      "items": [
+        {
+          "name": "Tratamiento de Encías y Periodontitis",
+          "url": "https://www.cleardent.es/madrid-barrio-salamanca/periodoncia/"
+        }
+      ]
+    },
+    {
+      "category": "Odontopediatría",
+      "items": [
+        {
+          "name": "Dentista para Niños",
+          "url": "https://www.cleardent.es/madrid-barrio-salamanca/dentista-ninos/"
+        }
+      ]
+    }
+  ],
+
+  "employees": [
+    {
+      "prefix": "Dr.",
+      "name": "[NOMBRE APELLIDO]",
+      "title": "Director Clínico — Implantología y Cirugía Oral",
+      "specialty": "Dentistry",
+      "bio": "Especialista en implantología y cirugía oral con más de X años de experiencia.",
+      "url": "https://www.cleardent.es/equipo/dr-nombre/",
+      "image": "https://www.cleardent.es/equipo/dr-nombre.jpg",
+      "knowsAbout": ["Implantología Dental", "Cirugía Oral", "Implantes All-on-4"],
+      "credentials": [
+        {
+          "category": "degree",
+          "name": "Licenciatura en Odontología",
+          "issuedBy": "Universidad [NOMBRE]"
+        },
+        {
+          "category": "postdoctoralTraining",
+          "name": "Máster en Implantología Oral",
+          "issuedBy": "Universidad [NOMBRE]"
+        }
+      ],
+      "memberOf": [
+        {
+          "name": "Colegio de Dentistas de Madrid",
+          "url": "https://www.coem.org.es/"
+        }
+      ],
+      "topdoctors": "https://www.topdoctors.es/[perfil]",
+      "doctoralia": "https://www.doctoralia.es/[perfil]"
+    }
+  ],
+
+  "areaServed": [
+    "Madrid",
+    "Barrio de Salamanca",
+    "Retiro",
+    "Goya",
+    "Velázquez",
+    "Príncipe de Vergara"
+  ],
+
+  "sameAs": [
+    "https://www.google.com/maps?cid=[GBP_CID_SALAMANCA]",
+    "https://www.doctoralia.es/cleardent-salamanca",
+    "https://www.topdoctors.es/cleardent-salamanca",
+    "https://www.facebook.com/cleardent",
+    "https://www.instagram.com/cleardent"
+  ],
+
+  "isChain": true,
+  "parentOrganizationId": "https://www.cleardent.es/#Organization",
+  "organizationUrl": "https://www.cleardent.es/",
+  "brandName": "Cleardent",
+  "brandDescription": "Cadena de clínicas dentales en Madrid especializada en implantes, ortodoncia invisible y estética dental.",
+  "foundingDate": "20XX",
+
+  "branches": [
+    {
+      "name": "Cleardent — Barrio de Salamanca",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/"
+    },
+    {
+      "name": "Cleardent — [OTRA SUCURSAL]",
+      "url": "https://www.cleardent.es/[otra-sucursal]/"
+    }
+  ],
+
+  "brandSameAs": [
+    "https://www.facebook.com/cleardent",
+    "https://www.instagram.com/cleardent",
+    "https://www.linkedin.com/company/cleardent"
+  ],
+
+  "breadcrumbs": [
+    { "name": "Inicio", "url": "https://www.cleardent.es/" },
+    { "name": "Madrid", "url": "https://www.cleardent.es/madrid/" },
+    { "name": "Barrio de Salamanca", "url": "https://www.cleardent.es/madrid-barrio-salamanca/" }
+  ],
+
+  "pageTitle": "Dentista en Barrio de Salamanca Madrid | Cleardent",
+  "metaDescription": "Clínica dental Cleardent en el Barrio de Salamanca, Madrid. Implantes dentales, ortodoncia invisible y estética dental. Solicita tu cita."
+}

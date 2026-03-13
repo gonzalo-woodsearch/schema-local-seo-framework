@@ -1,0 +1,59 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/diseno-sonrisa/#WebPage",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/diseno-sonrisa/",
+      "name": "Diseño de Sonrisa en Madrid | Cleardent — Barrio de Salamanca, Madrid",
+      "description": "Planificación digital completa de tu nueva sonrisa.",
+      "inLanguage": "es",
+      "isPartOf": {
+        "@id": "https://www.cleardent.es/#WebSite"
+      },
+      "about": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/diseno-sonrisa/#Service"
+      },
+      "provider": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/diseno-sonrisa/#Service",
+      "name": "Diseño de Sonrisa",
+      "serviceType": "Estética Dental",
+      "description": "Planificación digital completa de tu nueva sonrisa.",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/diseno-sonrisa/",
+      "provider": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Madrid"
+        },
+        {
+          "@type": "City",
+          "name": "Barrio de Salamanca"
+        },
+        {
+          "@type": "City",
+          "name": "Retiro"
+        },
+        {
+          "@type": "City",
+          "name": "Goya"
+        },
+        {
+          "@type": "City",
+          "name": "Velázquez"
+        },
+        {
+          "@type": "City",
+          "name": "Príncipe de Vergara"
+        }
+      ]
+    }
+  ]
+}

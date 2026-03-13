@@ -1,0 +1,59 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/carillas-porcelana/#WebPage",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/carillas-porcelana/",
+      "name": "Carillas de Porcelana en Madrid | Cleardent — Barrio de Salamanca, Madrid",
+      "description": "Carillas ultrafinas de porcelana para una sonrisa perfecta.",
+      "inLanguage": "es",
+      "isPartOf": {
+        "@id": "https://www.cleardent.es/#WebSite"
+      },
+      "about": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/carillas-porcelana/#Service"
+      },
+      "provider": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/carillas-porcelana/#Service",
+      "name": "Carillas de Porcelana",
+      "serviceType": "Estética Dental",
+      "description": "Carillas ultrafinas de porcelana para una sonrisa perfecta.",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/carillas-porcelana/",
+      "provider": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Madrid"
+        },
+        {
+          "@type": "City",
+          "name": "Barrio de Salamanca"
+        },
+        {
+          "@type": "City",
+          "name": "Retiro"
+        },
+        {
+          "@type": "City",
+          "name": "Goya"
+        },
+        {
+          "@type": "City",
+          "name": "Velázquez"
+        },
+        {
+          "@type": "City",
+          "name": "Príncipe de Vergara"
+        }
+      ]
+    }
+  ]
+}

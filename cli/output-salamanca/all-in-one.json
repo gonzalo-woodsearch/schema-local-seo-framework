@@ -1,0 +1,380 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Dentist",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist",
+      "name": "Cleardent — Barrio de Salamanca, Madrid",
+      "legalName": "Cleardent Dental S.L.",
+      "description": "Clínica dental Cleardent en el Barrio de Salamanca, Madrid. Especialistas en implantes dentales, ortodoncia invisible y estética dental. Aceptamos nuevos pacientes.",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/",
+      "telephone": "+34 91 XXX XXXX",
+      "email": "salamanca@cleardent.es",
+      "priceRange": "€€",
+      "isAcceptingNewPatients": true,
+      "medicalSpecialty": "Dentistry",
+      "paymentAccepted": "Cash, Credit Card, Bank Transfer, Financing",
+      "currenciesAccepted": "EUR",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.cleardent.es/logo.png",
+        "width": 300,
+        "height": 100
+      },
+      "image": [
+        "https://www.cleardent.es/images/clinica-salamanca-exterior.jpg",
+        "https://www.cleardent.es/images/clinica-salamanca-interior.jpg"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Calle [NOMBRE], [NUM]",
+        "addressLocality": "Madrid",
+        "addressRegion": "Comunidad de Madrid",
+        "postalCode": "28006",
+        "addressCountry": "ES"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "40.42735",
+        "longitude": "-3.68026"
+      },
+      "hasMap": "https://www.google.com/maps?cid=[GBP_CID_SALAMANCA]",
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "opens": "09:00",
+          "closes": "20:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Saturday",
+          "opens": "09:00",
+          "closes": "14:00"
+        }
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "312",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "review": [
+        {
+          "@type": "Review",
+          "author": {
+            "@type": "Person",
+            "name": "María G."
+          },
+          "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": "5",
+            "bestRating": "5"
+          },
+          "reviewBody": "Excelente clínica. Trato muy profesional y resultados perfectos en mi ortodoncia.",
+          "datePublished": "2026-01-15"
+        }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Tratamientos Dentales — Cleardent Salamanca",
+        "itemListElement": [
+          {
+            "@type": "OfferCatalog",
+            "name": "Implantología",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Implante Dental",
+                  "description": "Implante de titanio con corona de cerámica. Solución permanente para dientes perdidos.",
+                  "url": "https://www.cleardent.es/madrid-barrio-salamanca/implantes-dentales/"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Implantes All-on-4",
+                  "description": "Arcada completa fija con solo 4 implantes. Solución definitiva para edéntulos.",
+                  "url": "https://www.cleardent.es/madrid-barrio-salamanca/all-on-4/"
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Ortodoncia",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Ortodoncia Invisible (Alineadores)",
+                  "description": "Corrección dental sin brackets con alineadores transparentes removibles.",
+                  "url": "https://www.cleardent.es/madrid-barrio-salamanca/ortodoncia-invisible/"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Brackets Estéticos (Zafiro)",
+                  "description": "Ortodoncia con brackets de zafiro, casi invisibles.",
+                  "url": "https://www.cleardent.es/madrid-barrio-salamanca/ortodoncia-zafiro/"
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Estética Dental",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Blanqueamiento Dental",
+                  "description": "Blanqueamiento dental profesional. Resultados visibles desde la primera sesión.",
+                  "url": "https://www.cleardent.es/madrid-barrio-salamanca/blanqueamiento-dental/"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Carillas de Porcelana",
+                  "description": "Carillas ultrafinas de porcelana para una sonrisa perfecta.",
+                  "url": "https://www.cleardent.es/madrid-barrio-salamanca/carillas-porcelana/"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Diseño de Sonrisa",
+                  "description": "Planificación digital completa de tu nueva sonrisa.",
+                  "url": "https://www.cleardent.es/madrid-barrio-salamanca/diseno-sonrisa/"
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Odontología General",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Revisión y Limpieza Dental",
+                  "description": "Revisión completa y tartrectomía profesional.",
+                  "url": "https://www.cleardent.es/madrid-barrio-salamanca/limpieza-dental/"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Empastes y Restauraciones",
+                  "url": "https://www.cleardent.es/madrid-barrio-salamanca/empastes/"
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Endodoncia (Tratamiento de Conductos)",
+                  "url": "https://www.cleardent.es/madrid-barrio-salamanca/endodoncia/"
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Periodoncia",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Tratamiento de Encías y Periodontitis",
+                  "url": "https://www.cleardent.es/madrid-barrio-salamanca/periodoncia/"
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Odontopediatría",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Dentista para Niños",
+                  "url": "https://www.cleardent.es/madrid-barrio-salamanca/dentista-ninos/"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "employee": [
+        {
+          "@type": [
+            "Person",
+            "Physician"
+          ],
+          "@id": "https://www.cleardent.es/equipo/dr-nombre#Person",
+          "name": "Dr. [NOMBRE APELLIDO]",
+          "honorificPrefix": "Dr.",
+          "jobTitle": "Director Clínico — Implantología y Cirugía Oral",
+          "medicalSpecialty": "Dentistry",
+          "image": "https://www.cleardent.es/equipo/dr-nombre.jpg",
+          "url": "https://www.cleardent.es/equipo/dr-nombre/",
+          "worksFor": {
+            "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+          },
+          "sameAs": [
+            "https://www.topdoctors.es/[perfil]",
+            "https://www.doctoralia.es/[perfil]"
+          ]
+        }
+      ],
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Madrid"
+        },
+        {
+          "@type": "City",
+          "name": "Barrio de Salamanca"
+        },
+        {
+          "@type": "City",
+          "name": "Retiro"
+        },
+        {
+          "@type": "City",
+          "name": "Goya"
+        },
+        {
+          "@type": "City",
+          "name": "Velázquez"
+        },
+        {
+          "@type": "City",
+          "name": "Príncipe de Vergara"
+        }
+      ],
+      "sameAs": [
+        "https://www.google.com/maps?cid=[GBP_CID_SALAMANCA]",
+        "https://www.doctoralia.es/cleardent-salamanca",
+        "https://www.topdoctors.es/cleardent-salamanca",
+        "https://www.facebook.com/cleardent",
+        "https://www.instagram.com/cleardent"
+      ],
+      "parentOrganization": {
+        "@id": "https://www.cleardent.es/#Organization"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#WebPage",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/",
+      "name": "Dentista en Barrio de Salamanca Madrid | Cleardent",
+      "description": "Clínica dental Cleardent en el Barrio de Salamanca, Madrid. Implantes dentales, ortodoncia invisible y estética dental. Solicita tu cita.",
+      "inLanguage": "es",
+      "isPartOf": {
+        "@id": "https://www.cleardent.es/#WebSite"
+      },
+      "about": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Inicio",
+            "item": "https://www.cleardent.es/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Madrid",
+            "item": "https://www.cleardent.es/madrid/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Barrio de Salamanca",
+            "item": "https://www.cleardent.es/madrid-barrio-salamanca/"
+          }
+        ]
+      }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://www.cleardent.es/#Organization",
+      "name": "Cleardent",
+      "legalName": "Cleardent Dental S.L.",
+      "description": "Cadena de clínicas dentales en Madrid especializada en implantes, ortodoncia invisible y estética dental.",
+      "url": "https://www.cleardent.es/",
+      "telephone": "+34 91 XXX XXXX",
+      "email": "salamanca@cleardent.es",
+      "foundingDate": "20XX",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.cleardent.es/logo.png",
+        "width": 300,
+        "height": 100
+      },
+      "subOrganization": [
+        {
+          "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist",
+          "url": "https://www.cleardent.es/madrid-barrio-salamanca/",
+          "name": "Cleardent — Barrio de Salamanca"
+        },
+        {
+          "@id": "https://www.cleardent.es/[otra-sucursal]/#Dentist",
+          "url": "https://www.cleardent.es/[otra-sucursal]/",
+          "name": "Cleardent — [OTRA SUCURSAL]"
+        }
+      ],
+      "sameAs": [
+        "https://www.facebook.com/cleardent",
+        "https://www.instagram.com/cleardent",
+        "https://www.linkedin.com/company/cleardent"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.cleardent.es/#WebSite",
+      "url": "https://www.cleardent.es/",
+      "name": "Cleardent",
+      "inLanguage": "es",
+      "publisher": {
+        "@id": "https://www.cleardent.es/#Organization"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.cleardent.es/?s={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ]
+}

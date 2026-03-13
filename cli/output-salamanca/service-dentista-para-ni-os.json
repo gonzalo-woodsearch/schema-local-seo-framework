@@ -1,0 +1,58 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/dentista-ninos/#WebPage",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/dentista-ninos/",
+      "name": "Dentista para Niños en Madrid | Cleardent — Barrio de Salamanca, Madrid",
+      "description": "Dentista para Niños en Madrid.",
+      "inLanguage": "es",
+      "isPartOf": {
+        "@id": "https://www.cleardent.es/#WebSite"
+      },
+      "about": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/dentista-ninos/#Service"
+      },
+      "provider": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/dentista-ninos/#Service",
+      "name": "Dentista para Niños",
+      "serviceType": "Odontopediatría",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/dentista-ninos/",
+      "provider": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Madrid"
+        },
+        {
+          "@type": "City",
+          "name": "Barrio de Salamanca"
+        },
+        {
+          "@type": "City",
+          "name": "Retiro"
+        },
+        {
+          "@type": "City",
+          "name": "Goya"
+        },
+        {
+          "@type": "City",
+          "name": "Velázquez"
+        },
+        {
+          "@type": "City",
+          "name": "Príncipe de Vergara"
+        }
+      ]
+    }
+  ]
+}

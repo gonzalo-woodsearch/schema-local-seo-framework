@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schema JSON-LD Generator — Clínicas Dentales</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a1d2e;
+      border-bottom: 1px solid #2d3148;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    header h1 { font-size: 18px; font-weight: 600; color: #a78bfa; }
+    header span { font-size: 13px; color: #64748b; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: calc(100vh - 57px);
+    }
+
+    /* LEFT PANEL */
+    .form-panel {
+      overflow-y: auto;
+      border-right: 1px solid #2d3148;
+    }
+
+    .tabs {
+      display: flex;
+      background: #1a1d2e;
+      border-bottom: 1px solid #2d3148;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      overflow-x: auto;
+    }
+    .tab {
+      padding: 12px 16px;
+      font-size: 13px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      color: #64748b;
+      transition: all 0.15s;
+    }
+    .tab:hover { color: #a78bfa; }
+    .tab.active { color: #a78bfa; border-bottom-color: #a78bfa; }
+
+    .tab-content { display: none; padding: 24px; }
+    .tab-content.active { display: block; }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #475569;
+      margin-bottom: 16px;
+      margin-top: 24px;
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block;
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    .field label .required { color: #f87171; margin-left: 3px; }
+    .field label .hint { color: #475569; font-weight: 400; margin-left: 4px; }
+
+    input[type="text"], input[type="email"], input[type="url"],
+    input[type="number"], select, textarea {
+      width: 100%;
+      background: #1e2235;
+      border: 1px solid #2d3148;
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: #e2e8f0;
+      font-size: 13px;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #a78bfa;
+    }
+    textarea { resize: vertical; min-height: 72px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .toggle-row label { font-size: 13px; color: #94a3b8; cursor: pointer; }
+    input[type="checkbox"] { width: 16px; height: 16px; accent-color: #a78bfa; cursor: pointer; }
+
+    .service-list { display: flex; flex-direction: column; gap: 6px; }
+    .service-item {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .service-item input { flex: 1; }
+    .btn-remove {
+      background: #2d1f1f;
+      border: 1px solid #4a2222;
+      color: #f87171;
+      border-radius: 5px;
+      padding: 7px 10px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.15s;
+    }
+    .btn-remove:hover { background: #3d1f1f; }
+
+    .btn-add {
+      background: #1e2235;
+      border: 1px dashed #3d4a6b;
+      color: #64748b;
+      border-radius: 6px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 13px;
+      width: 100%;
+      margin-top: 8px;
+      transition: all 0.15s;
+    }
+    .btn-add:hover { border-color: #a78bfa; color: #a78bfa; background: #1a1d2e; }
+
+    .sameas-list { display: flex; flex-direction: column; gap: 6px; }
+
+    .employee-card {
+      background: #1a1d2e;
+      border: 1px solid #2d3148;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .employee-card .grid-2 { margin-bottom: 10px; }
+
+    .hours-row {
+      display: grid;
+      grid-template-columns: 140px 90px 90px 28px;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .hours-row label { font-size: 12px; color: #94a3b8; }
+
+    /* RIGHT PANEL */
+    .output-panel {
+      display: flex;
+      flex-direction: column;
+      background: #0d1117;
+    }
+
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: #1a1d2e;
+      border-bottom: 1px solid #2d3148;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .schema-type-tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .schema-pill {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      cursor: pointer;
+      border: 1px solid #2d3148;
+      color: #64748b;
+      background: #1e2235;
+      transition: all 0.15s;
+    }
+    .schema-pill.active {
+      background: #3b1f7a;
+      border-color: #a78bfa;
+      color: #c4b5fd;
+    }
+
+    .output-actions { display: flex; gap: 8px; }
+    .btn-copy, .btn-download {
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+    .btn-copy {
+      background: #a78bfa;
+      color: #1a1d2e;
+    }
+    .btn-copy:hover { background: #c4b5fd; }
+    .btn-copy.copied { background: #34d399; }
+    .btn-download {
+      background: #1e2235;
+      border: 1px solid #3d4a6b;
+      color: #94a3b8;
+    }
+    .btn-download:hover { border-color: #a78bfa; color: #a78bfa; }
+
+    #output-code {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      white-space: pre;
+      color: #e2e8f0;
+    }
+
+    /* Syntax highlighting */
+    .json-key { color: #93c5fd; }
+    .json-str { color: #86efac; }
+    .json-num { color: #fbbf24; }
+    .json-bool { color: #f472b6; }
+    .json-null { color: #64748b; }
+    .json-bracket { color: #94a3b8; }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #34d399;
+      color: #064e3b;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.2s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2d3148; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⚡ Schema JSON-LD Generator</h1>
+  <span>Clínicas Dentales · Local SEO · Madrid</span>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT: FORM -->
+  <div class="form-panel">
+    <div class="tabs">
+      <div class="tab active" data-tab="clinica">🏥 Clínica</div>
+      <div class="tab" data-tab="horarios">🕐 Horarios</div>
+      <div class="tab" data-tab="servicios">💊 Servicios</div>
+      <div class="tab" data-tab="equipo">👨‍⚕️ Equipo</div>
+      <div class="tab" data-tab="seo">🔗 SEO / sameAs</div>
+      <div class="tab" data-tab="avanzado">⚙️ Avanzado</div>
+    </div>
+
+    <!-- TAB: CLÍNICA -->
+    <div class="tab-content active" id="tab-clinica">
+      <div class="section-title">Identidad</div>
+
+      <div class="field">
+        <label>Nombre de la clínica <span class="required">*</span></label>
+        <input type="text" id="name" placeholder="Cleardent — Barrio de Salamanca" oninput="generate()" />
+      </div>
+      <div class="field">
+        <label>Razón social</label>
+        <input type="text" id="legalName" placeholder="Cleardent Dental S.L." oninput="generate()" />
+      </div>
+      <div class="field">
+        <label>Descripción <span class="hint">(aprox. 160 chars)</span></label>
+        <textarea id="description" placeholder="Clínica dental en Madrid especializada en implantes, ortodoncia y estética dental." oninput="generate()"></textarea>
+      </div>
+      <div class="field">
+        <label>URL de la página de esta clínica <span class="required">*</span></label>
+        <input type="url" id="url" placeholder="https://www.cleardent.es/madrid-salamanca/" oninput="generate()" />
+      </div>
+
+      <div class="section-title">Contacto</div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Teléfono <span class="required">*</span></label>
+          <input type="text" id="telephone" placeholder="+34 91 555 0000" oninput="generate()" />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="salamanca@cleardent.es" oninput="generate()" />
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Rango de precios</label>
+          <select id="priceRange" onchange="generate()">
+            <option value="€">€ (económico)</option>
+            <option value="€€" selected>€€ (medio)</option>
+            <option value="€€€">€€€ (premium)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Año de fundación</label>
+          <input type="text" id="foundingDate" placeholder="2010" oninput="generate()" />
+        </div>
+      </div>
+
+      <div class="section-title">Dirección</div>
+      <div class="field">
+        <label>Calle y número <span class="required">*</span></label>
+        <input type="text" id="street" placeholder="Calle Serrano, 45, Bajo" oninput="generate()" />
+      </div>
+      <div class="grid-3">
+        <div class="field">
+          <label>Ciudad <span class="required">*</span></label>
+          <input type="text" id="city" placeholder="Madrid" oninput="generate()" />
+        </div>
+        <div class="field">
+          <label>Comunidad</label>
+          <input type="text" id="region" placeholder="Comunidad de Madrid" oninput="generate()" />
+        </div>
+        <div class="field">
+          <label>Código postal</label>
+          <input type="text" id="postalCode" placeholder="28006" oninput="generate()" />
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Latitud <span class="hint">(5+ decimales)</span></label>
+          <input type="text" id="lat" placeholder="40.42735" oninput="generate()" />
+        </div>
+        <div class="field">
+          <label>Longitud <span class="hint">(5+ decimales)</span></label>
+          <input type="text" id="lng" placeholder="-3.68026" oninput="generate()" />
+        </div>
+      </div>
+      <div class="field">
+        <label>URL Google Maps</label>
+        <input type="url" id="mapsUrl" placeholder="https://goo.gl/maps/XXXXXXX" oninput="generate()" />
+      </div>
+
+      <div class="section-title">Valoraciones</div>
+      <div class="grid-3">
+        <div class="field">
+          <label>Nota media</label>
+          <input type="text" id="ratingValue" placeholder="4.9" oninput="generate()" />
+        </div>
+        <div class="field">
+          <label>Nº de reseñas</label>
+          <input type="number" id="reviewCount" placeholder="312" oninput="generate()" />
+        </div>
+        <div class="field">
+          <label>Nota máx.</label>
+          <input type="text" id="bestRating" value="5" oninput="generate()" />
+        </div>
+      </div>
+
+      <div class="section-title">Opciones</div>
+      <div class="toggle-row">
+        <input type="checkbox" id="isAccepting" checked onchange="generate()" />
+        <label for="isAccepting">isAcceptingNewPatients: true</label>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" id="isChain" onchange="generate()" />
+        <label for="isChain">Es sucursal de una cadena (añade parentOrganization)</label>
+      </div>
+      <div class="field" id="parentOrgField" style="display:none">
+        <label>URL de la organización madre</label>
+        <input type="url" id="parentOrgUrl" placeholder="https://www.cleardent.es/#Organization" oninput="generate()" />
+      </div>
+    </div>
+
+    <!-- TAB: HORARIOS -->
+    <div class="tab-content" id="tab-horarios">
+      <div class="section-title">Horario de apertura</div>
+      <p style="font-size:12px;color:#64748b;margin-bottom:16px;">Añade un bloque por cada grupo de días con el mismo horario.</p>
+
+      <div id="hours-list"></div>
+      <button class="btn-add" onclick="addHours()">+ Añadir bloque de horario</button>
+    </div>
+
+    <!-- TAB: SERVICIOS -->
+    <div class="tab-content" id="tab-servicios">
+      <div class="section-title">Categorías de servicios</div>
+      <p style="font-size:12px;color:#64748b;margin-bottom:16px;">Cada categoría agrupa varios tratamientos. Se genera como OfferCatalog en dos niveles.</p>
+
+      <div id="categories-list"></div>
+      <button class="btn-add" onclick="addCategory()">+ Añadir categoría</button>
+    </div>
+
+    <!-- TAB: EQUIPO -->
+    <div class="tab-content" id="tab-equipo">
+      <div class="section-title">Doctores / Dentistas</div>
+      <div id="employees-list"></div>
+      <button class="btn-add" onclick="addEmployee()">+ Añadir doctor/a</button>
+    </div>
+
+    <!-- TAB: SEO / SAMEAS -->
+    <div class="tab-content" id="tab-seo">
+      <div class="section-title">sameAs — Perfiles externos</div>
+      <p style="font-size:12px;color:#64748b;margin-bottom:16px;">Añade las URLs de los perfiles de esta clínica en directorios y redes sociales.</p>
+
+      <div id="sameas-list"></div>
+      <button class="btn-add" onclick="addSameAs()">+ Añadir URL</button>
+
+      <div class="section-title" style="margin-top:28px;">Zonas de servicio (areaServed)</div>
+      <div id="areas-list"></div>
+      <button class="btn-add" onclick="addArea()">+ Añadir zona</button>
+    </div>
+
+    <!-- TAB: AVANZADO -->
+    <div class="tab-content" id="tab-avanzado">
+      <div class="section-title">Tipos de schema a generar</div>
+
+      <div class="toggle-row">
+        <input type="checkbox" id="genDentist" checked onchange="generate()" />
+        <label for="genDentist">Dentist (entidad principal de la clínica)</label>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" id="genWebPage" checked onchange="generate()" />
+        <label for="genWebPage">WebPage + BreadcrumbList</label>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" id="genOrg" onchange="generate()" />
+        <label for="genOrg">Organization (para homepage de cadena)</label>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" id="genWebSite" onchange="generate()" />
+        <label for="genWebSite">WebSite + SearchAction (solo homepage)</label>
+      </div>
+
+      <div class="section-title" style="margin-top:28px;">Breadcrumb</div>
+      <div id="breadcrumb-list"></div>
+      <button class="btn-add" onclick="addBreadcrumb()">+ Añadir nivel</button>
+
+      <div class="section-title" style="margin-top:28px;">Organization (para homepage)</div>
+      <div class="field">
+        <label>URL de la homepage / Organization</label>
+        <input type="url" id="orgUrl" placeholder="https://www.cleardent.es/" oninput="generate()" />
+      </div>
+      <div class="field">
+        <label>Nombre del fundador</label>
+        <input type="text" id="founderName" placeholder="Dr. Juan García" oninput="generate()" />
+      </div>
+      <div class="field">
+        <label>Sucursales (una URL por línea)</label>
+        <textarea id="subOrgs" placeholder="https://www.cleardent.es/madrid-salamanca/&#10;https://www.cleardent.es/madrid-centro/" oninput="generate()"></textarea>
+      </div>
+    </div>
+
+  </div><!-- /form-panel -->
+
+  <!-- RIGHT: OUTPUT -->
+  <div class="output-panel">
+    <div class="output-header">
+      <div class="schema-type-tabs">
+        <div class="schema-pill active" data-schema="all">Todos</div>
+        <div class="schema-pill" data-schema="dentist">Dentist</div>
+        <div class="schema-pill" data-schema="webpage">WebPage</div>
+        <div class="schema-pill" data-schema="org">Organization</div>
+        <div class="schema-pill" data-schema="website">WebSite</div>
+      </div>
+      <div class="output-actions">
+        <button class="btn-copy" id="copyBtn" onclick="copyOutput()">Copiar</button>
+        <button class="btn-download" onclick="downloadOutput()">↓ .json</button>
+      </div>
+    </div>
+    <div id="output-code"></div>
+  </div>
+
+</div><!-- /layout -->
+
+<div class="toast" id="toast">¡Copiado al portapapeles!</div>
+
+<script>
+// ─── STATE ────────────────────────────────────────────────────
+let hours = [];
+let categories = [];
+let employees = [];
+let sameAsList = [];
+let areasList = [];
+let breadcrumbs = [];
+let activeSchemaFilter = 'all';
+
+// ─── INIT ─────────────────────────────────────────────────────
+function init() {
+  // Default hours
+  addHours('Monday,Tuesday,Wednesday,Thursday,Friday', '09:00', '20:00');
+  addHours('Saturday', '09:00', '14:00');
+
+  // Default categories
+  addCategory('Implantología');
+  addServiceToCategory(0, 'Implante Dental', '');
+  addServiceToCategory(0, 'Implantes All-on-4', '');
+
+  addCategory('Ortodoncia');
+  addServiceToCategory(1, 'Ortodoncia Invisible (Alineadores)', '');
+  addServiceToCategory(1, 'Brackets Estéticos', '');
+
+  addCategory('Estética Dental');
+  addServiceToCategory(2, 'Blanqueamiento Dental', '');
+  addServiceToCategory(2, 'Carillas de Porcelana', '');
+
+  addCategory('Odontología General');
+  addServiceToCategory(3, 'Revisión y Limpieza Dental', '');
+  addServiceToCategory(3, 'Empastes', '');
+  addServiceToCategory(3, 'Endodoncia', '');
+
+  // Default sameAs
+  addSameAs('https://www.google.com/maps?cid=');
+  addSameAs('https://www.doctoralia.es/');
+  addSameAs('https://www.topdoctors.es/');
+  addSameAs('https://www.facebook.com/');
+  addSameAs('https://www.instagram.com/');
+
+  // Default areas
+  addArea('Madrid');
+  addArea('Barrio de Salamanca');
+
+  // Default breadcrumb
+  addBreadcrumb('Inicio', 'https://www.cleardent.es/');
+  addBreadcrumb('Madrid', 'https://www.cleardent.es/madrid/');
+  addBreadcrumb('Barrio de Salamanca', 'https://www.cleardent.es/madrid-barrio-salamanca/');
+
+  generate();
+}
+
+// ─── TABS ─────────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('.schema-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.schema-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    activeSchemaFilter = pill.dataset.schema;
+    generate();
+  });
+});
+
+// parentOrg toggle
+document.getElementById('isChain').addEventListener('change', function() {
+  document.getElementById('parentOrgField').style.display = this.checked ? 'block' : 'none';
+  generate();
+});
+
+// ─── HOURS ────────────────────────────────────────────────────
+const ALL_DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DAY_ES = { Monday:'Lun', Tuesday:'Mar', Wednesday:'Mié', Thursday:'Jue', Friday:'Vie', Saturday:'Sáb', Sunday:'Dom' };
+
+function addHours(days = '', opens = '09:00', closes = '20:00') {
+  const id = Date.now() + Math.random();
+  hours.push({ id, days: days ? days.split(',') : [], opens, closes });
+  renderHours();
+}
+
+function renderHours() {
+  const el = document.getElementById('hours-list');
+  el.innerHTML = '';
+  hours.forEach((h, i) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'background:#1a1d2e;border:1px solid #2d3148;border-radius:8px;padding:14px;margin-bottom:10px;';
+
+    const dayChecks = ALL_DAYS.map(d => `
+      <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer;color:#94a3b8;">
+        <input type="checkbox" ${h.days.includes(d) ? 'checked' : ''} onchange="toggleDay(${i},'${d}')" />
+        ${DAY_ES[d]}
+      </label>`).join('');
+
+    div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:12px;color:#64748b;">Bloque ${i+1}</span>
+        <button class="btn-remove" onclick="removeHours(${i})">✕</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;">${dayChecks}</div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Abre</label>
+          <input type="text" value="${h.opens}" onchange="updateHours(${i},'opens',this.value)" oninput="generate()" />
+        </div>
+        <div class="field">
+          <label>Cierra</label>
+          <input type="text" value="${h.closes}" onchange="updateHours(${i},'closes',this.value)" oninput="generate()" />
+        </div>
+      </div>`;
+    el.appendChild(div);
+  });
+}
+
+function toggleDay(i, day) {
+  const idx = hours[i].days.indexOf(day);
+  if (idx >= 0) hours[i].days.splice(idx, 1);
+  else hours[i].days.push(day);
+  generate();
+}
+function updateHours(i, field, val) { hours[i][field] = val; generate(); }
+function removeHours(i) { hours.splice(i, 1); renderHours(); generate(); }
+
+// ─── CATEGORIES / SERVICES ────────────────────────────────────
+function addCategory(name = '') {
+  categories.push({ id: Date.now() + Math.random(), name, services: [] });
+  renderCategories();
+}
+
+function addServiceToCategory(catIdx, name = '', url = '') {
+  categories[catIdx].services.push({ id: Date.now() + Math.random(), name, url });
+  renderCategories();
+}
+
+function renderCategories() {
+  const el = document.getElementById('categories-list');
+  el.innerHTML = '';
+  categories.forEach((cat, ci) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'background:#1a1d2e;border:1px solid #2d3148;border-radius:8px;padding:14px;margin-bottom:12px;';
+
+    const servicesHtml = cat.services.map((s, si) => `
+      <div class="service-item" style="margin-bottom:6px;">
+        <input type="text" value="${s.name}" placeholder="Nombre del tratamiento"
+          oninput="categories[${ci}].services[${si}].name=this.value;generate()" style="flex:1.5" />
+        <input type="text" value="${s.url}" placeholder="URL del servicio (opcional)"
+          oninput="categories[${ci}].services[${si}].url=this.value;generate()" style="flex:2" />
+        <button class="btn-remove" onclick="removeService(${ci},${si})">✕</button>
+      </div>`).join('');
+
+    div.innerHTML = `
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+        <input type="text" value="${cat.name}" placeholder="Nombre de la categoría"
+          oninput="categories[${ci}].name=this.value;generate()" style="flex:1" />
+        <button class="btn-remove" onclick="removeCategory(${ci})">✕</button>
+      </div>
+      <div style="padding-left:12px;border-left:2px solid #2d3148;">${servicesHtml}</div>
+      <button class="btn-add" style="margin-top:8px;" onclick="addServiceToCategory(${ci},'','')">+ Tratamiento</button>`;
+    el.appendChild(div);
+  });
+}
+
+function removeCategory(i) { categories.splice(i, 1); renderCategories(); generate(); }
+function removeService(ci, si) { categories[ci].services.splice(si, 1); renderCategories(); generate(); }
+
+// ─── EMPLOYEES ────────────────────────────────────────────────
+function addEmployee() {
+  employees.push({ id: Date.now(), name: '', prefix: 'Dr.', title: '', specialty: 'Dentistry', url: '', image: '', topdoctors: '', doctoralia: '' });
+  renderEmployees();
+}
+
+function renderEmployees() {
+  const el = document.getElementById('employees-list');
+  el.innerHTML = '';
+  employees.forEach((e, i) => {
+    const div = document.createElement('div');
+    div.className = 'employee-card';
+    div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+        <span style="font-size:12px;color:#a78bfa;font-weight:600;">Doctor ${i+1}</span>
+        <button class="btn-remove" onclick="removeEmployee(${i})">✕</button>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Prefijo</label>
+          <select oninput="employees[${i}].prefix=this.value;generate()">
+            <option ${e.prefix==='Dr.'?'selected':''}>Dr.</option>
+            <option ${e.prefix==='Dra.'?'selected':''}>Dra.</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Nombre completo</label>
+          <input type="text" value="${e.name}" placeholder="Carlos García López"
+            oninput="employees[${i}].name=this.value;generate()" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Cargo / Especialidad</label>
+        <input type="text" value="${e.title}" placeholder="Director Clínico — Implantología"
+          oninput="employees[${i}].title=this.value;generate()" />
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label>URL del perfil</label>
+          <input type="url" value="${e.url}" placeholder="https://...es/equipo/dr-nombre/"
+            oninput="employees[${i}].url=this.value;generate()" />
+        </div>
+        <div class="field">
+          <label>URL de la foto</label>
+          <input type="url" value="${e.image}" placeholder="https://...es/equipo/foto.jpg"
+            oninput="employees[${i}].image=this.value;generate()" />
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Top Doctors (URL)</label>
+          <input type="url" value="${e.topdoctors}" placeholder="https://www.topdoctors.es/..."
+            oninput="employees[${i}].topdoctors=this.value;generate()" />
+        </div>
+        <div class="field">
+          <label>Doctoralia (URL)</label>
+          <input type="url" value="${e.doctoralia}" placeholder="https://www.doctoralia.es/..."
+            oninput="employees[${i}].doctoralia=this.value;generate()" />
+        </div>
+      </div>`;
+    el.appendChild(div);
+  });
+}
+
+function removeEmployee(i) { employees.splice(i, 1); renderEmployees(); generate(); }
+
+// ─── SAMEAS ───────────────────────────────────────────────────
+function addSameAs(url = '') {
+  sameAsList.push({ id: Date.now() + Math.random(), url });
+  renderSameAs();
+}
+
+function renderSameAs() {
+  const el = document.getElementById('sameas-list');
+  el.innerHTML = '';
+  sameAsList.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'service-item';
+    div.innerHTML = `
+      <input type="url" value="${s.url}" placeholder="https://..."
+        oninput="sameAsList[${i}].url=this.value;generate()" />
+      <button class="btn-remove" onclick="removeSameAs(${i})">✕</button>`;
+    el.appendChild(div);
+  });
+}
+
+function removeSameAs(i) { sameAsList.splice(i, 1); renderSameAs(); generate(); }
+
+// ─── AREAS ────────────────────────────────────────────────────
+function addArea(name = '') {
+  areasList.push({ id: Date.now() + Math.random(), name });
+  renderAreas();
+}
+
+function renderAreas() {
+  const el = document.getElementById('areas-list');
+  el.innerHTML = '';
+  areasList.forEach((a, i) => {
+    const div = document.createElement('div');
+    div.className = 'service-item';
+    div.style.marginBottom = '6px';
+    div.innerHTML = `
+      <input type="text" value="${a.name}" placeholder="Barrio / Ciudad"
+        oninput="areasList[${i}].name=this.value;generate()" />
+      <button class="btn-remove" onclick="removeArea(${i})">✕</button>`;
+    el.appendChild(div);
+  });
+}
+
+function removeArea(i) { areasList.splice(i, 1); renderAreas(); generate(); }
+
+// ─── BREADCRUMB ───────────────────────────────────────────────
+function addBreadcrumb(name = '', item = '') {
+  breadcrumbs.push({ id: Date.now() + Math.random(), name, item });
+  renderBreadcrumbs();
+}
+
+function renderBreadcrumbs() {
+  const el = document.getElementById('breadcrumb-list');
+  el.innerHTML = '';
+  breadcrumbs.forEach((b, i) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:grid;grid-template-columns:1fr 2fr 28px;gap:8px;align-items:center;margin-bottom:6px;';
+    div.innerHTML = `
+      <input type="text" value="${b.name}" placeholder="Nombre"
+        oninput="breadcrumbs[${i}].name=this.value;generate()" />
+      <input type="url" value="${b.item}" placeholder="URL"
+        oninput="breadcrumbs[${i}].item=this.value;generate()" />
+      <button class="btn-remove" onclick="removeBreadcrumb(${i})">✕</button>`;
+    el.appendChild(div);
+  });
+}
+
+function removeBreadcrumb(i) { breadcrumbs.splice(i, 1); renderBreadcrumbs(); generate(); }
+
+// ─── SCHEMA BUILDER ──────────────────────────────────────────
+function v(id) { return document.getElementById(id)?.value?.trim() || ''; }
+function cb(id) { return document.getElementById(id)?.checked; }
+
+function buildDentist() {
+  const pageUrl = v('url');
+  const dentistId = pageUrl ? pageUrl.replace(/\/$/, '') + '/#Dentist' : '';
+
+  const obj = {
+    '@type': 'Dentist',
+    '@id': dentistId || undefined,
+    'name': v('name') || undefined,
+    'legalName': v('legalName') || undefined,
+    'description': v('description') || undefined,
+    'url': pageUrl || undefined,
+    'telephone': v('telephone') || undefined,
+    'email': v('email') || undefined,
+    'priceRange': v('priceRange') || undefined,
+    'isAcceptingNewPatients': cb('isAccepting') ? true : undefined,
+    'medicalSpecialty': 'Dentistry',
+  };
+
+  if (v('name')) {
+    obj.logo = { '@type': 'ImageObject', 'url': (pageUrl ? new URL('/', pageUrl).href : '') + 'logo.png', 'width': 300, 'height': 100 };
+  }
+
+  // Address
+  if (v('street') || v('city')) {
+    obj.address = {
+      '@type': 'PostalAddress',
+      'streetAddress': v('street') || undefined,
+      'addressLocality': v('city') || undefined,
+      'addressRegion': v('region') || undefined,
+      'postalCode': v('postalCode') || undefined,
+      'addressCountry': 'ES'
+    };
+  }
+
+  // Geo
+  if (v('lat') && v('lng')) {
+    obj.geo = { '@type': 'GeoCoordinates', 'latitude': v('lat'), 'longitude': v('lng') };
+  }
+  if (v('mapsUrl')) obj.hasMap = v('mapsUrl');
+
+  // Hours
+  if (hours.length) {
+    obj.openingHoursSpecification = hours
+      .filter(h => h.days.length)
+      .map(h => ({
+        '@type': 'OpeningHoursSpecification',
+        'dayOfWeek': h.days.length === 1 ? h.days[0] : h.days,
+        'opens': h.opens,
+        'closes': h.closes
+      }));
+  }
+
+  obj.paymentAccepted = 'Cash, Credit Card, Bank Transfer, Financing';
+  obj.currenciesAccepted = 'EUR';
+
+  // Rating
+  if (v('ratingValue') && v('reviewCount')) {
+    obj.aggregateRating = {
+      '@type': 'AggregateRating',
+      'ratingValue': v('ratingValue'),
+      'reviewCount': v('reviewCount'),
+      'bestRating': v('bestRating') || '5',
+      'worstRating': '1'
+    };
+  }
+
+  // OfferCatalog
+  if (categories.length) {
+    const catItems = categories.filter(c => c.name).map(cat => {
+      const items = cat.services.filter(s => s.name).map(s => ({
+        '@type': 'Offer',
+        'itemOffered': {
+          '@type': 'Service',
+          'name': s.name,
+          ...(s.url ? { 'url': s.url } : {})
+        }
+      }));
+      return {
+        '@type': 'OfferCatalog',
+        'name': cat.name,
+        'itemListElement': items
+      };
+    });
+    if (catItems.length) {
+      obj.hasOfferCatalog = {
+        '@type': 'OfferCatalog',
+        'name': 'Tratamientos Dentales',
+        'itemListElement': catItems
+      };
+    }
+  }
+
+  // Employees
+  if (employees.filter(e => e.name).length) {
+    obj.employee = employees.filter(e => e.name).map(e => {
+      const empObj = {
+        '@type': ['Person', 'Physician'],
+        '@id': (e.url || (pageUrl + 'equipo/' + slugify(e.name))) + '#Person',
+        'name': e.prefix + ' ' + e.name,
+        'honorificPrefix': e.prefix,
+        'jobTitle': e.title || undefined,
+        'medicalSpecialty': 'Dentistry',
+        'worksFor': { '@id': dentistId }
+      };
+      if (e.image) empObj.image = e.image;
+      if (e.url) empObj.url = e.url;
+      const sameAsEmp = [e.topdoctors, e.doctoralia].filter(Boolean);
+      if (sameAsEmp.length) empObj.sameAs = sameAsEmp;
+      return empObj;
+    });
+  }
+
+  // areaServed
+  if (areasList.filter(a => a.name).length) {
+    obj.areaServed = areasList.filter(a => a.name).map(a => ({
+      '@type': 'City',
+      'name': a.name
+    }));
+  }
+
+  // sameAs
+  const saUrls = sameAsList.map(s => s.url).filter(Boolean);
+  if (saUrls.length) obj.sameAs = saUrls;
+
+  // parentOrganization
+  if (cb('isChain') && v('parentOrgUrl')) {
+    obj.parentOrganization = { '@id': v('parentOrgUrl') };
+  }
+
+  return clean(obj);
+}
+
+function buildWebPage() {
+  const pageUrl = v('url');
+  const dentistId = pageUrl ? pageUrl.replace(/\/$/, '') + '/#Dentist' : '';
+  const siteUrl = pageUrl ? (() => { try { return new URL('/', pageUrl).href; } catch(e) { return ''; } })() : '';
+
+  const obj = {
+    '@type': 'WebPage',
+    '@id': (pageUrl || '') + '#WebPage',
+    'url': pageUrl || undefined,
+    'name': v('name') ? `Dentista en ${v('city') || 'Madrid'} | ${v('name')}` : undefined,
+    'description': v('description') || undefined,
+    'inLanguage': 'es',
+    'isPartOf': siteUrl ? { '@id': siteUrl + '#WebSite' } : undefined,
+    'about': dentistId ? { '@id': dentistId } : undefined,
+  };
+
+  if (breadcrumbs.filter(b => b.name && b.item).length) {
+    obj.breadcrumb = {
+      '@type': 'BreadcrumbList',
+      'itemListElement': breadcrumbs.filter(b => b.name && b.item).map((b, i) => ({
+        '@type': 'ListItem',
+        'position': i + 1,
+        'name': b.name,
+        'item': b.item
+      }))
+    };
+  }
+
+  return clean(obj);
+}
+
+function buildOrganization() {
+  const orgUrl = v('orgUrl') || v('url');
+  const orgId = orgUrl ? orgUrl.replace(/\/$/, '') + '/#Organization' : '';
+  const siteUrl = orgUrl ? (() => { try { return new URL('/', orgUrl).href; } catch(e) { return ''; } })() : '';
+
+  const obj = {
+    '@type': 'Organization',
+    '@id': orgId || undefined,
+    'name': v('name') || undefined,
+    'legalName': v('legalName') || undefined,
+    'description': v('description') || undefined,
+    'url': orgUrl || undefined,
+    'telephone': v('telephone') || undefined,
+    'email': v('email') || undefined,
+  };
+
+  if (v('foundingDate')) obj.foundingDate = v('foundingDate');
+
+  if (siteUrl) {
+    obj.logo = { '@type': 'ImageObject', 'url': siteUrl + 'logo.png', 'width': 300, 'height': 100 };
+    obj.address = { '@type': 'PostalAddress', 'addressLocality': v('city') || 'Madrid', 'addressRegion': v('region') || 'Comunidad de Madrid', 'addressCountry': 'ES' };
+  }
+
+  if (v('founderName')) {
+    obj.founder = { '@type': ['Person', 'Physician'], 'name': v('founderName'), 'jobTitle': 'Fundador y Director Médico' };
+  }
+
+  const subOrgLines = v('subOrgs').split('\n').map(u => u.trim()).filter(Boolean);
+  if (subOrgLines.length) {
+    obj.subOrganization = subOrgLines.map(u => ({
+      '@id': u.replace(/\/$/, '') + '/#Dentist',
+      'url': u
+    }));
+  }
+
+  const saUrls = sameAsList.map(s => s.url).filter(Boolean);
+  if (saUrls.length) obj.sameAs = saUrls;
+
+  return clean(obj);
+}
+
+function buildWebSite() {
+  const orgUrl = v('orgUrl') || v('url');
+  const siteUrl = orgUrl ? (() => { try { return new URL('/', orgUrl).href; } catch(e) { return orgUrl; } })() : '';
+
+  return clean({
+    '@type': 'WebSite',
+    '@id': siteUrl ? siteUrl + '#WebSite' : undefined,
+    'url': siteUrl || undefined,
+    'name': v('name') || undefined,
+    'inLanguage': 'es',
+    'publisher': siteUrl ? { '@id': siteUrl.replace(/\/$/, '') + '/#Organization' } : undefined,
+    'potentialAction': siteUrl ? {
+      '@type': 'SearchAction',
+      'target': { '@type': 'EntryPoint', 'urlTemplate': siteUrl + '?s={search_term_string}' },
+      'query-input': 'required name=search_term_string'
+    } : undefined
+  });
+}
+
+function generate() {
+  const graph = [];
+
+  if (cb('genDentist') && activeSchemaFilter !== 'webpage' && activeSchemaFilter !== 'org' && activeSchemaFilter !== 'website') {
+    graph.push(buildDentist());
+  }
+  if (cb('genWebPage') && (activeSchemaFilter === 'all' || activeSchemaFilter === 'webpage')) {
+    graph.push(buildWebPage());
+  }
+  if (cb('genOrg') && (activeSchemaFilter === 'all' || activeSchemaFilter === 'org')) {
+    graph.push(buildOrganization());
+  }
+  if (cb('genWebSite') && (activeSchemaFilter === 'all' || activeSchemaFilter === 'website')) {
+    graph.push(buildWebSite());
+  }
+
+  // filter by pill
+  let filtered = graph;
+  if (activeSchemaFilter === 'dentist') filtered = [buildDentist()];
+  if (activeSchemaFilter === 'webpage') filtered = [buildWebPage()];
+  if (activeSchemaFilter === 'org') filtered = [buildOrganization()];
+  if (activeSchemaFilter === 'website') filtered = [buildWebSite()];
+
+  const out = { '@context': 'https://schema.org', '@graph': filtered };
+  const jsonStr = JSON.stringify(out, null, 2);
+  document.getElementById('output-code').innerHTML = highlight(jsonStr);
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────
+function clean(obj) {
+  return JSON.parse(JSON.stringify(obj, (k, v) => v === undefined ? undefined : v));
+}
+
+function slugify(str) {
+  return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function highlight(json) {
+  return json
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) return `<span class="json-key">${match}</span>`;
+        return `<span class="json-str">${match}</span>`;
+      }
+      if (/true|false/.test(match)) return `<span class="json-bool">${match}</span>`;
+      if (/null/.test(match)) return `<span class="json-null">${match}</span>`;
+      return `<span class="json-num">${match}</span>`;
+    })
+    .replace(/[\{\}\[\]]/g, m => `<span class="json-bracket">${m}</span>`);
+}
+
+function getRawOutput() {
+  const graph = [];
+  if (cb('genDentist')) graph.push(buildDentist());
+  if (cb('genWebPage')) graph.push(buildWebPage());
+  if (cb('genOrg')) graph.push(buildOrganization());
+  if (cb('genWebSite')) graph.push(buildWebSite());
+  return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }, null, 2);
+}
+
+function copyOutput() {
+  navigator.clipboard.writeText(getRawOutput()).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ Copiado';
+    btn.classList.add('copied');
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); toast.classList.remove('show'); }, 2000);
+  });
+}
+
+function downloadOutput() {
+  const blob = new Blob([getRawOutput()], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const name = v('name') ? v('name').replace(/[^a-zA-Z0-9]/g, '-').toLowerCase() : 'schema';
+  a.download = `schema-${name}.json`;
+  a.click();
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.CLINICA.es/#Organization",
+      "name": "NOMBRE CLINICA",
+      "legalName": "RAZON SOCIAL S.L.",
+      "description": "Cadena de clínicas dentales en Madrid especializada en implantes, ortodoncia y estética dental. Más de X años de experiencia.",
+      "url": "https://www.CLINICA.es/",
+      "telephone": "+34 9XX XXX XXX",
+      "email": "info@CLINICA.es",
+      "foundingDate": "YYYY",
+
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.CLINICA.es/logo.png",
+        "width": 300,
+        "height": 100
+      },
+
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Madrid",
+        "addressRegion": "Comunidad de Madrid",
+        "addressCountry": "ES"
+      },
+
+      "founder": {
+        "@type": ["Person", "Physician"],
+        "@id": "https://www.CLINICA.es/equipo/FUNDADOR/#Person",
+        "name": "Dr. NOMBRE FUNDADOR",
+        "jobTitle": "Fundador y Director Médico",
+        "medicalSpecialty": "Dentistry"
+      },
+
+      "subOrganization": [
+        {
+          "@id": "https://www.CLINICA.es/madrid-barrio-salamanca/#Dentist",
+          "url": "https://www.CLINICA.es/madrid-barrio-salamanca/",
+          "name": "NOMBRE CLINICA — Barrio de Salamanca, Madrid"
+        },
+        {
+          "@id": "https://www.CLINICA.es/madrid-centro/#Dentist",
+          "url": "https://www.CLINICA.es/madrid-centro/",
+          "name": "NOMBRE CLINICA — Madrid Centro"
+        },
+        {
+          "@id": "https://www.CLINICA.es/madrid-norte/#Dentist",
+          "url": "https://www.CLINICA.es/madrid-norte/",
+          "name": "NOMBRE CLINICA — Madrid Norte"
+        }
+      ],
+
+      "sameAs": [
+        "https://www.facebook.com/CLINICA",
+        "https://www.instagram.com/CLINICA",
+        "https://www.linkedin.com/company/CLINICA",
+        "https://www.youtube.com/CLINICA",
+        "https://www.doctoralia.es/CLINICA",
+        "https://www.topdoctors.es/CLINICA"
+      ]
+    },
+
+    {
+      "@type": "WebSite",
+      "@id": "https://www.CLINICA.es/#WebSite",
+      "url": "https://www.CLINICA.es/",
+      "name": "NOMBRE CLINICA",
+      "inLanguage": "es",
+      "publisher": {
+        "@id": "https://www.CLINICA.es/#Organization"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.CLINICA.es/?s={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ]
+}

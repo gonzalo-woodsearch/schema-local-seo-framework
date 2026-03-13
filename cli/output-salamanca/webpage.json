@@ -1,0 +1,42 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#WebPage",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/",
+      "name": "Dentista en Barrio de Salamanca Madrid | Cleardent",
+      "description": "Clínica dental Cleardent en el Barrio de Salamanca, Madrid. Implantes dentales, ortodoncia invisible y estética dental. Solicita tu cita.",
+      "inLanguage": "es",
+      "isPartOf": {
+        "@id": "https://www.cleardent.es/#WebSite"
+      },
+      "about": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Inicio",
+            "item": "https://www.cleardent.es/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Madrid",
+            "item": "https://www.cleardent.es/madrid/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Barrio de Salamanca",
+            "item": "https://www.cleardent.es/madrid-barrio-salamanca/"
+          }
+        ]
+      }
+    }
+  ]
+}

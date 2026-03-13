@@ -1,0 +1,58 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/periodoncia/#WebPage",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/periodoncia/",
+      "name": "Tratamiento de Encías y Periodontitis en Madrid | Cleardent — Barrio de Salamanca, Madrid",
+      "description": "Tratamiento de Encías y Periodontitis en Madrid.",
+      "inLanguage": "es",
+      "isPartOf": {
+        "@id": "https://www.cleardent.es/#WebSite"
+      },
+      "about": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/periodoncia/#Service"
+      },
+      "provider": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/periodoncia/#Service",
+      "name": "Tratamiento de Encías y Periodontitis",
+      "serviceType": "Periodoncia",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/periodoncia/",
+      "provider": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Madrid"
+        },
+        {
+          "@type": "City",
+          "name": "Barrio de Salamanca"
+        },
+        {
+          "@type": "City",
+          "name": "Retiro"
+        },
+        {
+          "@type": "City",
+          "name": "Goya"
+        },
+        {
+          "@type": "City",
+          "name": "Velázquez"
+        },
+        {
+          "@type": "City",
+          "name": "Príncipe de Vergara"
+        }
+      ]
+    }
+  ]
+}

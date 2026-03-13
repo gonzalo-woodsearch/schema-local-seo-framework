@@ -1,0 +1,97 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/implantes-dentales/#WebPage",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/implantes-dentales/",
+      "name": "Implante Dental en Madrid | Cleardent — Barrio de Salamanca, Madrid",
+      "description": "Implante de titanio con corona de cerámica. Solución permanente para dientes perdidos.",
+      "inLanguage": "es",
+      "isPartOf": {
+        "@id": "https://www.cleardent.es/#WebSite"
+      },
+      "about": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/implantes-dentales/#Service"
+      },
+      "provider": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/implantes-dentales/#Service",
+      "name": "Implante Dental",
+      "serviceType": "Implantología",
+      "description": "Implante de titanio con corona de cerámica. Solución permanente para dientes perdidos.",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/implantes-dentales/",
+      "provider": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Madrid"
+        },
+        {
+          "@type": "City",
+          "name": "Barrio de Salamanca"
+        },
+        {
+          "@type": "City",
+          "name": "Retiro"
+        },
+        {
+          "@type": "City",
+          "name": "Goya"
+        },
+        {
+          "@type": "City",
+          "name": "Velázquez"
+        },
+        {
+          "@type": "City",
+          "name": "Príncipe de Vergara"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/implantes-dentales/#FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Cuánto cuesta un implante dental en el Barrio de Salamanca?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "El precio de un implante dental en nuestra clínica del Barrio de Salamanca parte desde XXX€ (implante + corona). Ofrecemos financiación a 0% de interés. Solicita tu valoración gratuita."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Es doloroso el tratamiento de implantes?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Se realiza bajo anestesia local. El postoperatorio es muy leve y la mayoría de pacientes se incorpora al trabajo al día siguiente."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cuánto dura un implante dental?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Con un mantenimiento correcto los implantes pueden durar toda la vida. La tasa de éxito a 10 años supera el 95%."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cuánto tiempo dura el tratamiento completo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Entre 3 y 6 meses desde la colocación hasta la corona definitiva. En casos favorables se puede realizar en un solo día."
+          }
+        }
+      ]
+    }
+  ]
+}

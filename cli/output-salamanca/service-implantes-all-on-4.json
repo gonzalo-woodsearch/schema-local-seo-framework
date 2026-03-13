@@ -1,0 +1,73 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/all-on-4/#WebPage",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/all-on-4/",
+      "name": "Implantes All-on-4 en Madrid | Cleardent — Barrio de Salamanca, Madrid",
+      "description": "Arcada completa fija con solo 4 implantes. Solución definitiva para edéntulos.",
+      "inLanguage": "es",
+      "isPartOf": {
+        "@id": "https://www.cleardent.es/#WebSite"
+      },
+      "about": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/all-on-4/#Service"
+      },
+      "provider": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/all-on-4/#Service",
+      "name": "Implantes All-on-4",
+      "serviceType": "Implantología",
+      "description": "Arcada completa fija con solo 4 implantes. Solución definitiva para edéntulos.",
+      "url": "https://www.cleardent.es/madrid-barrio-salamanca/all-on-4/",
+      "provider": {
+        "@id": "https://www.cleardent.es/madrid-barrio-salamanca/#Dentist"
+      },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Madrid"
+        },
+        {
+          "@type": "City",
+          "name": "Barrio de Salamanca"
+        },
+        {
+          "@type": "City",
+          "name": "Retiro"
+        },
+        {
+          "@type": "City",
+          "name": "Goya"
+        },
+        {
+          "@type": "City",
+          "name": "Velázquez"
+        },
+        {
+          "@type": "City",
+          "name": "Príncipe de Vergara"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.cleardent.es/madrid-barrio-salamanca/all-on-4/#FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Qué es el tratamiento All-on-4?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "All-on-4 es una técnica de implantología avanzada que permite rehabilitar una arcada dental completa con solo 4 implantes. En muchos casos se puede salir de la clínica con los dientes fijos el mismo día."
+          }
+        }
+      ]
+    }
+  ]
+}
