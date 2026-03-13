@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Schema SEO Tool — Local Business Generator</title>
+<style>
+/* ── RESET & BASE ─────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:       #0b0d14;
+  --bg1:      #111420;
+  --bg2:      #161927;
+  --bg3:      #1c2033;
+  --bg4:      #222640;
+  --border:   #252a42;
+  --border2:  #2e3455;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --text3:    #475569;
+  --purple:   #7c6ff7;
+  --purple2:  #a78bfa;
+  --purple3:  #c4b5fd;
+  --green:    #34d399;
+  --red:      #f87171;
+  --yellow:   #fbbf24;
+  --blue:     #60a5fa;
+  --r:        6px;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px}
+
+/* ── LAYOUT ────────────────────────────────────────────────── */
+#app{display:flex;height:100vh;width:100vw}
+
+/* ── SIDEBAR ────────────────────────────────────────────────── */
+#sidebar{
+  width:220px;min-width:220px;
+  background:var(--bg1);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.sidebar-logo{
+  padding:18px 16px 14px;
+  border-bottom:1px solid var(--border);
+}
+.sidebar-logo h1{font-size:14px;font-weight:700;color:var(--purple2)}
+.sidebar-logo p{font-size:11px;color:var(--text3);margin-top:3px}
+
+.sidebar-section{
+  padding:12px 12px 6px;
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--text3);
+}
+.projects-list{flex:1;overflow-y:auto;padding:0 8px 8px}
+.project-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;border-radius:var(--r);
+  cursor:pointer;margin-bottom:2px;
+  transition:background .12s;
+  border:1px solid transparent;
+}
+.project-item:hover{background:var(--bg3)}
+.project-item.active{background:var(--bg4);border-color:var(--border2)}
+.project-dot{width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0}
+.project-name{flex:1;font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.project-del{opacity:0;color:var(--text3);font-size:14px;cursor:pointer;padding:0 2px;transition:opacity .1s}
+.project-item:hover .project-del{opacity:1}
+.project-del:hover{color:var(--red)}
+
+.btn-new{
+  margin:8px;padding:9px;
+  background:var(--purple);color:#fff;
+  border:none;border-radius:var(--r);
+  font-size:12px;font-weight:600;cursor:pointer;
+  transition:background .15s;
+}
+.btn-new:hover{background:var(--purple2)}
+
+.sidebar-nav{border-top:1px solid var(--border)}
+.nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:10px 14px;cursor:pointer;
+  color:var(--text2);font-size:12px;
+  transition:all .12s;
+}
+.nav-item:hover,.nav-item.active{color:var(--text);background:var(--bg3)}
+.nav-item .ico{font-size:14px;width:18px;text-align:center}
+
+/* ── MAIN ────────────────────────────────────────────────────── */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── TOPBAR ──────────────────────────────────────────────────── */
+#topbar{
+  height:52px;min-height:52px;
+  background:var(--bg1);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;gap:12px;
+}
+#topbar .project-title{font-size:15px;font-weight:600;flex:1;color:var(--text)}
+#topbar .project-title input{
+  background:transparent;border:none;color:var(--text);
+  font-size:15px;font-weight:600;width:100%;outline:none;
+  font-family:inherit;
+}
+#topbar .project-title input:focus{color:var(--purple2)}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.badge{
+  padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;
+}
+.badge-score{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
+.badge-score span{color:var(--green)}
+.btn-sm{
+  padding:6px 14px;border-radius:var(--r);font-size:12px;font-weight:600;
+  cursor:pointer;border:none;transition:all .15s;
+}
+.btn-primary{background:var(--purple);color:#fff}
+.btn-primary:hover{background:var(--purple2)}
+.btn-secondary{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
+.btn-secondary:hover{border-color:var(--purple);color:var(--purple2)}
+.btn-green{background:#065f46;color:var(--green);border:1px solid #064e3b}
+.btn-green:hover{background:#047857}
+
+/* ── EDITOR + OUTPUT ─────────────────────────────────────────── */
+#workspace{flex:1;display:flex;overflow:hidden}
+
+/* ── EDITOR PANEL ────────────────────────────────────────────── */
+#editor{
+  width:420px;min-width:380px;
+  display:flex;flex-direction:column;
+  border-right:1px solid var(--border);
+  overflow:hidden;
+}
+.editor-tabs{
+  display:flex;background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  overflow-x:auto;flex-shrink:0;
+}
+.editor-tabs::-webkit-scrollbar{height:0}
+.etab{
+  padding:11px 14px;font-size:12px;cursor:pointer;
+  border-bottom:2px solid transparent;color:var(--text3);
+  white-space:nowrap;transition:all .12s;
+}
+.etab:hover{color:var(--text2)}
+.etab.active{color:var(--purple2);border-bottom-color:var(--purple)}
+
+.editor-body{flex:1;overflow-y:auto;padding:20px}
+.editor-body::-webkit-scrollbar{width:5px}
+.editor-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* Fields */
+.field-group{margin-bottom:20px}
+.fg-title{
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--text3);
+  margin-bottom:12px;padding-bottom:6px;
+  border-bottom:1px solid var(--border);
+}
+.field{margin-bottom:11px}
+.field label{
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:500;
+}
+.req{color:var(--red);font-size:10px}
+.hint{color:var(--text3);font-weight:400;font-size:10px}
+.warn-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);display:none}
+.field.missing .warn-dot{display:inline-block}
+
+input[type=text],input[type=email],input[type=url],
+input[type=number],select,textarea{
+  width:100%;background:var(--bg3);
+  border:1px solid var(--border2);border-radius:var(--r);
+  padding:8px 10px;color:var(--text);font-size:12px;font-family:inherit;
+  transition:border-color .15s;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--purple)}
+.field.missing input,.field.missing select,.field.missing textarea{border-color:var(--yellow)!important}
+textarea{resize:vertical;min-height:68px}
+select option{background:var(--bg3)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+/* Toggle */
+.toggle-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.toggle-row label{font-size:12px;color:var(--text2);cursor:pointer}
+input[type=checkbox]{width:15px;height:15px;accent-color:var(--purple);cursor:pointer}
+
+/* List cards */
+.list-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);padding:13px;margin-bottom:9px;
+}
+.list-card-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:10px;
+}
+.list-card-header span{font-size:11px;color:var(--purple2);font-weight:600}
+.btn-icon{
+  background:transparent;border:1px solid var(--border2);
+  color:var(--text3);border-radius:4px;padding:3px 7px;
+  cursor:pointer;font-size:12px;transition:all .12s;
+}
+.btn-icon:hover{border-color:var(--red);color:var(--red)}
+
+.row-input{display:flex;gap:7px;align-items:center;margin-bottom:6px}
+.row-input input{flex:1}
+.btn-add-row{
+  width:100%;padding:7px;background:transparent;
+  border:1px dashed var(--border2);border-radius:var(--r);
+  color:var(--text3);cursor:pointer;font-size:12px;
+  margin-top:6px;transition:all .15s;
+}
+.btn-add-row:hover{border-color:var(--purple);color:var(--purple2)}
+
+/* Hours */
+.hours-days{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
+.day-chip{
+  padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;
+  border:1px solid var(--border2);color:var(--text3);
+  transition:all .12s;user-select:none;
+}
+.day-chip.on{background:var(--purple);border-color:var(--purple);color:#fff}
+
+/* ── RIGHT PANEL ─────────────────────────────────────────────── */
+#right{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* page type bar */
+#page-type-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 16px;background:var(--bg2);
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+#page-type-bar .label{font-size:11px;color:var(--text3);margin-right:4px}
+.pt-pill{
+  padding:5px 12px;border-radius:20px;font-size:11px;cursor:pointer;
+  border:1px solid var(--border2);color:var(--text3);background:var(--bg3);
+  transition:all .12s;
+}
+.pt-pill:hover{border-color:var(--purple);color:var(--purple2)}
+.pt-pill.active{background:#2d2060;border-color:var(--purple);color:var(--purple3)}
+
+/* output header */
+#output-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 16px;background:var(--bg2);
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+#output-header .output-info{font-size:11px;color:var(--text3)}
+#output-header .output-info b{color:var(--text2)}
+.output-btns{display:flex;gap:7px}
+
+/* code output */
+#code-output{
+  flex:1;overflow-y:auto;padding:18px;
+  font-family:'Cascadia Code','Fira Code','Consolas',monospace;
+  font-size:12px;line-height:1.75;white-space:pre;
+  background:var(--bg);color:var(--text);
+}
+#code-output::-webkit-scrollbar{width:5px}
+#code-output::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* validation panel */
+#val-panel{
+  height:160px;min-height:120px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+  flex-shrink:0;
+}
+#val-panel-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 16px;border-bottom:1px solid var(--border);
+}
+#val-panel-header span{font-size:11px;font-weight:600;color:var(--text2)}
+#val-score-wrap{display:flex;align-items:center;gap:6px}
+#val-score-bar{
+  width:100px;height:6px;background:var(--bg4);
+  border-radius:3px;overflow:hidden;
+}
+#val-score-fill{height:100%;border-radius:3px;transition:width .3s,background .3s}
+#val-score-text{font-size:11px;font-weight:700}
+#val-items{
+  flex:1;overflow-y:auto;display:flex;flex-wrap:wrap;
+  gap:5px;padding:10px 14px;align-content:flex-start;
+}
+.val-item{
+  display:flex;align-items:center;gap:5px;
+  padding:4px 9px;border-radius:20px;font-size:11px;
+  border:1px solid;
+}
+.val-ok{background:#052e16;border-color:#065f46;color:var(--green)}
+.val-warn{background:#2d1f00;border-color:#78350f;color:var(--yellow)}
+.val-err{background:#2d0f0f;border-color:#7f1d1d;color:var(--red)}
+.val-item .vi{font-size:10px}
+
+/* ── DASHBOARD VIEW ──────────────────────────────────────────── */
+#dashboard{
+  flex:1;overflow-y:auto;padding:40px;
+  display:none;
+}
+#dashboard.visible{display:block}
+.dash-title{font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px}
+.dash-sub{font-size:13px;color:var(--text3);margin-bottom:32px}
+.dash-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:16px;
+}
+.dash-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:10px;padding:20px;cursor:pointer;
+  transition:all .15s;
+}
+.dash-card:hover{border-color:var(--purple);transform:translateY(-2px)}
+.dash-card-new{
+  background:transparent;border:2px dashed var(--border2);
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:8px;color:var(--text3);
+  min-height:130px;
+}
+.dash-card-new:hover{border-color:var(--purple);color:var(--purple2)}
+.dash-card-new .ico-big{font-size:28px}
+.dc-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
+.dc-url{font-size:11px;color:var(--text3);margin-bottom:12px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dc-meta{display:flex;gap:8px;flex-wrap:wrap}
+.dc-chip{
+  padding:3px 8px;border-radius:4px;font-size:11px;
+  background:var(--bg4);color:var(--text2);
+}
+
+/* ── TOAST ───────────────────────────────────────────────────── */
+#toast{
+  position:fixed;bottom:24px;right:24px;
+  background:var(--green);color:#064e3b;
+  padding:10px 18px;border-radius:var(--r);
+  font-size:12px;font-weight:700;
+  opacity:0;transform:translateY(8px);
+  transition:all .2s;pointer-events:none;z-index:999;
+}
+#toast.show{opacity:1;transform:translateY(0)}
+
+/* ── EMPTY STATE ─────────────────────────────────────────────── */
+#empty-state{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;
+  color:var(--text3);
+}
+#empty-state .ico-big{font-size:48px;opacity:.3}
+#empty-state p{font-size:14px}
+
+/* Scrollbar global */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* Resize handle */
+.resize-handle{
+  width:4px;background:transparent;cursor:col-resize;
+  flex-shrink:0;transition:background .1s;
+}
+.resize-handle:hover,.resize-handle.dragging{background:var(--purple)}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ── SIDEBAR ── -->
+<div id="sidebar">
+  <div class="sidebar-logo">
+    <h1>⚡ Schema SEO Tool</h1>
+    <p>Local Business Generator</p>
+  </div>
+  <div class="sidebar-section">Proyectos</div>
+  <div class="projects-list" id="projects-list"></div>
+  <button class="btn-new" onclick="newProject()">+ Nueva Clínica</button>
+  <div class="sidebar-nav">
+    <div class="nav-item active" id="nav-editor" onclick="showView('editor')">
+      <span class="ico">✏️</span> Editor
+    </div>
+    <div class="nav-item" id="nav-dash" onclick="showView('dashboard')">
+      <span class="ico">📋</span> Dashboard
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div id="main">
+
+  <!-- TOPBAR -->
+  <div id="topbar">
+    <div class="project-title">
+      <input id="proj-name-input" type="text" placeholder="Sin nombre…"
+        oninput="currentProject().name=this.value;saveProjects();renderSidebar()" />
+    </div>
+    <div class="topbar-actions">
+      <div class="badge badge-score">Schema score: <span id="score-badge">0%</span></div>
+      <button class="btn-sm btn-secondary" onclick="duplicateProject()">Duplicar</button>
+      <button class="btn-sm btn-green" id="copy-script-btn" onclick="copyScriptTag()">
+        &lt;script&gt; Copiar tag
+      </button>
+      <button class="btn-sm btn-primary" onclick="downloadAll()">↓ Descargar todo</button>
+    </div>
+  </div>
+
+  <!-- WORKSPACE = editor + output -->
+  <div id="workspace">
+
+    <!-- EDITOR -->
+    <div id="editor">
+      <div class="editor-tabs" id="editor-tabs">
+        <div class="etab active" data-tab="clinica">🏥 Clínica</div>
+        <div class="etab" data-tab="ubicacion">📍 Ubicación</div>
+        <div class="etab" data-tab="horarios">🕐 Horarios</div>
+        <div class="etab" data-tab="servicios">💊 Servicios</div>
+        <div class="etab" data-tab="equipo">👨‍⚕️ Equipo</div>
+        <div class="etab" data-tab="seo">🔗 SEO</div>
+        <div class="etab" data-tab="avanzado">⚙️ Config</div>
+      </div>
+      <div class="editor-body" id="editor-body">
+        <!-- rendered by renderEditor() -->
+      </div>
+    </div>
+
+    <div class="resize-handle" id="resize-handle"></div>
+
+    <!-- RIGHT PANEL -->
+    <div id="right">
+      <!-- Page type -->
+      <div id="page-type-bar">
+        <span class="label">Página:</span>
+        <div class="pt-pill active" data-pt="location" onclick="setPageType('location')">📍 Clínica</div>
+        <div class="pt-pill" data-pt="service" onclick="setPageType('service')">💊 Servicio</div>
+        <div class="pt-pill" data-pt="person" onclick="setPageType('person')">👤 Doctor</div>
+        <div class="pt-pill" data-pt="homepage" onclick="setPageType('homepage')">🏠 Homepage</div>
+        <div class="pt-pill" data-pt="blog" onclick="setPageType('blog')">📝 Blog</div>
+      </div>
+      <!-- Output header -->
+      <div id="output-header">
+        <div class="output-info">
+          <b id="out-type-label">Dentist + WebPage</b>
+          <span> · </span>
+          <span id="out-lines-count">— líneas</span>
+        </div>
+        <div class="output-btns">
+          <button class="btn-sm btn-secondary" onclick="filterOutput('all')">Todos</button>
+          <button class="btn-sm btn-secondary" onclick="filterOutput('dentist')">Dentist</button>
+          <button class="btn-sm btn-secondary" onclick="filterOutput('webpage')">WebPage</button>
+          <button class="btn-sm btn-primary" onclick="copyOutput()">Copiar JSON</button>
+        </div>
+      </div>
+      <!-- Code -->
+      <div id="code-output"></div>
+      <!-- Validation -->
+      <div id="val-panel">
+        <div id="val-panel-header">
+          <span>Validación del schema</span>
+          <div id="val-score-wrap">
+            <div id="val-score-bar"><div id="val-score-fill"></div></div>
+            <span id="val-score-text">0%</span>
+          </div>
+        </div>
+        <div id="val-items"></div>
+      </div>
+    </div>
+
+  </div><!-- /workspace -->
+
+  <!-- DASHBOARD -->
+  <div id="dashboard">
+    <div class="dash-title">Proyectos</div>
+    <div class="dash-sub">Cada proyecto = una clínica o sucursal. Schema generado de forma independiente.</div>
+    <div class="dash-grid" id="dash-grid"></div>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div id="empty-state" style="display:none">
+    <div class="ico-big">🦷</div>
+    <p>Crea tu primer proyecto para empezar</p>
+    <button class="btn-sm btn-primary" onclick="newProject()" style="margin-top:8px">+ Nueva Clínica</button>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<div id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════════
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DAY_ES = {Monday:'Lun',Tuesday:'Mar',Wednesday:'Mié',Thursday:'Jue',Friday:'Vie',Saturday:'Sáb',Sunday:'Dom'};
+
+let projects = [];
+let currentId = null;
+let activeTab = 'clinica';
+let activePageType = 'location';
+let outputFilter = 'all';
+
+function currentProject(){ return projects.find(p=>p.id===currentId) }
+
+function emptyProject(name='Nueva Clínica'){
+  return {
+    id: Date.now()+'',
+    name,
+    url:'', telephone:'', email:'', legalName:'', description:'',
+    priceRange:'€€', isAccepting:true, foundingDate:'',
+    logoUrl:'', images:[],
+    address:{ street:'', city:'Madrid', region:'Comunidad de Madrid', postalCode:'', country:'ES' },
+    geo:{ lat:'', lng:'' },
+    mapsUrl:'',
+    openingHours:[
+      {id:'h1', days:['Monday','Tuesday','Wednesday','Thursday','Friday'], opens:'09:00', closes:'20:00'},
+      {id:'h2', days:['Saturday'], opens:'09:00', closes:'14:00'},
+    ],
+    rating:{ value:'', count:'', best:'5' },
+    services:[
+      { id:'c1', category:'Implantología', items:[
+        {id:'s1',name:'Implante Dental',desc:'',url:'',faqs:[]},
+        {id:'s2',name:'Implantes All-on-4',desc:'',url:'',faqs:[]}
+      ]},
+      { id:'c2', category:'Ortodoncia', items:[
+        {id:'s3',name:'Ortodoncia Invisible',desc:'',url:'',faqs:[]},
+        {id:'s4',name:'Brackets Estéticos',desc:'',url:'',faqs:[]}
+      ]},
+      { id:'c3', category:'Estética Dental', items:[
+        {id:'s5',name:'Blanqueamiento Dental',desc:'',url:'',faqs:[]},
+        {id:'s6',name:'Carillas de Porcelana',desc:'',url:'',faqs:[]}
+      ]},
+      { id:'c4', category:'Odontología General', items:[
+        {id:'s7',name:'Limpieza Dental',desc:'',url:'',faqs:[]},
+        {id:'s8',name:'Empastes',desc:'',url:'',faqs:[]},
+        {id:'s9',name:'Endodoncia',desc:'',url:'',faqs:[]}
+      ]},
+    ],
+    employees:[],
+    sameAs:['','',''],
+    areaServed:['Madrid',''],
+    breadcrumbs:[{id:'b1',name:'Inicio',url:''},{id:'b2',name:'',url:''}],
+    isChain:false, parentOrgId:'',
+    orgUrl:'', brandName:'', subOrgUrls:'',
+    pageTitle:'', metaDesc:'',
+    genWebPage:true, genOrg:false, genWebSite:false,
+  };
+}
+
+// ════════════════════════════════════════════════════════════════
+// PERSIST
+// ════════════════════════════════════════════════════════════════
+function saveProjects(){ try{ localStorage.setItem('schemaSEO_v2', JSON.stringify({projects,currentId})) }catch{} }
+function loadProjects(){
+  try{
+    const d = JSON.parse(localStorage.getItem('schemaSEO_v2')||'null');
+    if(d){ projects=d.projects||[]; currentId=d.currentId||null; }
+  }catch{}
+  if(!projects.length){ const p=emptyProject(); projects=[p]; currentId=p.id; }
+  if(!currentId || !projects.find(p=>p.id===currentId)) currentId=projects[0].id;
+}
+
+// ════════════════════════════════════════════════════════════════
+// PROJECTS
+// ════════════════════════════════════════════════════════════════
+function newProject(){
+  const p=emptyProject('Nueva Clínica '+( projects.length+1 ));
+  projects.unshift(p); currentId=p.id;
+  saveProjects(); renderAll(); showView('editor');
+}
+function selectProject(id){ currentId=id; saveProjects(); renderAll(); showView('editor'); }
+function deleteProject(id,e){
+  e.stopPropagation();
+  if(!confirm('¿Eliminar este proyecto?')) return;
+  projects=projects.filter(p=>p.id!==id);
+  if(currentId===id) currentId=projects[0]?.id||null;
+  if(!projects.length){ const p=emptyProject(); projects=[p]; currentId=p.id; }
+  saveProjects(); renderAll();
+}
+function duplicateProject(){
+  const p=currentProject(); if(!p) return;
+  const copy={...JSON.parse(JSON.stringify(p)), id:Date.now()+'', name:p.name+' (copia)'};
+  projects.unshift(copy); currentId=copy.id;
+  saveProjects(); renderAll(); toast('Proyecto duplicado');
+}
+
+// ════════════════════════════════════════════════════════════════
+// VIEWS
+// ════════════════════════════════════════════════════════════════
+function showView(v){
+  document.getElementById('workspace').style.display = v==='editor'?'flex':'none';
+  document.getElementById('dashboard').style.display = v==='dashboard'?'block':'none';
+  document.getElementById('empty-state').style.display='none';
+  document.getElementById('nav-editor').classList.toggle('active', v==='editor');
+  document.getElementById('nav-dash').classList.toggle('active', v==='dashboard');
+  if(v==='dashboard') renderDashboard();
+}
+
+function setPageType(pt){
+  activePageType=pt;
+  document.querySelectorAll('.pt-pill').forEach(p=>p.classList.toggle('active',p.dataset.pt===pt));
+  const labels={location:'Dentist + WebPage',service:'Service + FAQ',person:'Person + Physician',homepage:'Organization + WebSite',blog:'BlogPosting'};
+  document.getElementById('out-type-label').textContent=labels[pt]||pt;
+  generate();
+}
+
+function filterOutput(f){
+  outputFilter=f;
+  generate();
+}
+
+// ════════════════════════════════════════════════════════════════
+// RENDER SIDEBAR
+// ════════════════════════════════════════════════════════════════
+function renderSidebar(){
+  const el=document.getElementById('projects-list');
+  el.innerHTML=projects.map(p=>`
+    <div class="project-item ${p.id===currentId?'active':''}" onclick="selectProject('${p.id}')">
+      <div class="project-dot"></div>
+      <div class="project-name">${esc(p.name||'Sin nombre')}</div>
+      <span class="project-del" onclick="deleteProject('${p.id}',event)">✕</span>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════════════════════════
+// RENDER DASHBOARD
+// ════════════════════════════════════════════════════════════════
+function renderDashboard(){
+  const el=document.getElementById('dash-grid');
+  el.innerHTML=`
+    <div class="dash-card dash-card-new" onclick="newProject()">
+      <div class="ico-big">＋</div>
+      <span style="font-size:13px">Nueva Clínica</span>
+    </div>
+    `+projects.map(p=>`
+    <div class="dash-card" onclick="selectProject('${p.id}');showView('editor')">
+      <div class="dc-name">${esc(p.name||'Sin nombre')}</div>
+      <div class="dc-url">${esc(p.url||'URL no configurada')}</div>
+      <div class="dc-meta">
+        <span class="dc-chip">${p.services?.length||0} categ.</span>
+        <span class="dc-chip">${p.employees?.length||0} doctores</span>
+        <span class="dc-chip">${p.rating?.value?'⭐ '+p.rating.value:'Sin rating'}</span>
+        ${p.isChain?'<span class="dc-chip">🔗 Cadena</span>':''}
+      </div>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════════════════════════
+// RENDER EDITOR
+// ════════════════════════════════════════════════════════════════
+function renderAll(){
+  const p=currentProject();
+  document.getElementById('proj-name-input').value=p?.name||'';
+  renderSidebar();
+  renderEditor();
+  generate();
+}
+
+function renderEditor(){
+  const p=currentProject(); if(!p) return;
+  const body=document.getElementById('editor-body');
+  body.innerHTML=tabs[activeTab]?.(p)||'';
+  // tabs click
+  document.querySelectorAll('.etab').forEach(t=>{
+    t.classList.toggle('active',t.dataset.tab===activeTab);
+    t.onclick=()=>{ activeTab=t.dataset.tab; renderEditor(); };
+  });
+}
+
+// ── TABS CONTENT ────────────────────────────────────────────────
+const tabs={
+
+clinica(p){ return `
+<div class="field-group">
+  <div class="fg-title">Identidad</div>
+  ${f('Nombre de la clínica','name',p.name,'text','Cleardent — Barrio de Salamanca',true)}
+  ${f('Razón social','legalName',p.legalName,'text','Cleardent Dental S.L.')}
+  ${fa('Descripción','description',p.description,'Clínica dental especializada en...')}
+  ${f('URL de esta página','url',p.url,'url','https://www.cleardent.es/madrid-salamanca/',true)}
+</div>
+<div class="field-group">
+  <div class="fg-title">Contacto</div>
+  <div class="grid2">
+    ${f('Teléfono','telephone',p.telephone,'text','+34 91 555 0000',true)}
+    ${f('Email','email',p.email,'email','salamanca@cleardent.es')}
+  </div>
+  <div class="grid2">
+    <div class="field">
+      <label>Rango de precios</label>
+      <select onchange="set('priceRange',this.value)">
+        ${['€','€€','€€€'].map(v=>`<option ${p.priceRange===v?'selected':''}>${v}</option>`).join('')}
+      </select>
+    </div>
+    ${f('Año fundación','foundingDate',p.foundingDate,'text','2015')}
+  </div>
+  ${f('URL del logo','logoUrl',p.logoUrl,'url','https://www.cleardent.es/logo.png')}
+</div>
+<div class="field-group">
+  <div class="fg-title">Valoraciones (AggregateRating)</div>
+  <div class="grid3">
+    ${f('Nota','rating.value',p.rating.value,'text','4.9')}
+    ${f('Nº reseñas','rating.count',p.rating.count,'number','312')}
+    ${f('Nota máx.','rating.best',p.rating.best,'text','5')}
+  </div>
+</div>
+<div class="field-group">
+  <div class="fg-title">Opciones</div>
+  <div class="toggle-row">
+    <input type="checkbox" id="ck-accepting" ${p.isAccepting?'checked':''} onchange="set('isAccepting',this.checked)" />
+    <label for="ck-accepting">isAcceptingNewPatients: true</label>
+  </div>
+  <div class="toggle-row">
+    <input type="checkbox" id="ck-chain" ${p.isChain?'checked':''} onchange="set('isChain',this.checked);renderEditor()" />
+    <label for="ck-chain">Es sucursal de una cadena (parentOrganization)</label>
+  </div>
+  ${p.isChain?f('ID de la Organization madre','parentOrgId',p.parentOrgId,'url','https://www.cleardent.es/#Organization'):''}
+</div>
+`},
+
+ubicacion(p){ return `
+<div class="field-group">
+  <div class="fg-title">Dirección postal</div>
+  ${f('Calle y número','address.street',p.address.street,'text','Calle Serrano, 45, Bajo',true)}
+  <div class="grid3">
+    ${f('Ciudad','address.city',p.address.city,'text','Madrid',true)}
+    ${f('Comunidad','address.region',p.address.region,'text','Comunidad de Madrid')}
+    ${f('Código postal','address.postalCode',p.address.postalCode,'text','28006')}
+  </div>
+</div>
+<div class="field-group">
+  <div class="fg-title">Geolocalización</div>
+  <p style="font-size:11px;color:var(--text3);margin-bottom:10px">Mínimo 5 decimales para precisión local óptima.</p>
+  <div class="grid2">
+    ${f('Latitud','geo.lat',p.geo.lat,'text','40.42735',true)}
+    ${f('Longitud','geo.lng',p.geo.lng,'text','-3.68026',true)}
+  </div>
+  ${f('URL Google Maps (hasMap)','mapsUrl',p.mapsUrl,'url','https://goo.gl/maps/...')}
+</div>
+<div class="field-group">
+  <div class="fg-title">Zonas de servicio (areaServed)</div>
+  <div id="areas-list">
+    ${(p.areaServed||[]).map((a,i)=>`
+    <div class="row-input">
+      <input type="text" value="${esc(a)}" placeholder="Barrio / Ciudad / Zona"
+        oninput="p.areaServed[${i}]=this.value;gen()" />
+      <button class="btn-icon" onclick="p.areaServed.splice(${i},1);renderEditor()">✕</button>
+    </div>`).join('')}
+  </div>
+  <button class="btn-add-row" onclick="p.areaServed.push('');renderEditor()">+ Añadir zona</button>
+</div>
+`},
+
+horarios(p){ return `
+<div class="field-group">
+  <div class="fg-title">Horario de apertura</div>
+  <p style="font-size:11px;color:var(--text3);margin-bottom:14px">
+    Agrupa días con el mismo horario. Google prefiere este formato sobre el string legacy.
+  </p>
+  <div id="hours-list">
+    ${(p.openingHours||[]).map((h,i)=>renderHoursBlock(h,i,p)).join('')}
+  </div>
+  <button class="btn-add-row" onclick="p.openingHours.push({id:uid(),days:[],opens:'09:00',closes:'18:00'});renderEditor()">
+    + Añadir bloque de horario
+  </button>
+</div>
+`},
+
+servicios(p){ return `
+<div class="field-group">
+  <div class="fg-title">Catálogo de servicios (OfferCatalog)</div>
+  <p style="font-size:11px;color:var(--text3);margin-bottom:14px">
+    Estructura jerárquica: Categoría → Tratamiento. Cada tratamiento con URL genera su service page schema.
+  </p>
+  <div id="cats-list">
+    ${(p.services||[]).map((cat,ci)=>renderCatBlock(cat,ci,p)).join('')}
+  </div>
+  <button class="btn-add-row" onclick="p.services.push({id:uid(),category:'Nueva Categoría',items:[]});renderEditor()">
+    + Añadir categoría
+  </button>
+</div>
+`},
+
+equipo(p){ return `
+<div class="field-group">
+  <div class="fg-title">Doctores / Dentistas</div>
+  <p style="font-size:11px;color:var(--text3);margin-bottom:14px">
+    Tipo: [Person, Physician]. Activa propiedades médicas y señales E-E-A-T para YMYL.
+  </p>
+  <div id="emp-list">
+    ${(p.employees||[]).map((e,i)=>renderEmpBlock(e,i,p)).join('')}
+  </div>
+  <button class="btn-add-row" onclick="p.employees.push({id:uid(),prefix:'Dr.',name:'',title:'',specialty:'Dentistry',url:'',image:'',topdoctors:'',doctoralia:''});renderEditor()">
+    + Añadir doctor/a
+  </button>
+</div>
+`},
+
+seo(p){ return `
+<div class="field-group">
+  <div class="fg-title">sameAs — Perfiles externos</div>
+  <p style="font-size:11px;color:var(--text3);margin-bottom:10px">
+    Cluster mínimo: GBP (CID URL) + Doctoralia + Top Doctors + Facebook + Instagram.
+  </p>
+  <div id="sameas-list">
+    ${(p.sameAs||[]).map((s,i)=>`
+    <div class="row-input">
+      <input type="url" value="${esc(s)}" placeholder="https://..."
+        oninput="p.sameAs[${i}]=this.value;gen()" />
+      <button class="btn-icon" onclick="p.sameAs.splice(${i},1);renderEditor()">✕</button>
+    </div>`).join('')}
+  </div>
+  <button class="btn-add-row" onclick="p.sameAs.push('');renderEditor()">+ Añadir URL</button>
+</div>
+<div class="field-group">
+  <div class="fg-title">Breadcrumb</div>
+  <div id="bc-list">
+    ${(p.breadcrumbs||[]).map((b,i)=>`
+    <div class="row-input" style="gap:7px">
+      <input type="text" value="${esc(b.name)}" placeholder="Nombre"
+        style="flex:1" oninput="p.breadcrumbs[${i}].name=this.value;gen()" />
+      <input type="url" value="${esc(b.url)}" placeholder="URL"
+        style="flex:2" oninput="p.breadcrumbs[${i}].url=this.value;gen()" />
+      <button class="btn-icon" onclick="p.breadcrumbs.splice(${i},1);renderEditor()">✕</button>
+    </div>`).join('')}
+  </div>
+  <button class="btn-add-row" onclick="p.breadcrumbs.push({id:uid(),name:'',url:''});renderEditor()">+ Añadir nivel</button>
+</div>
+<div class="field-group">
+  <div class="fg-title">Meta (WebPage)</div>
+  ${f('Título de página','pageTitle',p.pageTitle,'text','Dentista en Salamanca Madrid | Cleardent')}
+  ${fa('Meta description','metaDesc',p.metaDesc,'Clínica dental en el Barrio de Salamanca, Madrid...')}
+</div>
+`},
+
+avanzado(p){ return `
+<div class="field-group">
+  <div class="fg-title">Schemas a generar</div>
+  <div class="toggle-row">
+    <input type="checkbox" checked disabled />
+    <label>Dentist (siempre activo)</label>
+  </div>
+  <div class="toggle-row">
+    <input type="checkbox" id="ck-webpage" ${p.genWebPage?'checked':''} onchange="set('genWebPage',this.checked)" />
+    <label for="ck-webpage">WebPage + BreadcrumbList</label>
+  </div>
+  <div class="toggle-row">
+    <input type="checkbox" id="ck-org" ${p.genOrg?'checked':''} onchange="set('genOrg',this.checked)" />
+    <label for="ck-org">Organization (para homepage de cadena)</label>
+  </div>
+  <div class="toggle-row">
+    <input type="checkbox" id="ck-website" ${p.genWebSite?'checked':''} onchange="set('genWebSite',this.checked)" />
+    <label for="ck-website">WebSite + SearchAction (solo homepage)</label>
+  </div>
+</div>
+<div class="field-group">
+  <div class="fg-title">Organization / Homepage (cadena)</div>
+  ${f('URL de la homepage','orgUrl',p.orgUrl,'url','https://www.cleardent.es/')}
+  ${f('Nombre de la marca','brandName',p.brandName,'text','Cleardent')}
+  <div class="field">
+    <label>Sucursales — una URL por línea</label>
+    <textarea oninput="set('subOrgUrls',this.value)"
+      placeholder="https://www.cleardent.es/madrid-salamanca/&#10;https://www.cleardent.es/madrid-centro/"
+    >${esc(p.subOrgUrls||'')}</textarea>
+  </div>
+</div>
+`},
+};
+
+// ── BLOCK HELPERS ────────────────────────────────────────────────
+function renderHoursBlock(h,i,p){
+  const dayChips=DAYS.map(d=>`<span class="day-chip ${h.days.includes(d)?'on':''}"
+    onclick="toggleDay('${h.id}','${d}')">${DAY_ES[d]}</span>`).join('');
+  return `
+  <div class="list-card">
+    <div class="list-card-header">
+      <span>Bloque ${i+1}</span>
+      <button class="btn-icon" onclick="p.openingHours.splice(${i},1);renderEditor()">✕</button>
+    </div>
+    <div class="hours-days">${dayChips}</div>
+    <div class="grid2">
+      <div class="field">
+        <label>Abre</label>
+        <input type="text" value="${h.opens}" oninput="updateHours('${h.id}','opens',this.value)" />
+      </div>
+      <div class="field">
+        <label>Cierra</label>
+        <input type="text" value="${h.closes}" oninput="updateHours('${h.id}','closes',this.value)" />
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderCatBlock(cat,ci,p){
+  const items=(cat.items||[]).map((item,si)=>`
+    <div style="background:var(--bg3);border-radius:5px;padding:10px;margin-bottom:7px;">
+      <div class="row-input" style="margin-bottom:6px">
+        <input type="text" value="${esc(item.name)}" placeholder="Nombre del tratamiento" style="flex:1.5"
+          oninput="p.services[${ci}].items[${si}].name=this.value;gen()" />
+        <button class="btn-icon" onclick="p.services[${ci}].items.splice(${si},1);renderEditor()">✕</button>
+      </div>
+      <input type="url" value="${esc(item.url)}" placeholder="URL del tratamiento (opcional — genera service page)"
+        style="width:100%;margin-bottom:0"
+        oninput="p.services[${ci}].items[${si}].url=this.value;gen()" />
+    </div>`).join('');
+  return `
+  <div class="list-card">
+    <div class="list-card-header">
+      <span>Categoría ${ci+1}</span>
+      <button class="btn-icon" onclick="p.services.splice(${ci},1);renderEditor()">✕</button>
+    </div>
+    <input type="text" value="${esc(cat.category)}" placeholder="Nombre de la categoría"
+      style="margin-bottom:10px"
+      oninput="p.services[${ci}].category=this.value;gen()" />
+    ${items}
+    <button class="btn-add-row" onclick="p.services[${ci}].items.push({id:uid(),name:'',desc:'',url:'',faqs:[]});renderEditor()">
+      + Tratamiento
+    </button>
+  </div>`;
+}
+
+function renderEmpBlock(e,i,p){
+  return `
+  <div class="list-card">
+    <div class="list-card-header">
+      <span>${e.prefix||'Dr.'} ${esc(e.name)||'(sin nombre)'}</span>
+      <button class="btn-icon" onclick="p.employees.splice(${i},1);renderEditor()">✕</button>
+    </div>
+    <div class="grid2" style="margin-bottom:9px">
+      <div class="field">
+        <label>Prefijo</label>
+        <select onchange="p.employees[${i}].prefix=this.value;gen()">
+          <option ${e.prefix==='Dr.'?'selected':''}>Dr.</option>
+          <option ${e.prefix==='Dra.'?'selected':''}>Dra.</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Nombre completo</label>
+        <input type="text" value="${esc(e.name)}" placeholder="Carlos García"
+          oninput="p.employees[${i}].name=this.value;gen()" />
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:9px">
+      <label>Cargo</label>
+      <input type="text" value="${esc(e.title)}" placeholder="Director Clínico — Implantología"
+        oninput="p.employees[${i}].title=this.value;gen()" />
+    </div>
+    <div class="grid2" style="margin-bottom:9px">
+      <div class="field">
+        <label>URL del perfil</label>
+        <input type="url" value="${esc(e.url)}" placeholder="https://.../equipo/dr-nombre/"
+          oninput="p.employees[${i}].url=this.value;gen()" />
+      </div>
+      <div class="field">
+        <label>URL de la foto</label>
+        <input type="url" value="${esc(e.image||'')}" placeholder="https://.../foto.jpg"
+          oninput="p.employees[${i}].image=this.value;gen()" />
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label>Top Doctors (URL)</label>
+        <input type="url" value="${esc(e.topdoctors||'')}" placeholder="https://www.topdoctors.es/..."
+          oninput="p.employees[${i}].topdoctors=this.value;gen()" />
+      </div>
+      <div class="field">
+        <label>Doctoralia (URL)</label>
+        <input type="url" value="${esc(e.doctoralia||'')}" placeholder="https://www.doctoralia.es/..."
+          oninput="p.employees[${i}].doctoralia=this.value;gen()" />
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── FIELD HELPERS ────────────────────────────────────────────────
+function f(label,key,val,type='text',ph='',req=false){
+  const id='f_'+key.replace(/\./g,'_');
+  const dotPath=key.includes('.')?key.split('.'):'';
+  const onin=dotPath?`setDot('${dotPath[0]}','${dotPath[1]}',this.value)`:`set('${key}',this.value)`;
+  return `<div class="field" id="${id}">
+    <label>${label}${req?` <span class="req">*</span>`:''} <span class="warn-dot"></span></label>
+    <input type="${type}" value="${esc(val||'')}" placeholder="${ph}" oninput="${onin};gen()" />
+  </div>`;
+}
+function fa(label,key,val,ph=''){
+  return `<div class="field">
+    <label>${label}</label>
+    <textarea oninput="set('${key}',this.value);gen()" placeholder="${ph}">${esc(val||'')}</textarea>
+  </div>`;
+}
+
+// ── SETTERS ──────────────────────────────────────────────────────
+function set(key,val){ const p=currentProject(); if(p){ p[key]=val; saveProjects(); } }
+function setDot(k1,k2,val){ const p=currentProject(); if(p){ if(!p[k1])p[k1]={}; p[k1][k2]=val; saveProjects(); } }
+function toggleDay(hid,day){
+  const p=currentProject(); if(!p) return;
+  const h=p.openingHours.find(x=>x.id===hid); if(!h) return;
+  const i=h.days.indexOf(day);
+  if(i>=0) h.days.splice(i,1); else h.days.push(day);
+  saveProjects(); gen();
+  // re-render just the chips
+  document.querySelectorAll('.day-chip').forEach(c=>{
+    if(c.getAttribute('onclick')?.includes(hid)){
+      c.classList.toggle('on', h.days.includes(day) && c.getAttribute('onclick')?.includes(`'${day}'`));
+    }
+  });
+  document.querySelectorAll('.hours-days').forEach((hd,i2)=>{
+    const block=p.openingHours[i2]; if(!block) return;
+    hd.querySelectorAll('.day-chip').forEach(c=>{
+      const d=c.getAttribute('onclick')?.match(/'([^']+)'\)$/)?.[1];
+      if(d) c.classList.toggle('on',block.days.includes(d));
+    });
+  });
+}
+function updateHours(hid,field,val){
+  const p=currentProject(); if(!p) return;
+  const h=p.openingHours.find(x=>x.id===hid); if(h){ h[field]=val; saveProjects(); gen(); }
+}
+function uid(){ return Math.random().toString(36).slice(2) }
+
+// ════════════════════════════════════════════════════════════════
+// SCHEMA BUILDERS
+// ════════════════════════════════════════════════════════════════
+function baseUrl(url){ try{ return new URL('/',url).href }catch{ return '' } }
+function slugify(s){ return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') }
+function clean(o){ return JSON.parse(JSON.stringify(o,(k,v)=>v===undefined||v===null||v===''||( Array.isArray(v)&&!v.length )?undefined:v)) }
+
+function buildDentist(p){
+  const pageUrl=p.url||'';
+  const dentistId=pageUrl?pageUrl.replace(/\/$/,'')+  '/#Dentist':'';
+  const siteBase=baseUrl(pageUrl);
+  const obj={
+    '@type':'Dentist',
+    '@id':dentistId||undefined,
+    'name':p.name||undefined,
+    'legalName':p.legalName||undefined,
+    'description':p.description||undefined,
+    'url':pageUrl||undefined,
+    'telephone':p.telephone||undefined,
+    'email':p.email||undefined,
+    'priceRange':p.priceRange||'€€',
+    'isAcceptingNewPatients':p.isAccepting!==false?true:undefined,
+    'medicalSpecialty':'Dentistry',
+    'paymentAccepted':'Cash, Credit Card, Bank Transfer, Financing',
+    'currenciesAccepted':'EUR',
+  };
+  if(siteBase) obj.logo={
+    '@type':'ImageObject',
+    'url':p.logoUrl||siteBase+'logo.png',
+    'width':300,'height':100
+  };
+  if(p.address?.street||p.address?.city){
+    obj.address={
+      '@type':'PostalAddress',
+      'streetAddress':p.address.street||undefined,
+      'addressLocality':p.address.city||undefined,
+      'addressRegion':p.address.region||'Comunidad de Madrid',
+      'postalCode':p.address.postalCode||undefined,
+      'addressCountry':p.address.country||'ES'
+    };
+  }
+  if(p.geo?.lat&&p.geo?.lng) obj.geo={'@type':'GeoCoordinates','latitude':String(p.geo.lat),'longitude':String(p.geo.lng)};
+  if(p.mapsUrl) obj.hasMap=p.mapsUrl;
+  if(p.openingHours?.length){
+    obj.openingHoursSpecification=p.openingHours.filter(h=>h.days?.length).map(h=>({
+      '@type':'OpeningHoursSpecification',
+      'dayOfWeek':h.days.length===1?h.days[0]:h.days,
+      'opens':h.opens,
+      'closes':h.closes,
+    }));
+  }
+  if(p.rating?.value&&p.rating?.count){
+    obj.aggregateRating={
+      '@type':'AggregateRating',
+      'ratingValue':String(p.rating.value),
+      'reviewCount':String(p.rating.count),
+      'bestRating':String(p.rating.best||5),
+      'worstRating':'1',
+    };
+  }
+  if(p.services?.filter(c=>c.category).length){
+    obj.hasOfferCatalog={
+      '@type':'OfferCatalog',
+      'name':'Tratamientos Dentales',
+      'itemListElement':p.services.filter(c=>c.category).map(cat=>({
+        '@type':'OfferCatalog',
+        'name':cat.category,
+        'itemListElement':(cat.items||[]).filter(i=>i.name).map(item=>({
+          '@type':'Offer',
+          'itemOffered':clean({'@type':'Service','name':item.name,'description':item.desc||undefined,'url':item.url||undefined})
+        }))
+      }))
+    };
+  }
+  if(p.employees?.filter(e=>e.name).length){
+    obj.employee=p.employees.filter(e=>e.name).map(e=>{
+      const empUrl=e.url||(pageUrl+'equipo/'+slugify(e.name)+'/');
+      return clean({
+        '@type':['Person','Physician'],
+        '@id':empUrl.replace(/\/$/,  '')+'#Person',
+        'name':`${e.prefix||'Dr.'} ${e.name}`,
+        'honorificPrefix':e.prefix||'Dr.',
+        'jobTitle':e.title||undefined,
+        'medicalSpecialty':'Dentistry',
+        'image':e.image||undefined,
+        'url':empUrl||undefined,
+        'worksFor':dentistId?{'@id':dentistId}:undefined,
+        'sameAs':[e.topdoctors,e.doctoralia].filter(Boolean),
+      });
+    });
+  }
+  if(p.areaServed?.filter(Boolean).length){
+    obj.areaServed=p.areaServed.filter(Boolean).map(a=>({'@type':'City','name':a}));
+  }
+  const sa=(p.sameAs||[]).filter(Boolean);
+  if(sa.length) obj.sameAs=sa;
+  if(p.isChain&&p.parentOrgId) obj.parentOrganization={'@id':p.parentOrgId};
+  return clean(obj);
+}
+
+function buildWebPage(p){
+  const pageUrl=p.url||'';
+  const dentistId=pageUrl?pageUrl.replace(/\/$/,  '')+'/#Dentist':'';
+  const siteBase=baseUrl(pageUrl);
+  const obj={
+    '@type':'WebPage',
+    '@id':(pageUrl+'#WebPage')||undefined,
+    'url':pageUrl||undefined,
+    'name':p.pageTitle||(p.name?`Dentista en ${p.address?.city||'Madrid'} | ${p.name}`:undefined),
+    'description':p.metaDesc||p.description||undefined,
+    'inLanguage':'es',
+    'isPartOf':siteBase?{'@id':siteBase+'#WebSite'}:undefined,
+    'about':dentistId?{'@id':dentistId}:undefined,
+  };
+  if(p.breadcrumbs?.filter(b=>b.name&&b.url).length){
+    obj.breadcrumb={
+      '@type':'BreadcrumbList',
+      'itemListElement':p.breadcrumbs.filter(b=>b.name&&b.url).map((b,i)=>({
+        '@type':'ListItem','position':i+1,'name':b.name,'item':b.url
+      }))
+    };
+  }
+  return clean(obj);
+}
+
+function buildOrganization(p){
+  const orgBase=baseUrl(p.orgUrl||p.url);
+  const orgId=(p.orgUrl||orgBase||'').replace(/\/$/,  '')+'/#Organization';
+  return clean({
+    '@type':'Organization',
+    '@id':orgId||undefined,
+    'name':p.brandName||p.name||undefined,
+    'legalName':p.legalName||undefined,
+    'url':p.orgUrl||orgBase||undefined,
+    'foundingDate':p.foundingDate||undefined,
+    'logo':orgBase?{'@type':'ImageObject','url':(p.logoUrl||orgBase+'logo.png'),'width':300,'height':100}:undefined,
+    'subOrganization':(p.subOrgUrls||'').split('\n').map(u=>u.trim()).filter(Boolean).map(u=>({
+      '@id':u.replace(/\/$/,  '')+'/#Dentist','url':u
+    })),
+    'sameAs':(p.sameAs||[]).filter(Boolean),
+  });
+}
+
+function buildWebSite(p){
+  const siteBase=baseUrl(p.orgUrl||p.url);
+  return clean({
+    '@type':'WebSite',
+    '@id':siteBase+'#WebSite',
+    'url':siteBase||undefined,
+    'name':p.brandName||p.name||undefined,
+    'inLanguage':'es',
+    'publisher':siteBase?{'@id':siteBase.replace(/\/$/,  '')+'/#Organization'}:undefined,
+    'potentialAction':siteBase?{
+      '@type':'SearchAction',
+      'target':{'@type':'EntryPoint','urlTemplate':siteBase+'?s={search_term_string}'},
+      'query-input':'required name=search_term_string'
+    }:undefined
+  });
+}
+
+function buildForPageType(p, pt){
+  const graph=[];
+  if(pt==='location'){
+    graph.push(buildDentist(p));
+    if(p.genWebPage) graph.push(buildWebPage(p));
+  } else if(pt==='homepage'){
+    if(p.genOrg||true) graph.push(buildOrganization(p));
+    if(p.genWebSite||true) graph.push(buildWebSite(p));
+  } else if(pt==='service'){
+    // first service with URL
+    const item=p.services?.flatMap(c=>c.items||[]).find(i=>i.url)||{};
+    const dentistId=(p.url||'').replace(/\/$/,  '')+'/#Dentist';
+    graph.push(clean({
+      '@type':'Service',
+      '@id':(item.url||p.url||'')+'#Service',
+      'name':item.name||p.name,
+      'description':item.desc||p.description||undefined,
+      'url':item.url||undefined,
+      'provider':dentistId?{'@id':dentistId}:undefined,
+      'areaServed':(p.areaServed||[]).filter(Boolean).map(a=>({'@type':'City','name':a})),
+    }));
+  } else if(pt==='person'){
+    const e=p.employees?.[0];
+    if(e?.name){
+      const empUrl=e.url||(p.url+'equipo/'+slugify(e.name)+'/');
+      graph.push(clean({
+        '@type':['Person','Physician'],
+        '@id':empUrl.replace(/\/$/,  '')+'#Person',
+        'name':`${e.prefix||'Dr.'} ${e.name}`,
+        'honorificPrefix':e.prefix||'Dr.',
+        'jobTitle':e.title||undefined,
+        'medicalSpecialty':'Dentistry',
+        'worksFor':{'@id':(p.url||'').replace(/\/$/,  '')+'/#Dentist'},
+        'sameAs':[e.topdoctors,e.doctoralia].filter(Boolean),
+      }));
+    }
+  } else if(pt==='blog'){
+    const e=p.employees?.[0];
+    graph.push(clean({
+      '@type':'BlogPosting',
+      'headline': p.pageTitle||'[TITULO DEL ARTÍCULO]',
+      'description':p.metaDesc||'[DESCRIPCIÓN]',
+      'url':p.url||undefined,
+      'datePublished':'YYYY-MM-DD',
+      'dateModified':'YYYY-MM-DD',
+      'inLanguage':'es',
+      'author':e?.name?{'@type':['Person','Physician'],'@id':(e.url||'').replace(/\/$/,  '')+'#Person','name':`${e.prefix||'Dr.'} ${e.name}`}:undefined,
+      'publisher':{'@id':(baseUrl(p.url)||'').replace(/\/$/,  '')+'/#Organization'},
+    }));
+  }
+  return {'@context':'https://schema.org','@graph':graph};
+}
+
+// ════════════════════════════════════════════════════════════════
+// GENERATE + DISPLAY
+// ════════════════════════════════════════════════════════════════
+function gen(){ generate(); }
+
+function generate(){
+  const p=currentProject(); if(!p) return;
+  const schema=buildForPageType(p, activePageType);
+  let filtered=schema;
+  if(outputFilter==='dentist'){
+    filtered={...schema,'@graph':schema['@graph'].filter(n=>n['@type']==='Dentist'||n['@type']?.[0]==='Dentist')};
+  } else if(outputFilter==='webpage'){
+    filtered={...schema,'@graph':schema['@graph'].filter(n=>n['@type']==='WebPage')};
+  }
+  const jsonStr=JSON.stringify(filtered,null,2);
+  document.getElementById('code-output').innerHTML=highlight(jsonStr);
+  const lines=jsonStr.split('\n').length;
+  document.getElementById('out-lines-count').textContent=`${lines} líneas · ${Math.round(jsonStr.length/1024*10)/10}kb`;
+  validateSchema(p);
+  saveProjects();
+}
+
+// ════════════════════════════════════════════════════════════════
+// VALIDATION
+// ════════════════════════════════════════════════════════════════
+const CHECKS=[
+  {label:'name',fn:p=>!!p.name,req:true},
+  {label:'url',fn:p=>!!p.url,req:true},
+  {label:'telephone',fn:p=>!!p.telephone,req:true},
+  {label:'address.street',fn:p=>!!p.address?.street,req:true},
+  {label:'address.city',fn:p=>!!p.address?.city,req:true},
+  {label:'geo (lat/lng)',fn:p=>!!p.geo?.lat&&!!p.geo?.lng,req:true},
+  {label:'geo 5 decimales',fn:p=>{
+    const l=String(p.geo?.lat||''); return l.includes('.')&&l.split('.')[1]?.length>=4;
+  },req:false},
+  {label:'openingHours',fn:p=>(p.openingHours||[]).some(h=>h.days?.length),req:true},
+  {label:'aggregateRating',fn:p=>!!p.rating?.value&&!!p.rating?.count,req:false},
+  {label:'hasOfferCatalog',fn:p=>(p.services||[]).some(c=>c.items?.some(i=>i.name)),req:false},
+  {label:'employee',fn:p=>(p.employees||[]).some(e=>e.name),req:false},
+  {label:'sameAs GBP',fn:p=>(p.sameAs||[]).some(s=>s.includes('google.com/maps')),req:false},
+  {label:'sameAs Doctoralia',fn:p=>(p.sameAs||[]).some(s=>s.includes('doctoralia')),req:false},
+  {label:'sameAs Top Doctors',fn:p=>(p.sameAs||[]).some(s=>s.includes('topdoctors')),req:false},
+  {label:'isAcceptingNewPatients',fn:p=>p.isAccepting!==false,req:false},
+  {label:'breadcrumbs',fn:p=>(p.breadcrumbs||[]).some(b=>b.name&&b.url),req:false},
+  {label:'description',fn:p=>!!p.description&&p.description.length>50,req:false},
+  {label:'logo URL',fn:p=>!!(p.logoUrl||(p.url&&baseUrl(p.url))),req:false},
+];
+
+function validateSchema(p){
+  const items=document.getElementById('val-items');
+  let pass=0;
+  const html=CHECKS.map(c=>{
+    const ok=c.fn(p);
+    if(ok) pass++;
+    const cls=ok?'val-ok':c.req?'val-err':'val-warn';
+    const ico=ok?'✓':c.req?'✗':'!';
+    return `<div class="val-item ${cls}"><span class="vi">${ico}</span> ${c.label}</div>`;
+  }).join('');
+  items.innerHTML=html;
+  const score=Math.round(pass/CHECKS.length*100);
+  document.getElementById('val-score-text').textContent=score+'%';
+  document.getElementById('score-badge').textContent=score+'%';
+  const fill=document.getElementById('val-score-fill');
+  fill.style.width=score+'%';
+  fill.style.background=score>=80?'var(--green)':score>=50?'var(--yellow)':'var(--red)';
+}
+
+// ════════════════════════════════════════════════════════════════
+// OUTPUT ACTIONS
+// ════════════════════════════════════════════════════════════════
+function getRawJson(){
+  const p=currentProject(); if(!p) return '{}';
+  return JSON.stringify(buildForPageType(p, activePageType),null,2);
+}
+
+function getScriptTag(){
+  return `<script type="application/ld+json">\n${getRawJson()}\n<\/script>`;
+}
+
+function copyOutput(){
+  navigator.clipboard.writeText(getRawJson()).then(()=>toast('JSON copiado ✓'));
+}
+function copyScriptTag(){
+  navigator.clipboard.writeText(getScriptTag()).then(()=>toast('<script> tag copiado ✓'));
+}
+
+function downloadAll(){
+  const p=currentProject(); if(!p) return;
+  const types=['location','service','person','homepage','blog'];
+  const zip=[];
+  types.forEach(pt=>{
+    const schema=buildForPageType(p,pt);
+    if(schema['@graph']?.length){
+      const blob=new Blob([JSON.stringify(schema,null,2)],{type:'application/json'});
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download=`schema-${slugify(p.name||'clinica')}-${pt}.json`;
+      a.click();
+    }
+  });
+  toast('Todos los schemas descargados ✓');
+}
+
+// ════════════════════════════════════════════════════════════════
+// SYNTAX HIGHLIGHT
+// ════════════════════════════════════════════════════════════════
+function highlight(json){
+  return json
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,m=>{
+      if(/^"/.test(m)){
+        if(/:$/.test(m)) return `<span style="color:#93c5fd">${m}</span>`;
+        return `<span style="color:#86efac">${m}</span>`;
+      }
+      if(/true|false/.test(m)) return `<span style="color:#f472b6">${m}</span>`;
+      if(/null/.test(m)) return `<span style="color:#475569">${m}</span>`;
+      return `<span style="color:#fbbf24">${m}</span>`;
+    });
+}
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ════════════════════════════════════════════════════════════════
+// RESIZE HANDLE
+// ════════════════════════════════════════════════════════════════
+(function(){
+  const handle=document.getElementById('resize-handle');
+  const editor=document.getElementById('editor');
+  let dragging=false,startX=0,startW=0;
+  handle.addEventListener('mousedown',e=>{
+    dragging=true;startX=e.clientX;startW=editor.offsetWidth;
+    handle.classList.add('dragging');
+    document.body.style.cursor='col-resize';
+    document.body.style.userSelect='none';
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!dragging) return;
+    const w=Math.min(Math.max(startW+(e.clientX-startX),300),700);
+    editor.style.width=w+'px';editor.style.minWidth=w+'px';
+  });
+  document.addEventListener('mouseup',()=>{
+    dragging=false;handle.classList.remove('dragging');
+    document.body.style.cursor='';document.body.style.userSelect='';
+  });
+})();
+
+// ════════════════════════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════════════════════════
+loadProjects();
+renderAll();
+showView('editor');
+</script>
+</body>
+</html>
