@@ -3,1388 +3,1753 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Schema SEO Tool — Local Business Generator</title>
+<title>Schema SEO Tool</title>
 <style>
-/* ── RESET & BASE ─────────────────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:       #0b0d14;
-  --bg1:      #111420;
-  --bg2:      #161927;
-  --bg3:      #1c2033;
-  --bg4:      #222640;
-  --border:   #252a42;
-  --border2:  #2e3455;
-  --text:     #e2e8f0;
-  --text2:    #94a3b8;
-  --text3:    #475569;
-  --purple:   #7c6ff7;
-  --purple2:  #a78bfa;
-  --purple3:  #c4b5fd;
-  --green:    #34d399;
-  --red:      #f87171;
-  --yellow:   #fbbf24;
-  --blue:     #60a5fa;
-  --r:        6px;
+  --bg:#0b0d14;--bg1:#10121f;--bg2:#141828;--bg3:#1a1e30;--bg4:#20253a;--bg5:#272c42;
+  --border:#1e2338;--border2:#272d47;--border3:#323a5c;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#506080;--text4:#3a4a6a;
+  --purple:#7c6ff7;--purple2:#a78bfa;--purple3:#c4b5fd;--purpleBg:#1a1635;
+  --green:#34d399;--greenBg:#052e16;--greenBd:#065f46;
+  --red:#f87171;--redBg:#2d0f0f;--redBd:#7f1d1d;
+  --yellow:#fbbf24;--yellowBg:#2d1f00;--yellowBd:#78350f;
+  --blue:#60a5fa;--blueBg:#0c1f3d;
+  --r:7px;--r2:10px;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
 }
-html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;line-height:1.5}
 
-/* ── LAYOUT ────────────────────────────────────────────────── */
-#app{display:flex;height:100vh;width:100vw}
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border3);border-radius:3px}
 
-/* ── SIDEBAR ────────────────────────────────────────────────── */
-#sidebar{
-  width:220px;min-width:220px;
-  background:var(--bg1);
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  overflow:hidden;
+/* APP SHELL */
+#app{display:flex;height:100vh;width:100vw;overflow:hidden}
+
+/* ═══════════════ SIDEBAR ═══════════════ */
+#sb{width:230px;min-width:230px;background:var(--bg1);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;transition:width .2s}
+.sb-logo{padding:16px 14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sb-logo-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--purple),#4f46e5);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.sb-logo-text h1{font-size:13px;font-weight:700;color:var(--text)}
+.sb-logo-text p{font-size:10px;color:var(--text3)}
+
+.sb-search{padding:10px 10px 6px}
+.sb-search input{width:100%;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--r);padding:7px 10px 7px 28px;color:var(--text);font-size:12px;outline:none}
+.sb-search input:focus{border-color:var(--purple)}
+.sb-search-wrap{position:relative}
+.sb-search-ico{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none}
+
+.sb-sec{padding:8px 12px 4px;font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--text4);display:flex;justify-content:space-between;align-items:center}
+.sb-sec-count{font-weight:400;color:var(--text3)}
+
+.projects-wrap{flex:1;overflow-y:auto;padding:0 6px 6px}
+.proj-card{
+  padding:9px 10px;border-radius:var(--r);cursor:pointer;
+  border:1px solid transparent;margin-bottom:3px;
+  transition:all .12s;display:flex;align-items:center;gap:8px;
 }
-.sidebar-logo{
-  padding:18px 16px 14px;
-  border-bottom:1px solid var(--border);
-}
-.sidebar-logo h1{font-size:14px;font-weight:700;color:var(--purple2)}
-.sidebar-logo p{font-size:11px;color:var(--text3);margin-top:3px}
+.proj-card:hover{background:var(--bg3)}
+.proj-card.active{background:var(--bg4);border-color:var(--border2)}
+.proj-card.active .proj-dot{background:var(--purple)}
+.proj-dot{width:8px;height:8px;border-radius:50%;background:var(--text4);flex-shrink:0;transition:background .2s}
+.proj-info{flex:1;min-width:0}
+.proj-name{font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.proj-sub{font-size:10px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.proj-score-ring{flex-shrink:0}
+.proj-score-ring svg{display:block}
+.proj-del{opacity:0;color:var(--text3);font-size:13px;cursor:pointer;padding:2px 4px;border-radius:3px;
+  transition:all .1s;flex-shrink:0}
+.proj-card:hover .proj-del{opacity:1}
+.proj-del:hover{color:var(--red);background:var(--redBg)}
 
-.sidebar-section{
-  padding:12px 12px 6px;
-  font-size:10px;font-weight:700;text-transform:uppercase;
-  letter-spacing:.08em;color:var(--text3);
+.sb-bottom{border-top:1px solid var(--border);padding:8px}
+.btn-new-proj{
+  width:100%;padding:9px;background:linear-gradient(135deg,var(--purple),#4f46e5);
+  color:#fff;border:none;border-radius:var(--r);font-size:12px;font-weight:600;
+  cursor:pointer;transition:opacity .15s;display:flex;align-items:center;justify-content:center;gap:6px;
 }
-.projects-list{flex:1;overflow-y:auto;padding:0 8px 8px}
-.project-item{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 10px;border-radius:var(--r);
-  cursor:pointer;margin-bottom:2px;
-  transition:background .12s;
-  border:1px solid transparent;
-}
-.project-item:hover{background:var(--bg3)}
-.project-item.active{background:var(--bg4);border-color:var(--border2)}
-.project-dot{width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0}
-.project-name{flex:1;font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.project-del{opacity:0;color:var(--text3);font-size:14px;cursor:pointer;padding:0 2px;transition:opacity .1s}
-.project-item:hover .project-del{opacity:1}
-.project-del:hover{color:var(--red)}
+.btn-new-proj:hover{opacity:.9}
 
-.btn-new{
-  margin:8px;padding:9px;
-  background:var(--purple);color:#fff;
-  border:none;border-radius:var(--r);
-  font-size:12px;font-weight:600;cursor:pointer;
-  transition:background .15s;
-}
-.btn-new:hover{background:var(--purple2)}
+/* ═══════════════ MAIN ═══════════════ */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 
-.sidebar-nav{border-top:1px solid var(--border)}
-.nav-item{
-  display:flex;align-items:center;gap:9px;
-  padding:10px 14px;cursor:pointer;
-  color:var(--text2);font-size:12px;
-  transition:all .12s;
-}
-.nav-item:hover,.nav-item.active{color:var(--text);background:var(--bg3)}
-.nav-item .ico{font-size:14px;width:18px;text-align:center}
-
-/* ── MAIN ────────────────────────────────────────────────────── */
-#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-
-/* ── TOPBAR ──────────────────────────────────────────────────── */
+/* TOPBAR */
 #topbar{
-  height:52px;min-height:52px;
-  background:var(--bg1);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;padding:0 20px;gap:12px;
+  height:50px;min-height:50px;background:var(--bg1);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 16px;gap:10px;
 }
-#topbar .project-title{font-size:15px;font-weight:600;flex:1;color:var(--text)}
-#topbar .project-title input{
-  background:transparent;border:none;color:var(--text);
-  font-size:15px;font-weight:600;width:100%;outline:none;
-  font-family:inherit;
+.topbar-name{flex:1;min-width:0}
+.topbar-name input{
+  background:transparent;border:none;color:var(--text);font-size:14px;font-weight:600;
+  width:100%;outline:none;font-family:inherit;cursor:text;
 }
-#topbar .project-title input:focus{color:var(--purple2)}
-.topbar-actions{display:flex;gap:8px;align-items:center}
-.badge{
-  padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;
-}
-.badge-score{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
-.badge-score span{color:var(--green)}
-.btn-sm{
-  padding:6px 14px;border-radius:var(--r);font-size:12px;font-weight:600;
-  cursor:pointer;border:none;transition:all .15s;
-}
-.btn-primary{background:var(--purple);color:#fff}
-.btn-primary:hover{background:var(--purple2)}
-.btn-secondary{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
-.btn-secondary:hover{border-color:var(--purple);color:var(--purple2)}
-.btn-green{background:#065f46;color:var(--green);border:1px solid #064e3b}
-.btn-green:hover{background:#047857}
+.topbar-name input::placeholder{color:var(--text4)}
+.topbar-name input:focus{color:var(--purple2)}
+.topbar-right{display:flex;align-items:center;gap:8px}
 
-/* ── EDITOR + OUTPUT ─────────────────────────────────────────── */
+.save-indicator{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px;
+  padding:4px 8px;border-radius:20px;background:var(--bg3);border:1px solid var(--border)}
+.save-dot{width:6px;height:6px;border-radius:50%;background:var(--green);transition:background .3s}
+.save-dot.saving{background:var(--yellow);animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.score-badge{
+  display:flex;align-items:center;gap:6px;padding:4px 10px;
+  border-radius:20px;background:var(--bg3);border:1px solid var(--border2);
+  font-size:11px;font-weight:600;
+}
+.score-badge-val{color:var(--green)}
+
+.btn-t{
+  padding:7px 14px;border-radius:var(--r);font-size:12px;font-weight:600;
+  cursor:pointer;border:none;transition:all .15s;white-space:nowrap;
+}
+.btn-purple{background:linear-gradient(135deg,var(--purple),#4f46e5);color:#fff}
+.btn-purple:hover{opacity:.9;transform:translateY(-1px)}
+.btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{border-color:var(--purple);color:var(--purple2)}
+.btn-green-solid{background:var(--greenBg);color:var(--green);border:1px solid var(--greenBd)}
+.btn-green-solid:hover{background:#065f46}
+.btn-red{background:var(--redBg);color:var(--red);border:1px solid var(--redBd)}
+
+/* WORKSPACE */
 #workspace{flex:1;display:flex;overflow:hidden}
 
-/* ── EDITOR PANEL ────────────────────────────────────────────── */
-#editor{
-  width:420px;min-width:380px;
-  display:flex;flex-direction:column;
+/* ═══════════════ EDITOR ═══════════════ */
+#editor-panel{
+  width:430px;min-width:320px;max-width:700px;
+  display:flex;flex-direction:column;overflow:hidden;
   border-right:1px solid var(--border);
-  overflow:hidden;
 }
-.editor-tabs{
-  display:flex;background:var(--bg2);
-  border-bottom:1px solid var(--border);
-  overflow-x:auto;flex-shrink:0;
+.etabs{
+  display:flex;background:var(--bg2);border-bottom:1px solid var(--border);
+  overflow-x:auto;flex-shrink:0;padding:0 4px;
 }
-.editor-tabs::-webkit-scrollbar{height:0}
+.etabs::-webkit-scrollbar{height:0}
 .etab{
-  padding:11px 14px;font-size:12px;cursor:pointer;
+  padding:11px 12px;font-size:12px;cursor:pointer;
   border-bottom:2px solid transparent;color:var(--text3);
-  white-space:nowrap;transition:all .12s;
+  white-space:nowrap;transition:all .12s;display:flex;align-items:center;gap:5px;
+  position:relative;
 }
 .etab:hover{color:var(--text2)}
 .etab.active{color:var(--purple2);border-bottom-color:var(--purple)}
+.etab-dot{width:5px;height:5px;border-radius:50%;background:var(--yellow);display:none}
+.etab.has-warn .etab-dot{display:block}
+.etab.all-ok .etab-dot{background:var(--green);display:block}
 
-.editor-body{flex:1;overflow-y:auto;padding:20px}
-.editor-body::-webkit-scrollbar{width:5px}
-.editor-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.ebody{flex:1;overflow-y:auto;padding:20px 18px}
 
-/* Fields */
-.field-group{margin-bottom:20px}
+/* FIELDS */
+.fg{margin-bottom:22px}
 .fg-title{
-  font-size:10px;font-weight:700;text-transform:uppercase;
-  letter-spacing:.08em;color:var(--text3);
-  margin-bottom:12px;padding-bottom:6px;
-  border-bottom:1px solid var(--border);
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--text4);margin-bottom:12px;padding-bottom:7px;
+  border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;
 }
-.field{margin-bottom:11px}
-.field label{
+.fg-title span{color:var(--text3)}
+
+.field{margin-bottom:11px;position:relative}
+.field-label{
   display:flex;align-items:center;gap:5px;
   font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:500;
 }
-.req{color:var(--red);font-size:10px}
-.hint{color:var(--text3);font-weight:400;font-size:10px}
-.warn-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);display:none}
-.field.missing .warn-dot{display:inline-block}
-
-input[type=text],input[type=email],input[type=url],
-input[type=number],select,textarea{
-  width:100%;background:var(--bg3);
-  border:1px solid var(--border2);border-radius:var(--r);
-  padding:8px 10px;color:var(--text);font-size:12px;font-family:inherit;
-  transition:border-color .15s;
+.req-star{color:var(--red);font-size:10px}
+.tip-btn{
+  width:14px;height:14px;border-radius:50%;background:var(--bg5);
+  border:1px solid var(--border3);color:var(--text3);font-size:9px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .12s;flex-shrink:0;
 }
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--purple)}
-.field.missing input,.field.missing select,.field.missing textarea{border-color:var(--yellow)!important}
-textarea{resize:vertical;min-height:68px}
+.tip-btn:hover{background:var(--purpleBg);border-color:var(--purple);color:var(--purple2)}
+.field-state{margin-left:auto;font-size:10px;font-weight:600}
+.state-ok{color:var(--green)}
+.state-warn{color:var(--yellow)}
+.state-err{color:var(--red)}
+
+input[type=text],input[type=email],input[type=url],input[type=number],
+input[type=search],select,textarea{
+  width:100%;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--r);padding:8px 10px;color:var(--text);
+  font-size:12px;font-family:inherit;transition:border-color .15s,background .15s;
+}
+input:focus,select:focus,textarea:focus{
+  outline:none;border-color:var(--purple);background:var(--bg4)
+}
+input.ok{border-color:var(--greenBd)!important}
+input.warn{border-color:var(--yellowBd)!important}
+input.err{border-color:var(--redBd)!important}
+textarea{resize:vertical;min-height:66px}
 select option{background:var(--bg3)}
 
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 
-/* Toggle */
 .toggle-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
-.toggle-row label{font-size:12px;color:var(--text2);cursor:pointer}
-input[type=checkbox]{width:15px;height:15px;accent-color:var(--purple);cursor:pointer}
+.toggle-row label{font-size:12px;color:var(--text2);cursor:pointer;user-select:none}
+input[type=checkbox]{width:15px;height:15px;accent-color:var(--purple);cursor:pointer;flex-shrink:0}
 
-/* List cards */
-.list-card{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:var(--r);padding:13px;margin-bottom:9px;
+/* TOOLTIP */
+.tooltip-box{
+  position:fixed;z-index:9999;
+  background:var(--bg1);border:1px solid var(--border3);
+  border-radius:var(--r2);padding:10px 12px;max-width:240px;
+  box-shadow:var(--shadow);pointer-events:none;opacity:0;transition:opacity .15s;
 }
-.list-card-header{
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:10px;
+.tooltip-box.show{opacity:1}
+.tt-title{font-size:11px;font-weight:700;color:var(--purple2);margin-bottom:5px}
+.tt-body{font-size:11px;color:var(--text2);line-height:1.5}
+.tt-tag{
+  display:inline-block;margin-top:6px;padding:2px 7px;
+  border-radius:3px;font-size:10px;font-weight:600;
 }
-.list-card-header span{font-size:11px;color:var(--purple2);font-weight:600}
+.tt-required{background:#7f1d1d;color:var(--red)}
+.tt-recommended{background:#78350f;color:var(--yellow)}
+.tt-optional{background:#1e3a5f;color:var(--blue)}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);
+  padding:14px;margin-bottom:10px;transition:border-color .15s}
+.card:hover{border-color:var(--border2)}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.card-title{font-size:12px;font-weight:600;color:var(--purple2)}
+.card-actions{display:flex;gap:5px}
 .btn-icon{
-  background:transparent;border:1px solid var(--border2);
-  color:var(--text3);border-radius:4px;padding:3px 7px;
-  cursor:pointer;font-size:12px;transition:all .12s;
+  background:transparent;border:1px solid var(--border2);color:var(--text3);
+  border-radius:5px;padding:3px 8px;cursor:pointer;font-size:12px;transition:all .12s;
 }
-.btn-icon:hover{border-color:var(--red);color:var(--red)}
+.btn-icon:hover{border-color:var(--redBd);color:var(--red);background:var(--redBg)}
+.btn-icon.up:hover{border-color:var(--border3);color:var(--text2);background:var(--bg4)}
 
-.row-input{display:flex;gap:7px;align-items:center;margin-bottom:6px}
-.row-input input{flex:1}
-.btn-add-row{
-  width:100%;padding:7px;background:transparent;
+.row-line{display:flex;gap:7px;align-items:center;margin-bottom:6px}
+.row-line input,.row-line select{flex:1}
+.btn-add-card{
+  width:100%;padding:8px;background:transparent;
   border:1px dashed var(--border2);border-radius:var(--r);
-  color:var(--text3);cursor:pointer;font-size:12px;
-  margin-top:6px;transition:all .15s;
+  color:var(--text3);cursor:pointer;font-size:12px;transition:all .15s;margin-top:4px;
 }
-.btn-add-row:hover{border-color:var(--purple);color:var(--purple2)}
+.btn-add-card:hover{border-color:var(--purple);color:var(--purple2);background:var(--purpleBg)}
 
-/* Hours */
-.hours-days{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
+/* HOURS */
+.day-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
 .day-chip{
-  padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;
-  border:1px solid var(--border2);color:var(--text3);
-  transition:all .12s;user-select:none;
+  padding:4px 9px;border-radius:5px;font-size:11px;cursor:pointer;
+  border:1px solid var(--border2);color:var(--text3);transition:all .12s;user-select:none;
 }
 .day-chip.on{background:var(--purple);border-color:var(--purple);color:#fff}
+.day-chip:hover:not(.on){border-color:var(--border3);color:var(--text2)}
 
-/* ── RIGHT PANEL ─────────────────────────────────────────────── */
-#right{flex:1;display:flex;flex-direction:column;overflow:hidden}
-
-/* page type bar */
-#page-type-bar{
-  display:flex;align-items:center;gap:8px;
-  padding:10px 16px;background:var(--bg2);
-  border-bottom:1px solid var(--border);flex-shrink:0;
+/* ═══════════════ RESIZE HANDLE ═══════════════ */
+.resize-h{
+  width:4px;background:transparent;cursor:col-resize;flex-shrink:0;
+  transition:background .15s;
 }
-#page-type-bar .label{font-size:11px;color:var(--text3);margin-right:4px}
+.resize-h:hover,.resize-h.drag{background:var(--purple)}
+
+/* ═══════════════ OUTPUT PANEL ═══════════════ */
+#output-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+.out-toolbar{
+  display:flex;align-items:center;gap:8px;padding:8px 14px;
+  background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;
+}
+.page-type-label{font-size:11px;color:var(--text3);margin-right:2px}
 .pt-pill{
-  padding:5px 12px;border-radius:20px;font-size:11px;cursor:pointer;
+  padding:5px 11px;border-radius:20px;font-size:11px;cursor:pointer;
   border:1px solid var(--border2);color:var(--text3);background:var(--bg3);
-  transition:all .12s;
+  transition:all .12s;white-space:nowrap;
 }
 .pt-pill:hover{border-color:var(--purple);color:var(--purple2)}
-.pt-pill.active{background:#2d2060;border-color:var(--purple);color:var(--purple3)}
+.pt-pill.active{background:var(--purpleBg);border-color:var(--purple);color:var(--purple3);font-weight:600}
 
-/* output header */
-#output-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:9px 16px;background:var(--bg2);
-  border-bottom:1px solid var(--border);flex-shrink:0;
+.out-tabs{
+  display:flex;background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:0 12px;flex-shrink:0;
 }
-#output-header .output-info{font-size:11px;color:var(--text3)}
-#output-header .output-info b{color:var(--text2)}
-.output-btns{display:flex;gap:7px}
+.otab{
+  padding:10px 14px;font-size:12px;cursor:pointer;
+  border-bottom:2px solid transparent;color:var(--text3);
+  white-space:nowrap;transition:all .12s;
+}
+.otab:hover{color:var(--text2)}
+.otab.active{color:var(--purple2);border-bottom-color:var(--purple)}
 
-/* code output */
-#code-output{
-  flex:1;overflow-y:auto;padding:18px;
+/* JSON OUTPUT */
+#json-view{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.json-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 14px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.json-meta{font-size:11px;color:var(--text3)}
+.json-meta b{color:var(--text2)}
+.json-actions{display:flex;gap:6px}
+#json-code{
+  flex:1;overflow-y:auto;padding:16px 18px;
   font-family:'Cascadia Code','Fira Code','Consolas',monospace;
-  font-size:12px;line-height:1.75;white-space:pre;
-  background:var(--bg);color:var(--text);
+  font-size:12px;line-height:1.8;white-space:pre;background:var(--bg);
+  position:relative;
 }
-#code-output::-webkit-scrollbar{width:5px}
-#code-output::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-
-/* validation panel */
-#val-panel{
-  height:160px;min-height:120px;
-  background:var(--bg2);border-top:1px solid var(--border);
-  display:flex;flex-direction:column;overflow:hidden;
-  flex-shrink:0;
-}
-#val-panel-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:8px 16px;border-bottom:1px solid var(--border);
-}
-#val-panel-header span{font-size:11px;font-weight:600;color:var(--text2)}
-#val-score-wrap{display:flex;align-items:center;gap:6px}
-#val-score-bar{
-  width:100px;height:6px;background:var(--bg4);
-  border-radius:3px;overflow:hidden;
-}
-#val-score-fill{height:100%;border-radius:3px;transition:width .3s,background .3s}
-#val-score-text{font-size:11px;font-weight:700}
-#val-items{
-  flex:1;overflow-y:auto;display:flex;flex-wrap:wrap;
-  gap:5px;padding:10px 14px;align-content:flex-start;
-}
-.val-item{
-  display:flex;align-items:center;gap:5px;
-  padding:4px 9px;border-radius:20px;font-size:11px;
-  border:1px solid;
-}
-.val-ok{background:#052e16;border-color:#065f46;color:var(--green)}
-.val-warn{background:#2d1f00;border-color:#78350f;color:var(--yellow)}
-.val-err{background:#2d0f0f;border-color:#7f1d1d;color:var(--red)}
-.val-item .vi{font-size:10px}
-
-/* ── DASHBOARD VIEW ──────────────────────────────────────────── */
-#dashboard{
-  flex:1;overflow-y:auto;padding:40px;
-  display:none;
-}
-#dashboard.visible{display:block}
-.dash-title{font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px}
-.dash-sub{font-size:13px;color:var(--text3);margin-bottom:32px}
-.dash-grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-  gap:16px;
-}
-.dash-card{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:10px;padding:20px;cursor:pointer;
-  transition:all .15s;
-}
-.dash-card:hover{border-color:var(--purple);transform:translateY(-2px)}
-.dash-card-new{
-  background:transparent;border:2px dashed var(--border2);
-  display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:8px;color:var(--text3);
-  min-height:130px;
-}
-.dash-card-new:hover{border-color:var(--purple);color:var(--purple2)}
-.dash-card-new .ico-big{font-size:28px}
-.dc-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
-.dc-url{font-size:11px;color:var(--text3);margin-bottom:12px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dc-meta{display:flex;gap:8px;flex-wrap:wrap}
-.dc-chip{
-  padding:3px 8px;border-radius:4px;font-size:11px;
-  background:var(--bg4);color:var(--text2);
-}
-
-/* ── TOAST ───────────────────────────────────────────────────── */
-#toast{
-  position:fixed;bottom:24px;right:24px;
+.copy-flash{
+  position:absolute;top:12px;right:12px;
   background:var(--green);color:#064e3b;
-  padding:10px 18px;border-radius:var(--r);
-  font-size:12px;font-weight:700;
-  opacity:0;transform:translateY(8px);
-  transition:all .2s;pointer-events:none;z-index:999;
+  padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;
+  opacity:0;transition:opacity .2s;pointer-events:none;
+}
+.copy-flash.show{opacity:1}
+
+/* SERP PREVIEW */
+#serp-view{flex:1;overflow-y:auto;padding:24px;display:none;background:var(--bg)}
+.serp-label{font-size:11px;color:var(--text3);margin-bottom:16px;
+  display:flex;align-items:center;gap:6px}
+.serp-label::before,.serp-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Google Organic Result */
+.serp-organic{
+  background:#fff;border-radius:10px;padding:16px 20px;max-width:600px;
+  margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.15);
+}
+.serp-breadcrumb{font-size:12px;color:#202124;margin-bottom:3px;
+  display:flex;align-items:center;gap:4px}
+.serp-favicon{width:18px;height:18px;background:#4285f4;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:9px;color:#fff;font-weight:700;flex-shrink:0}
+.serp-site{color:#202124;font-size:13px}
+.serp-title{font-size:19px;color:#1a0dab;font-weight:400;margin-bottom:4px;
+  line-height:1.3;cursor:pointer;font-family:arial,sans-serif}
+.serp-title:hover{text-decoration:underline}
+.serp-desc{font-size:13px;color:#4d5156;line-height:1.6;font-family:arial,sans-serif}
+.serp-stars{display:flex;align-items:center;gap:4px;margin:4px 0}
+.serp-star-val{font-size:13px;font-weight:700;color:#202124}
+.serp-stars-ico{color:#fbbc04;font-size:14px;letter-spacing:-1px}
+.serp-review-count{font-size:12px;color:#70757a}
+
+/* FAQ Rich Result */
+.serp-faq{
+  background:#fff;border-radius:10px;max-width:600px;
+  overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.15);margin-bottom:20px;
+}
+.serp-faq-item{border-bottom:1px solid #e8eaed;padding:12px 20px;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;transition:background .1s}
+.serp-faq-item:last-child{border-bottom:none}
+.serp-faq-item:hover{background:#f8f9fa}
+.serp-faq-q{font-size:14px;color:#202124;font-family:arial,sans-serif;font-weight:500}
+.serp-faq-ico{color:#5f6368;font-size:12px;transition:transform .2s}
+.serp-faq-item.open .serp-faq-ico{transform:rotate(180deg)}
+.serp-faq-a{padding:0 20px;max-height:0;overflow:hidden;transition:all .2s;
+  font-size:13px;color:#4d5156;font-family:arial,sans-serif;line-height:1.6}
+.serp-faq-item.open+.serp-faq-a{max-height:200px;padding:0 20px 12px}
+
+/* Local Pack Card */
+.serp-local{
+  background:#fff;border-radius:10px;max-width:600px;
+  padding:16px 20px;box-shadow:0 2px 12px rgba(0,0,0,.15);margin-bottom:20px;
+  font-family:arial,sans-serif;
+}
+.serp-local-name{font-size:22px;color:#202124;font-weight:400;margin-bottom:6px}
+.serp-local-type{font-size:13px;color:#70757a;margin-bottom:8px}
+.serp-local-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:13px;color:#4d5156}
+.serp-local-ico{color:#5f6368;width:16px;text-align:center}
+.serp-open{color:#188038;font-weight:500}
+.serp-closed{color:#d93025;font-weight:500}
+.serp-local-actions{display:flex;gap:10px;margin-top:12px}
+.serp-action-btn{
+  padding:8px 16px;border-radius:20px;font-size:13px;border:1px solid #dadce0;
+  color:#1a73e8;cursor:pointer;background:#fff;font-family:arial;transition:background .1s;
+}
+.serp-action-btn:hover{background:#f8f9fa}
+
+/* SCRIPT TAG VIEW */
+#script-view{flex:1;overflow:hidden;display:none;flex-direction:column}
+.script-header{padding:14px 18px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0}
+.script-header h3{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.script-header p{font-size:11px;color:var(--text3)}
+#script-code{
+  flex:1;overflow-y:auto;padding:16px 18px;
+  font-family:'Cascadia Code','Fira Code','Consolas',monospace;
+  font-size:12px;line-height:1.8;white-space:pre;background:var(--bg);
+}
+.script-copy-row{
+  padding:10px 16px;background:var(--bg2);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.script-copy-row p{font-size:11px;color:var(--text3)}
+
+/* VALIDATION PANEL */
+#val-panel{
+  height:168px;min-height:130px;background:var(--bg2);
+  border-top:1px solid var(--border);display:flex;flex-direction:column;
+  flex-shrink:0;overflow:hidden;
+}
+.val-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 14px;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.val-header-left{display:flex;align-items:center;gap:8px}
+.val-header-left span{font-size:12px;font-weight:600;color:var(--text2)}
+.val-score-wrap{display:flex;align-items:center;gap:7px}
+.val-bar{width:90px;height:5px;background:var(--bg5);border-radius:3px;overflow:hidden}
+.val-bar-fill{height:100%;border-radius:3px;transition:width .4s,background .4s}
+.val-pct{font-size:12px;font-weight:700}
+.val-toggle{font-size:11px;color:var(--text3);cursor:pointer;padding:2px 6px;
+  border-radius:3px;border:1px solid var(--border)}
+.val-toggle:hover{border-color:var(--border3);color:var(--text2)}
+
+.val-body{flex:1;overflow-y:auto;padding:8px 12px}
+.val-section{margin-bottom:8px}
+.val-section-title{font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--text4);margin-bottom:5px}
+.val-chips{display:flex;flex-wrap:wrap;gap:4px}
+.vchip{
+  display:flex;align-items:center;gap:4px;
+  padding:3px 8px;border-radius:4px;font-size:11px;border:1px solid;
+  cursor:default;transition:all .12s;
+}
+.vchip:hover{filter:brightness(1.15)}
+.vchip.ok{background:var(--greenBg);border-color:var(--greenBd);color:var(--green)}
+.vchip.warn{background:var(--yellowBg);border-color:var(--yellowBd);color:var(--yellow)}
+.vchip.err{background:var(--redBg);border-color:var(--redBd);color:var(--red)}
+.vchip .vi{font-size:9px}
+
+/* IMPORT MODAL */
+#import-modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;
+  display:none;align-items:center;justify-content:center;
+  animation:fadeIn .15s ease;
+}
+#import-modal.open{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-box{
+  background:var(--bg2);border:1px solid var(--border3);border-radius:var(--r2);
+  padding:24px;width:560px;max-width:95vw;max-height:85vh;
+  display:flex;flex-direction:column;gap:14px;
+  animation:slideUp .15s ease;
+}
+@keyframes slideUp{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-title{font-size:16px;font-weight:700;color:var(--text)}
+.modal-sub{font-size:12px;color:var(--text3)}
+#import-textarea{width:100%;height:200px;resize:vertical;
+  font-family:'Cascadia Code','Consolas',monospace;font-size:12px}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px}
+
+/* TOAST */
+#toast{
+  position:fixed;bottom:20px;right:20px;z-index:200;
+  background:var(--bg1);border:1px solid var(--border3);color:var(--text);
+  padding:10px 16px;border-radius:var(--r2);font-size:12px;font-weight:600;
+  display:flex;align-items:center;gap:8px;
+  box-shadow:var(--shadow);
+  opacity:0;transform:translateY(6px);transition:all .2s;pointer-events:none;
 }
 #toast.show{opacity:1;transform:translateY(0)}
+.toast-ico{font-size:14px}
 
-/* ── EMPTY STATE ─────────────────────────────────────────────── */
-#empty-state{
-  flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:12px;
-  color:var(--text3);
+/* EMPTY / NO PROJECT */
+.empty-state{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:14px;color:var(--text3);
 }
-#empty-state .ico-big{font-size:48px;opacity:.3}
-#empty-state p{font-size:14px}
+.empty-state .big-ico{font-size:52px;opacity:.2}
+.empty-state h2{font-size:16px;font-weight:600;color:var(--text2)}
+.empty-state p{font-size:13px;text-align:center;max-width:300px}
 
-/* Scrollbar global */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-
-/* Resize handle */
-.resize-handle{
-  width:4px;background:transparent;cursor:col-resize;
-  flex-shrink:0;transition:background .1s;
+/* KEYBOARD SHORTCUT BADGE */
+kbd{
+  display:inline-block;padding:1px 5px;border-radius:3px;font-size:10px;
+  background:var(--bg5);border:1px solid var(--border3);color:var(--text3);
+  font-family:inherit;
 }
-.resize-handle:hover,.resize-handle.dragging{background:var(--purple)}
+
+/* ANIMATIONS */
+.fade-in{animation:fadeIn .15s ease}
+input,select,textarea,.card,.proj-card,.btn-t,.vchip{transition-property:border-color,background,color,opacity,transform;transition-duration:.12s}
 </style>
 </head>
 <body>
 <div id="app">
 
-<!-- ── SIDEBAR ── -->
-<div id="sidebar">
-  <div class="sidebar-logo">
-    <h1>⚡ Schema SEO Tool</h1>
-    <p>Local Business Generator</p>
+<!-- SIDEBAR -->
+<div id="sb">
+  <div class="sb-logo">
+    <div class="sb-logo-icon">⚡</div>
+    <div class="sb-logo-text">
+      <h1>Schema SEO Tool</h1>
+      <p>Local Business Generator</p>
+    </div>
   </div>
-  <div class="sidebar-section">Proyectos</div>
-  <div class="projects-list" id="projects-list"></div>
-  <button class="btn-new" onclick="newProject()">+ Nueva Clínica</button>
-  <div class="sidebar-nav">
-    <div class="nav-item active" id="nav-editor" onclick="showView('editor')">
-      <span class="ico">✏️</span> Editor
+  <div class="sb-search">
+    <div class="sb-search-wrap">
+      <span class="sb-search-ico">🔍</span>
+      <input type="search" placeholder="Buscar proyectos…" oninput="filterProjects(this.value)" />
     </div>
-    <div class="nav-item" id="nav-dash" onclick="showView('dashboard')">
-      <span class="ico">📋</span> Dashboard
-    </div>
+  </div>
+  <div class="sb-sec">
+    <span>Proyectos</span>
+    <span class="sb-sec-count" id="proj-count">0</span>
+  </div>
+  <div class="projects-wrap" id="projects-wrap"></div>
+  <div class="sb-bottom">
+    <button class="btn-new-proj" onclick="newProject()">
+      <span>＋</span> Nueva Clínica
+    </button>
   </div>
 </div>
 
-<!-- ── MAIN ── -->
+<!-- MAIN -->
 <div id="main">
 
   <!-- TOPBAR -->
   <div id="topbar">
-    <div class="project-title">
-      <input id="proj-name-input" type="text" placeholder="Sin nombre…"
-        oninput="currentProject().name=this.value;saveProjects();renderSidebar()" />
+    <div class="topbar-name">
+      <input id="proj-title" type="text" placeholder="Nombre del proyecto…"
+        oninput="setField('name',this.value)" autocomplete="off" />
     </div>
-    <div class="topbar-actions">
-      <div class="badge badge-score">Schema score: <span id="score-badge">0%</span></div>
-      <button class="btn-sm btn-secondary" onclick="duplicateProject()">Duplicar</button>
-      <button class="btn-sm btn-green" id="copy-script-btn" onclick="copyScriptTag()">
-        &lt;script&gt; Copiar tag
+    <div class="topbar-right">
+      <div class="save-indicator">
+        <div class="save-dot" id="save-dot"></div>
+        <span id="save-label">Guardado</span>
+      </div>
+      <div class="score-badge">
+        Schema score: <span class="score-badge-val" id="score-top">—</span>
+      </div>
+      <button class="btn-t btn-ghost" onclick="openImport()" title="Importar JSON-LD existente">
+        ↑ Importar
       </button>
-      <button class="btn-sm btn-primary" onclick="downloadAll()">↓ Descargar todo</button>
+      <button class="btn-t btn-green-solid" onclick="copyScriptTag()" title="Copiar listo para pegar en &lt;head&gt;">
+        &lt;script&gt; Copiar
+      </button>
+      <button class="btn-t btn-purple" onclick="downloadAll()" title="Descargar todos los schemas">
+        ↓ Descargar
+      </button>
     </div>
   </div>
 
-  <!-- WORKSPACE = editor + output -->
+  <!-- WORKSPACE -->
   <div id="workspace">
 
-    <!-- EDITOR -->
-    <div id="editor">
-      <div class="editor-tabs" id="editor-tabs">
-        <div class="etab active" data-tab="clinica">🏥 Clínica</div>
-        <div class="etab" data-tab="ubicacion">📍 Ubicación</div>
-        <div class="etab" data-tab="horarios">🕐 Horarios</div>
-        <div class="etab" data-tab="servicios">💊 Servicios</div>
-        <div class="etab" data-tab="equipo">👨‍⚕️ Equipo</div>
-        <div class="etab" data-tab="seo">🔗 SEO</div>
-        <div class="etab" data-tab="avanzado">⚙️ Config</div>
-      </div>
-      <div class="editor-body" id="editor-body">
-        <!-- rendered by renderEditor() -->
-      </div>
+    <!-- EDITOR PANEL -->
+    <div id="editor-panel">
+      <div class="etabs" id="etabs-bar"></div>
+      <div class="ebody" id="ebody"></div>
     </div>
 
-    <div class="resize-handle" id="resize-handle"></div>
+    <div class="resize-h" id="rh"></div>
 
-    <!-- RIGHT PANEL -->
-    <div id="right">
-      <!-- Page type -->
-      <div id="page-type-bar">
-        <span class="label">Página:</span>
-        <div class="pt-pill active" data-pt="location" onclick="setPageType('location')">📍 Clínica</div>
-        <div class="pt-pill" data-pt="service" onclick="setPageType('service')">💊 Servicio</div>
-        <div class="pt-pill" data-pt="person" onclick="setPageType('person')">👤 Doctor</div>
-        <div class="pt-pill" data-pt="homepage" onclick="setPageType('homepage')">🏠 Homepage</div>
-        <div class="pt-pill" data-pt="blog" onclick="setPageType('blog')">📝 Blog</div>
+    <!-- OUTPUT PANEL -->
+    <div id="output-panel">
+
+      <!-- Page type bar -->
+      <div class="out-toolbar">
+        <span class="page-type-label">Página:</span>
+        <div class="pt-pill active" data-pt="location"   onclick="setPageType('location')">📍 Clínica</div>
+        <div class="pt-pill"        data-pt="service"    onclick="setPageType('service')">💊 Servicio</div>
+        <div class="pt-pill"        data-pt="person"     onclick="setPageType('person')">👤 Doctor</div>
+        <div class="pt-pill"        data-pt="homepage"   onclick="setPageType('homepage')">🏠 Homepage</div>
+        <div class="pt-pill"        data-pt="blog"       onclick="setPageType('blog')">📝 Blog</div>
       </div>
-      <!-- Output header -->
-      <div id="output-header">
-        <div class="output-info">
-          <b id="out-type-label">Dentist + WebPage</b>
-          <span> · </span>
-          <span id="out-lines-count">— líneas</span>
-        </div>
-        <div class="output-btns">
-          <button class="btn-sm btn-secondary" onclick="filterOutput('all')">Todos</button>
-          <button class="btn-sm btn-secondary" onclick="filterOutput('dentist')">Dentist</button>
-          <button class="btn-sm btn-secondary" onclick="filterOutput('webpage')">WebPage</button>
-          <button class="btn-sm btn-primary" onclick="copyOutput()">Copiar JSON</button>
-        </div>
+
+      <!-- Output sub-tabs -->
+      <div class="out-tabs">
+        <div class="otab active" data-ot="json"   onclick="setOutTab('json')">JSON-LD</div>
+        <div class="otab"        data-ot="script" onclick="setOutTab('script')">&lt;script&gt; Tag</div>
+        <div class="otab"        data-ot="serp"   onclick="setOutTab('serp')">👁 SERP Preview</div>
       </div>
-      <!-- Code -->
-      <div id="code-output"></div>
-      <!-- Validation -->
-      <div id="val-panel">
-        <div id="val-panel-header">
-          <span>Validación del schema</span>
-          <div id="val-score-wrap">
-            <div id="val-score-bar"><div id="val-score-fill"></div></div>
-            <span id="val-score-text">0%</span>
+
+      <!-- JSON view -->
+      <div id="json-view">
+        <div class="json-header">
+          <div class="json-meta"><b id="json-type-label">Dentist + WebPage</b> · <span id="json-lines">—</span></div>
+          <div class="json-actions">
+            <button class="btn-t btn-ghost" style="padding:5px 10px;font-size:11px" onclick="filterJson('all')">Todos</button>
+            <button class="btn-t btn-ghost" style="padding:5px 10px;font-size:11px" onclick="filterJson('dentist')">Dentist</button>
+            <button class="btn-t btn-ghost" style="padding:5px 10px;font-size:11px" onclick="filterJson('webpage')">WebPage</button>
+            <button class="btn-t btn-purple" style="padding:5px 10px;font-size:11px" onclick="copyJson()">Copiar</button>
           </div>
         </div>
-        <div id="val-items"></div>
+        <div id="json-code">
+          <span class="copy-flash" id="copy-flash">¡Copiado!</span>
+        </div>
       </div>
-    </div>
+
+      <!-- Script tag view -->
+      <div id="script-view">
+        <div class="script-header">
+          <h3>Script tag — listo para pegar en <code style="color:var(--purple2)">&lt;head&gt;</code></h3>
+          <p>Copia este bloque completo y pégalo antes de <code style="color:var(--text2)">&lt;/head&gt;</code> en la página.</p>
+        </div>
+        <div id="script-code"></div>
+        <div class="script-copy-row">
+          <p>⌨️ <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> para copiar rápido</p>
+          <button class="btn-t btn-green-solid" onclick="copyScriptTag()">Copiar script tag completo</button>
+        </div>
+      </div>
+
+      <!-- SERP preview view -->
+      <div id="serp-view">
+        <div class="serp-label">Previsualización SERP — Google</div>
+        <div id="serp-content"></div>
+      </div>
+
+      <!-- VALIDATION PANEL -->
+      <div id="val-panel">
+        <div class="val-header">
+          <div class="val-header-left">
+            <span>Validación del schema</span>
+          </div>
+          <div class="val-score-wrap">
+            <div class="val-bar"><div class="val-bar-fill" id="val-fill"></div></div>
+            <span class="val-pct" id="val-pct">0%</span>
+            <span class="val-toggle" onclick="toggleValDetail()">⚙ detalles</span>
+          </div>
+        </div>
+        <div class="val-body" id="val-body"></div>
+      </div>
+
+    </div><!-- /output-panel -->
 
   </div><!-- /workspace -->
-
-  <!-- DASHBOARD -->
-  <div id="dashboard">
-    <div class="dash-title">Proyectos</div>
-    <div class="dash-sub">Cada proyecto = una clínica o sucursal. Schema generado de forma independiente.</div>
-    <div class="dash-grid" id="dash-grid"></div>
-  </div>
-
-  <!-- EMPTY STATE -->
-  <div id="empty-state" style="display:none">
-    <div class="ico-big">🦷</div>
-    <p>Crea tu primer proyecto para empezar</p>
-    <button class="btn-sm btn-primary" onclick="newProject()" style="margin-top:8px">+ Nueva Clínica</button>
-  </div>
 
 </div><!-- /main -->
 </div><!-- /app -->
 
-<div id="toast"></div>
+<!-- IMPORT MODAL -->
+<div id="import-modal">
+  <div class="modal-box">
+    <div class="modal-title">Importar JSON-LD existente</div>
+    <div class="modal-sub">Pega aquí un schema JSON-LD existente para cargarlo en el editor y editarlo.</div>
+    <textarea id="import-textarea" placeholder='{ "@context": "https://schema.org", "@type": "Dentist", ... }'></textarea>
+    <div class="modal-actions">
+      <button class="btn-t btn-ghost" onclick="closeImport()">Cancelar</button>
+      <button class="btn-t btn-purple" onclick="doImport()">Importar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOOLTIP -->
+<div class="tooltip-box" id="tt"></div>
+
+<!-- TOAST -->
+<div id="toast"><span class="toast-ico" id="toast-ico">✓</span><span id="toast-msg"></span></div>
 
 <script>
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════════════════════
+const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DAY_ES={Monday:'Lun',Tuesday:'Mar',Wednesday:'Mié',Thursday:'Jue',Friday:'Vie',Saturday:'Sáb',Sunday:'Dom'};
+
+const TIPS={
+  name:{title:'name — Obligatorio',body:'Nombre exacto de la clínica tal como aparece en Google Business Profile. La inconsistencia NAP penaliza las señales locales.',tag:'required'},
+  url:{title:'url — Obligatorio',body:'URL canónica de esta página de ubicación. Debe ser única por sucursal. Nunca uses la homepage para todas las sucursales.',tag:'required'},
+  telephone:{title:'telephone — Obligatorio',body:'Con prefijo de país (+34). Debe coincidir exactamente con el teléfono en GBP, Doctoralia y Top Doctors.',tag:'required'},
+  description:{title:'description — Recomendado',body:'160-200 caracteres. Incluye ciudad, especialidades clave y diferencial. Google lo usa para entender la entidad.',tag:'recommended'},
+  geo:{title:'GeoCoordinates — Obligatorio',body:'Mínimo 5 decimales. Coordenadas imprecisas reducen la relevancia para queries hiperlocales. Úsalas de Google Maps.',tag:'required'},
+  aggregateRating:{title:'aggregateRating — Recomendado',body:'Muestra estrellas en los resultados orgánicos. Aumenta el CTR entre un 15-30%. Solo si tienes reseñas reales verificables.',tag:'recommended'},
+  sameAs:{title:'sameAs — Recomendado',body:'Google cruza estos perfiles para construir la confianza de la entidad. Mínimo: GBP (CID URL) + Doctoralia + Top Doctors.',tag:'recommended'},
+  isAccepting:{title:'isAcceptingNewPatients — Recomendado',body:'Clave para AI Overviews y Gemini. Filtra resultados para "dentista aceptando nuevos pacientes".',tag:'recommended'},
+  openingHours:{title:'openingHoursSpecification — Obligatorio',body:'Formato estructurado por día. Google prefiere este formato al string legacy. Debe coincidir con GBP.',tag:'required'},
+  employee:{title:'employee — Recomendado',body:'Usa tipo ["Person","Physician"]. Activa señales E-E-A-T para YMYL. Enlaza con perfiles en Top Doctors y Doctoralia.',tag:'recommended'},
+  services:{title:'hasOfferCatalog — Recomendado',body:'Estructura jerárquica: Categoría → Servicio. Refleja la arquitectura del sitio y refuerza la comprensión semántica de los servicios.',tag:'recommended'},
+};
+
+// ══════════════════════════════════════════════════════
 // STATE
-// ════════════════════════════════════════════════════════════════
-const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-const DAY_ES = {Monday:'Lun',Tuesday:'Mar',Wednesday:'Mié',Thursday:'Jue',Friday:'Vie',Saturday:'Sáb',Sunday:'Dom'};
+// ══════════════════════════════════════════════════════
+let projects=[], currentId=null, activeTab='clinica', activePT='location', activeOT='json', jsonFilter='all';
+let saveTimer=null, searchQuery='', valDetailMode=false;
 
-let projects = [];
-let currentId = null;
-let activeTab = 'clinica';
-let activePageType = 'location';
-let outputFilter = 'all';
-
-function currentProject(){ return projects.find(p=>p.id===currentId) }
+function P(){ return projects.find(p=>p.id===currentId) }
 
 function emptyProject(name='Nueva Clínica'){
   return {
-    id: Date.now()+'',
-    name,
-    url:'', telephone:'', email:'', legalName:'', description:'',
-    priceRange:'€€', isAccepting:true, foundingDate:'',
-    logoUrl:'', images:[],
-    address:{ street:'', city:'Madrid', region:'Comunidad de Madrid', postalCode:'', country:'ES' },
-    geo:{ lat:'', lng:'' },
-    mapsUrl:'',
+    id:uid(), name,
+    url:'',telephone:'',email:'',legalName:'',description:'',
+    priceRange:'€€',isAccepting:true,foundingDate:'',logoUrl:'',
+    address:{street:'',city:'Madrid',region:'Comunidad de Madrid',postalCode:'',country:'ES'},
+    geo:{lat:'',lng:''},mapsUrl:'',
     openingHours:[
-      {id:'h1', days:['Monday','Tuesday','Wednesday','Thursday','Friday'], opens:'09:00', closes:'20:00'},
-      {id:'h2', days:['Saturday'], opens:'09:00', closes:'14:00'},
+      {id:uid(),days:['Monday','Tuesday','Wednesday','Thursday','Friday'],opens:'09:00',closes:'20:00'},
+      {id:uid(),days:['Saturday'],opens:'09:00',closes:'14:00'},
     ],
-    rating:{ value:'', count:'', best:'5' },
+    rating:{value:'',count:'',best:'5'},
     services:[
-      { id:'c1', category:'Implantología', items:[
-        {id:'s1',name:'Implante Dental',desc:'',url:'',faqs:[]},
-        {id:'s2',name:'Implantes All-on-4',desc:'',url:'',faqs:[]}
+      {id:uid(),category:'Implantología',items:[
+        {id:uid(),name:'Implante Dental',desc:'',url:'',faqs:[
+          {id:uid(),q:'¿Cuánto cuesta un implante dental?',a:'El precio de un implante dental en nuestra clínica parte desde XXX€ incluyendo la corona. Ofrecemos financiación a 0% de interés.'},
+          {id:uid(),q:'¿Es doloroso el tratamiento?',a:'No. Se realiza bajo anestesia local. La mayoría de pacientes se incorpora al trabajo al día siguiente.'},
+        ]},
+        {id:uid(),name:'Implantes All-on-4',desc:'',url:'',faqs:[]},
       ]},
-      { id:'c2', category:'Ortodoncia', items:[
-        {id:'s3',name:'Ortodoncia Invisible',desc:'',url:'',faqs:[]},
-        {id:'s4',name:'Brackets Estéticos',desc:'',url:'',faqs:[]}
+      {id:uid(),category:'Ortodoncia',items:[
+        {id:uid(),name:'Ortodoncia Invisible',desc:'',url:'',faqs:[]},
+        {id:uid(),name:'Brackets Estéticos',desc:'',url:'',faqs:[]},
       ]},
-      { id:'c3', category:'Estética Dental', items:[
-        {id:'s5',name:'Blanqueamiento Dental',desc:'',url:'',faqs:[]},
-        {id:'s6',name:'Carillas de Porcelana',desc:'',url:'',faqs:[]}
+      {id:uid(),category:'Estética Dental',items:[
+        {id:uid(),name:'Blanqueamiento Dental',desc:'',url:'',faqs:[]},
+        {id:uid(),name:'Carillas de Porcelana',desc:'',url:'',faqs:[]},
       ]},
-      { id:'c4', category:'Odontología General', items:[
-        {id:'s7',name:'Limpieza Dental',desc:'',url:'',faqs:[]},
-        {id:'s8',name:'Empastes',desc:'',url:'',faqs:[]},
-        {id:'s9',name:'Endodoncia',desc:'',url:'',faqs:[]}
+      {id:uid(),category:'Odontología General',items:[
+        {id:uid(),name:'Limpieza Dental',desc:'',url:'',faqs:[]},
+        {id:uid(),name:'Empastes',desc:'',url:'',faqs:[]},
+        {id:uid(),name:'Endodoncia',desc:'',url:'',faqs:[]},
       ]},
     ],
     employees:[],
     sameAs:['','',''],
-    areaServed:['Madrid',''],
-    breadcrumbs:[{id:'b1',name:'Inicio',url:''},{id:'b2',name:'',url:''}],
-    isChain:false, parentOrgId:'',
-    orgUrl:'', brandName:'', subOrgUrls:'',
-    pageTitle:'', metaDesc:'',
-    genWebPage:true, genOrg:false, genWebSite:false,
+    areaServed:['Madrid','Barrio de Salamanca',''],
+    breadcrumbs:[{id:uid(),name:'Inicio',url:''},{id:uid(),name:'',url:''}],
+    isChain:false,parentOrgId:'',
+    orgUrl:'',brandName:'',subOrgUrls:'',
+    pageTitle:'',metaDesc:'',
+    genWebPage:true,genOrg:false,genWebSite:false,
   };
 }
 
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // PERSIST
-// ════════════════════════════════════════════════════════════════
-function saveProjects(){ try{ localStorage.setItem('schemaSEO_v2', JSON.stringify({projects,currentId})) }catch{} }
-function loadProjects(){
-  try{
-    const d = JSON.parse(localStorage.getItem('schemaSEO_v2')||'null');
-    if(d){ projects=d.projects||[]; currentId=d.currentId||null; }
-  }catch{}
-  if(!projects.length){ const p=emptyProject(); projects=[p]; currentId=p.id; }
-  if(!currentId || !projects.find(p=>p.id===currentId)) currentId=projects[0].id;
+// ══════════════════════════════════════════════════════
+function save(){
+  clearTimeout(saveTimer);
+  const dot=document.getElementById('save-dot');
+  const lbl=document.getElementById('save-label');
+  dot.classList.add('saving');lbl.textContent='Guardando…';
+  saveTimer=setTimeout(()=>{
+    try{ localStorage.setItem('schemaSEOv3',JSON.stringify({projects,currentId})) }catch{}
+    dot.classList.remove('saving');lbl.textContent='Guardado';
+  },400);
 }
 
-// ════════════════════════════════════════════════════════════════
-// PROJECTS
-// ════════════════════════════════════════════════════════════════
-function newProject(){
-  const p=emptyProject('Nueva Clínica '+( projects.length+1 ));
-  projects.unshift(p); currentId=p.id;
-  saveProjects(); renderAll(); showView('editor');
+function load(){
+  try{
+    const d=JSON.parse(localStorage.getItem('schemaSEOv3')||'null');
+    if(d){projects=d.projects||[];currentId=d.currentId||null}
+  }catch{}
+  if(!projects.length){const p=emptyProject('Mi Clínica Dental');projects=[p];currentId=p.id}
+  if(!currentId||!projects.find(p=>p.id===currentId)) currentId=projects[0].id;
 }
-function selectProject(id){ currentId=id; saveProjects(); renderAll(); showView('editor'); }
+
+// ══════════════════════════════════════════════════════
+// PROJECTS
+// ══════════════════════════════════════════════════════
+function newProject(){
+  const p=emptyProject('Nueva Clínica '+(projects.length+1));
+  projects.unshift(p);currentId=p.id;
+  save();renderAll();toast('✦ Proyecto creado','info');
+}
+
+function selectProject(id){
+  currentId=id;save();renderAll();
+}
+
 function deleteProject(id,e){
   e.stopPropagation();
-  if(!confirm('¿Eliminar este proyecto?')) return;
+  if(!confirm('¿Eliminar este proyecto?'))return;
   projects=projects.filter(p=>p.id!==id);
   if(currentId===id) currentId=projects[0]?.id||null;
-  if(!projects.length){ const p=emptyProject(); projects=[p]; currentId=p.id; }
-  saveProjects(); renderAll();
-}
-function duplicateProject(){
-  const p=currentProject(); if(!p) return;
-  const copy={...JSON.parse(JSON.stringify(p)), id:Date.now()+'', name:p.name+' (copia)'};
-  projects.unshift(copy); currentId=copy.id;
-  saveProjects(); renderAll(); toast('Proyecto duplicado');
+  if(!projects.length){const p=emptyProject();projects=[p];currentId=p.id}
+  save();renderAll();toast('Proyecto eliminado','warn');
 }
 
-// ════════════════════════════════════════════════════════════════
-// VIEWS
-// ════════════════════════════════════════════════════════════════
-function showView(v){
-  document.getElementById('workspace').style.display = v==='editor'?'flex':'none';
-  document.getElementById('dashboard').style.display = v==='dashboard'?'block':'none';
-  document.getElementById('empty-state').style.display='none';
-  document.getElementById('nav-editor').classList.toggle('active', v==='editor');
-  document.getElementById('nav-dash').classList.toggle('active', v==='dashboard');
-  if(v==='dashboard') renderDashboard();
+function filterProjects(q){
+  searchQuery=q.toLowerCase();renderSidebar();
 }
 
-function setPageType(pt){
-  activePageType=pt;
-  document.querySelectorAll('.pt-pill').forEach(p=>p.classList.toggle('active',p.dataset.pt===pt));
-  const labels={location:'Dentist + WebPage',service:'Service + FAQ',person:'Person + Physician',homepage:'Organization + WebSite',blog:'BlogPosting'};
-  document.getElementById('out-type-label').textContent=labels[pt]||pt;
-  generate();
+// ══════════════════════════════════════════════════════
+// FIELD SETTERS
+// ══════════════════════════════════════════════════════
+function setField(key,val){
+  const p=P();if(!p)return;
+  p[key]=val;
+  if(key==='name') document.getElementById('proj-title').value=val;
+  scheduleSave();generate();renderSidebar();
 }
 
-function filterOutput(f){
-  outputFilter=f;
-  generate();
+function setNested(k1,k2,val){
+  const p=P();if(!p)return;
+  if(!p[k1])p[k1]={};
+  p[k1][k2]=val;
+  scheduleSave();generate();
 }
 
-// ════════════════════════════════════════════════════════════════
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>save(),600)}
+
+// ══════════════════════════════════════════════════════
 // RENDER SIDEBAR
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 function renderSidebar(){
-  const el=document.getElementById('projects-list');
-  el.innerHTML=projects.map(p=>`
-    <div class="project-item ${p.id===currentId?'active':''}" onclick="selectProject('${p.id}')">
-      <div class="project-dot"></div>
-      <div class="project-name">${esc(p.name||'Sin nombre')}</div>
-      <span class="project-del" onclick="deleteProject('${p.id}',event)">✕</span>
-    </div>`).join('');
-}
-
-// ════════════════════════════════════════════════════════════════
-// RENDER DASHBOARD
-// ════════════════════════════════════════════════════════════════
-function renderDashboard(){
-  const el=document.getElementById('dash-grid');
-  el.innerHTML=`
-    <div class="dash-card dash-card-new" onclick="newProject()">
-      <div class="ico-big">＋</div>
-      <span style="font-size:13px">Nueva Clínica</span>
-    </div>
-    `+projects.map(p=>`
-    <div class="dash-card" onclick="selectProject('${p.id}');showView('editor')">
-      <div class="dc-name">${esc(p.name||'Sin nombre')}</div>
-      <div class="dc-url">${esc(p.url||'URL no configurada')}</div>
-      <div class="dc-meta">
-        <span class="dc-chip">${p.services?.length||0} categ.</span>
-        <span class="dc-chip">${p.employees?.length||0} doctores</span>
-        <span class="dc-chip">${p.rating?.value?'⭐ '+p.rating.value:'Sin rating'}</span>
-        ${p.isChain?'<span class="dc-chip">🔗 Cadena</span>':''}
+  const el=document.getElementById('projects-wrap');
+  const filtered=projects.filter(p=>!searchQuery||p.name?.toLowerCase().includes(searchQuery)||(p.url||'').toLowerCase().includes(searchQuery));
+  document.getElementById('proj-count').textContent=filtered.length;
+  el.innerHTML=filtered.map(p=>{
+    const score=calcScore(p);
+    const c=score>=80?'#34d399':score>=50?'#fbbf24':'#f87171';
+    const r=16,circ=2*Math.PI*r,dash=circ*(score/100),gap=circ-dash;
+    const ring=`<svg width="38" height="38" viewBox="0 0 38 38">
+      <circle cx="19" cy="19" r="${r}" fill="none" stroke="#1e2338" stroke-width="3"/>
+      <circle cx="19" cy="19" r="${r}" fill="none" stroke="${c}" stroke-width="3"
+        stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${circ/4}"
+        stroke-linecap="round" transform="rotate(-90 19 19)"/>
+      <text x="19" y="23" text-anchor="middle" fill="${c}" font-size="9" font-weight="700" font-family="sans-serif">${score}%</text>
+    </svg>`;
+    return `<div class="proj-card ${p.id===currentId?'active':''}" onclick="selectProject('${p.id}')">
+      <div class="proj-dot"></div>
+      <div class="proj-info">
+        <div class="proj-name">${esc(p.name||'Sin nombre')}</div>
+        <div class="proj-sub">${esc(p.address?.city||'Ciudad no configurada')}</div>
       </div>
-    </div>`).join('');
+      <div class="proj-score-ring">${ring}</div>
+      <span class="proj-del" onclick="deleteProject('${p.id}',event)" title="Eliminar">✕</span>
+    </div>`;
+  }).join('');
 }
 
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // RENDER EDITOR
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+const TAB_DEFS=[
+  {id:'clinica',  label:'🏥 Clínica'},
+  {id:'ubicacion',label:'📍 Ubicación'},
+  {id:'horarios', label:'🕐 Horarios'},
+  {id:'servicios',label:'💊 Servicios'},
+  {id:'equipo',   label:'👨‍⚕️ Equipo'},
+  {id:'seo',      label:'🔗 SEO'},
+  {id:'config',   label:'⚙️ Config'},
+];
+
 function renderAll(){
-  const p=currentProject();
-  document.getElementById('proj-name-input').value=p?.name||'';
+  const p=P();
+  document.getElementById('proj-title').value=p?.name||'';
   renderSidebar();
-  renderEditor();
+  renderTabBar();
+  renderEditorBody();
   generate();
 }
 
-function renderEditor(){
-  const p=currentProject(); if(!p) return;
-  const body=document.getElementById('editor-body');
-  body.innerHTML=tabs[activeTab]?.(p)||'';
-  // tabs click
-  document.querySelectorAll('.etab').forEach(t=>{
-    t.classList.toggle('active',t.dataset.tab===activeTab);
-    t.onclick=()=>{ activeTab=t.dataset.tab; renderEditor(); };
-  });
+function renderTabBar(){
+  const bar=document.getElementById('etabs-bar');
+  bar.innerHTML=TAB_DEFS.map(t=>`
+    <div class="etab ${activeTab===t.id?'active':''}" onclick="switchTab('${t.id}')">
+      ${t.label}
+      <div class="etab-dot"></div>
+    </div>`).join('');
 }
 
-// ── TABS CONTENT ────────────────────────────────────────────────
-const tabs={
+function switchTab(id){
+  activeTab=id;
+  document.querySelectorAll('.etab').forEach(t=>{
+    t.classList.toggle('active',t.getAttribute('onclick')?.includes(`'${id}'`));
+  });
+  renderEditorBody();
+}
 
-clinica(p){ return `
-<div class="field-group">
-  <div class="fg-title">Identidad</div>
-  ${f('Nombre de la clínica','name',p.name,'text','Cleardent — Barrio de Salamanca',true)}
-  ${f('Razón social','legalName',p.legalName,'text','Cleardent Dental S.L.')}
-  ${fa('Descripción','description',p.description,'Clínica dental especializada en...')}
-  ${f('URL de esta página','url',p.url,'url','https://www.cleardent.es/madrid-salamanca/',true)}
+function renderEditorBody(){
+  const p=P();
+  if(!p){ document.getElementById('ebody').innerHTML='<div class="empty-state"><div class="big-ico">🦷</div><p>Crea un proyecto para empezar</p></div>'; return; }
+  document.getElementById('ebody').innerHTML=TABS[activeTab]?.(p)||'';
+}
+
+// ══════════════════════════════════════════════════════
+// TABS CONTENT
+// ══════════════════════════════════════════════════════
+const TABS={
+
+clinica(p){return `
+<div class="fg">
+  <div class="fg-title">Identidad <span>— @type: Dentist</span></div>
+  ${fi('Nombre de la clínica','name',p.name,'Cleardent — Barrio de Salamanca','text',true,'name')}
+  ${fi('Razón social','legalName',p.legalName,'Cleardent Dental S.L.','text',false)}
+  ${fta('Descripción','description',p.description,'Clínica dental en Madrid especializada en implantes, ortodoncia y estética dental. Aceptamos nuevos pacientes.','description')}
+  ${fi('URL de esta página','url',p.url,'https://www.cleardent.es/madrid-salamanca/','url',true,'url')}
 </div>
-<div class="field-group">
+<div class="fg">
   <div class="fg-title">Contacto</div>
   <div class="grid2">
-    ${f('Teléfono','telephone',p.telephone,'text','+34 91 555 0000',true)}
-    ${f('Email','email',p.email,'email','salamanca@cleardent.es')}
+    ${fi('Teléfono','telephone',p.telephone,'+34 91 555 0000','text',true,'telephone')}
+    ${fi('Email','email',p.email,'info@cleardent.es','email')}
   </div>
   <div class="grid2">
     <div class="field">
-      <label>Rango de precios</label>
-      <select onchange="set('priceRange',this.value)">
+      <div class="field-label">Rango de precios</div>
+      <select onchange="setField('priceRange',this.value)">
         ${['€','€€','€€€'].map(v=>`<option ${p.priceRange===v?'selected':''}>${v}</option>`).join('')}
       </select>
     </div>
-    ${f('Año fundación','foundingDate',p.foundingDate,'text','2015')}
+    ${fi('Año fundación','foundingDate',p.foundingDate,'2015')}
   </div>
-  ${f('URL del logo','logoUrl',p.logoUrl,'url','https://www.cleardent.es/logo.png')}
+  ${fi('URL del logo','logoUrl',p.logoUrl,'https://www.cleardent.es/logo.png','url')}
 </div>
-<div class="field-group">
-  <div class="fg-title">Valoraciones (AggregateRating)</div>
+<div class="fg">
+  <div class="fg-title">Valoraciones (AggregateRating) ${tip('aggregateRating')}</div>
+  <p style="font-size:11px;color:var(--text3);margin-bottom:10px">⚠️ Solo si tienes reseñas reales verificables (Google, Doctoralia).</p>
   <div class="grid3">
-    ${f('Nota','rating.value',p.rating.value,'text','4.9')}
-    ${f('Nº reseñas','rating.count',p.rating.count,'number','312')}
-    ${f('Nota máx.','rating.best',p.rating.best,'text','5')}
+    ${fi('Nota media','rating.value',p.rating.value,'4.9')}
+    ${fi('Nº de reseñas','rating.count',p.rating.count,'312','number')}
+    ${fi('Nota máxima','rating.best',p.rating.best,'5')}
   </div>
 </div>
-<div class="field-group">
+<div class="fg">
   <div class="fg-title">Opciones</div>
   <div class="toggle-row">
-    <input type="checkbox" id="ck-accepting" ${p.isAccepting?'checked':''} onchange="set('isAccepting',this.checked)" />
-    <label for="ck-accepting">isAcceptingNewPatients: true</label>
+    <input type="checkbox" id="ck-acc" ${p.isAccepting?'checked':''} onchange="setField('isAccepting',this.checked)" />
+    <label for="ck-acc">isAcceptingNewPatients: true ${tip('isAccepting')}</label>
   </div>
   <div class="toggle-row">
-    <input type="checkbox" id="ck-chain" ${p.isChain?'checked':''} onchange="set('isChain',this.checked);renderEditor()" />
+    <input type="checkbox" id="ck-chain" ${p.isChain?'checked':''} onchange="setField('isChain',this.checked);renderEditorBody()" />
     <label for="ck-chain">Es sucursal de una cadena (parentOrganization)</label>
   </div>
-  ${p.isChain?f('ID de la Organization madre','parentOrgId',p.parentOrgId,'url','https://www.cleardent.es/#Organization'):''}
+  ${p.isChain?fi('ID de la Organization madre','parentOrgId',p.parentOrgId,'https://www.cleardent.es/#Organization','url'):''}
 </div>
 `},
 
-ubicacion(p){ return `
-<div class="field-group">
+ubicacion(p){return `
+<div class="fg">
   <div class="fg-title">Dirección postal</div>
-  ${f('Calle y número','address.street',p.address.street,'text','Calle Serrano, 45, Bajo',true)}
+  ${fi('Calle y número','address.street',p.address.street,'Calle Serrano, 45, Bajo','text',true)}
   <div class="grid3">
-    ${f('Ciudad','address.city',p.address.city,'text','Madrid',true)}
-    ${f('Comunidad','address.region',p.address.region,'text','Comunidad de Madrid')}
-    ${f('Código postal','address.postalCode',p.address.postalCode,'text','28006')}
+    ${fi('Ciudad','address.city',p.address.city,'Madrid','text',true)}
+    ${fi('Comunidad','address.region',p.address.region,'Comunidad de Madrid')}
+    ${fi('C.P.','address.postalCode',p.address.postalCode,'28006')}
   </div>
 </div>
-<div class="field-group">
-  <div class="fg-title">Geolocalización</div>
-  <p style="font-size:11px;color:var(--text3);margin-bottom:10px">Mínimo 5 decimales para precisión local óptima.</p>
+<div class="fg">
+  <div class="fg-title">Geolocalización ${tip('geo')}</div>
+  <p style="font-size:11px;color:var(--text3);margin-bottom:10px">
+    Mínimo 5 decimales — coordenadas exactas del local, no del barrio.
+    <a href="https://www.google.es/maps" target="_blank" style="color:var(--blue);text-decoration:none">
+    Obtener en Google Maps →</a>
+  </p>
   <div class="grid2">
-    ${f('Latitud','geo.lat',p.geo.lat,'text','40.42735',true)}
-    ${f('Longitud','geo.lng',p.geo.lng,'text','-3.68026',true)}
+    ${fi('Latitud','geo.lat',p.geo.lat,'40.42735','text',true)}
+    ${fi('Longitud','geo.lng',p.geo.lng,'-3.68026','text',true)}
   </div>
-  ${f('URL Google Maps (hasMap)','mapsUrl',p.mapsUrl,'url','https://goo.gl/maps/...')}
+  ${fi('URL Google Maps (hasMap)','mapsUrl',p.mapsUrl,'https://goo.gl/maps/...','url')}
 </div>
-<div class="field-group">
+<div class="fg">
   <div class="fg-title">Zonas de servicio (areaServed)</div>
   <div id="areas-list">
     ${(p.areaServed||[]).map((a,i)=>`
-    <div class="row-input">
+    <div class="row-line">
       <input type="text" value="${esc(a)}" placeholder="Barrio / Ciudad / Zona"
-        oninput="p.areaServed[${i}]=this.value;gen()" />
-      <button class="btn-icon" onclick="p.areaServed.splice(${i},1);renderEditor()">✕</button>
+        oninput="P().areaServed[${i}]=this.value;scheduleSave();generate()" />
+      <button class="btn-icon" onclick="P().areaServed.splice(${i},1);renderEditorBody()">✕</button>
     </div>`).join('')}
   </div>
-  <button class="btn-add-row" onclick="p.areaServed.push('');renderEditor()">+ Añadir zona</button>
+  <button class="btn-add-card" onclick="P().areaServed.push('');renderEditorBody()">+ Añadir zona</button>
 </div>
 `},
 
-horarios(p){ return `
-<div class="field-group">
-  <div class="fg-title">Horario de apertura</div>
+horarios(p){return `
+<div class="fg">
+  <div class="fg-title">Horario de apertura ${tip('openingHours')}</div>
   <p style="font-size:11px;color:var(--text3);margin-bottom:14px">
-    Agrupa días con el mismo horario. Google prefiere este formato sobre el string legacy.
+    Agrupa días con el mismo horario en un bloque. Añade bloques para excepciones o festivos.
   </p>
   <div id="hours-list">
-    ${(p.openingHours||[]).map((h,i)=>renderHoursBlock(h,i,p)).join('')}
+    ${(p.openingHours||[]).map((h,i)=>`
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Bloque ${i+1}</span>
+        <button class="btn-icon" onclick="P().openingHours.splice(${i},1);renderEditorBody()">✕ Eliminar</button>
+      </div>
+      <div class="day-chips">
+        ${DAYS.map(d=>`<span class="day-chip ${h.days.includes(d)?'on':''}"
+          onclick="toggleDay('${h.id}','${d}')">${DAY_ES[d]}</span>`).join('')}
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <div class="field-label">Abre</div>
+          <input type="text" value="${h.opens}" oninput="updH('${h.id}','opens',this.value)" />
+        </div>
+        <div class="field">
+          <div class="field-label">Cierra</div>
+          <input type="text" value="${h.closes}" oninput="updH('${h.id}','closes',this.value)" />
+        </div>
+      </div>
+    </div>`).join('')}
   </div>
-  <button class="btn-add-row" onclick="p.openingHours.push({id:uid(),days:[],opens:'09:00',closes:'18:00'});renderEditor()">
+  <button class="btn-add-card" onclick="P().openingHours.push({id:uid(),days:[],opens:'09:00',closes:'20:00'});renderEditorBody()">
     + Añadir bloque de horario
   </button>
 </div>
 `},
 
-servicios(p){ return `
-<div class="field-group">
-  <div class="fg-title">Catálogo de servicios (OfferCatalog)</div>
+servicios(p){return `
+<div class="fg">
+  <div class="fg-title">Catálogo de servicios ${tip('services')}</div>
   <p style="font-size:11px;color:var(--text3);margin-bottom:14px">
-    Estructura jerárquica: Categoría → Tratamiento. Cada tratamiento con URL genera su service page schema.
+    Estructura: Categoría → Tratamiento. Los tratamientos con URL generan schema de página de servicio independiente.
   </p>
   <div id="cats-list">
-    ${(p.services||[]).map((cat,ci)=>renderCatBlock(cat,ci,p)).join('')}
+    ${(p.services||[]).map((cat,ci)=>`
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Categoría ${ci+1}</span>
+        <button class="btn-icon" onclick="P().services.splice(${ci},1);renderEditorBody()">✕</button>
+      </div>
+      <div class="field" style="margin-bottom:10px">
+        <input type="text" value="${esc(cat.category)}" placeholder="Nombre de la categoría"
+          oninput="P().services[${ci}].category=this.value;scheduleSave();generate()" />
+      </div>
+      <div style="padding-left:10px;border-left:2px solid var(--border)">
+        ${(cat.items||[]).map((item,si)=>`
+        <div style="background:var(--bg3);border-radius:6px;padding:10px;margin-bottom:7px">
+          <div class="row-line" style="margin-bottom:6px">
+            <input type="text" value="${esc(item.name)}" placeholder="Nombre del tratamiento"
+              style="flex:1.5" oninput="P().services[${ci}].items[${si}].name=this.value;scheduleSave();generate()" />
+            <button class="btn-icon" onclick="P().services[${ci}].items.splice(${si},1);renderEditorBody()">✕</button>
+          </div>
+          <input type="url" value="${esc(item.url)}" placeholder="URL del tratamiento (opcional — activa service schema)"
+            style="width:100%"
+            oninput="P().services[${ci}].items[${si}].url=this.value;scheduleSave();generate()" />
+        </div>`).join('')}
+        <button class="btn-add-card" style="margin-top:0"
+          onclick="P().services[${ci}].items.push({id:uid(),name:'',desc:'',url:'',faqs:[]});renderEditorBody()">
+          + Tratamiento
+        </button>
+      </div>
+    </div>`).join('')}
   </div>
-  <button class="btn-add-row" onclick="p.services.push({id:uid(),category:'Nueva Categoría',items:[]});renderEditor()">
+  <button class="btn-add-card"
+    onclick="P().services.push({id:uid(),category:'Nueva Categoría',items:[]});renderEditorBody()">
     + Añadir categoría
   </button>
 </div>
 `},
 
-equipo(p){ return `
-<div class="field-group">
-  <div class="fg-title">Doctores / Dentistas</div>
+equipo(p){return `
+<div class="fg">
+  <div class="fg-title">Doctores / Dentistas ${tip('employee')}</div>
   <p style="font-size:11px;color:var(--text3);margin-bottom:14px">
-    Tipo: [Person, Physician]. Activa propiedades médicas y señales E-E-A-T para YMYL.
+    Tipo: [Person, Physician] — desbloquea propiedades médicas y señales E-E-A-T para YMYL.
   </p>
   <div id="emp-list">
-    ${(p.employees||[]).map((e,i)=>renderEmpBlock(e,i,p)).join('')}
+    ${(p.employees||[]).map((e,i)=>`
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">${esc(e.prefix||'Dr.')} ${esc(e.name)||'(sin nombre)'}</span>
+        <button class="btn-icon" onclick="P().employees.splice(${i},1);renderEditorBody()">✕</button>
+      </div>
+      <div class="grid2" style="margin-bottom:9px">
+        <div class="field">
+          <div class="field-label">Prefijo</div>
+          <select onchange="P().employees[${i}].prefix=this.value;scheduleSave();generate()">
+            <option ${e.prefix==='Dr.'?'selected':''}>Dr.</option>
+            <option ${e.prefix==='Dra.'?'selected':''}>Dra.</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="field-label">Nombre completo</div>
+          <input type="text" value="${esc(e.name)}" placeholder="Carlos García López"
+            oninput="P().employees[${i}].name=this.value;scheduleSave();generate()" />
+        </div>
+      </div>
+      ${fEmp('Cargo / Especialidad','title',e.title,'Director Clínico — Implantología',i)}
+      <div class="grid2">
+        ${fEmp('URL del perfil','url',e.url,'https://.../equipo/dr-nombre/',i,'url')}
+        ${fEmp('URL de la foto','image',e.image,'https://.../foto.jpg',i,'url')}
+      </div>
+      <div class="grid2">
+        ${fEmp('Top Doctors','topdoctors',e.topdoctors,'https://www.topdoctors.es/...',i,'url')}
+        ${fEmp('Doctoralia','doctoralia',e.doctoralia,'https://www.doctoralia.es/...',i,'url')}
+      </div>
+    </div>`).join('')}
   </div>
-  <button class="btn-add-row" onclick="p.employees.push({id:uid(),prefix:'Dr.',name:'',title:'',specialty:'Dentistry',url:'',image:'',topdoctors:'',doctoralia:''});renderEditor()">
+  <button class="btn-add-card"
+    onclick="P().employees.push({id:uid(),prefix:'Dr.',name:'',title:'',specialty:'Dentistry',url:'',image:'',topdoctors:'',doctoralia:''});renderEditorBody()">
     + Añadir doctor/a
   </button>
 </div>
 `},
 
-seo(p){ return `
-<div class="field-group">
-  <div class="fg-title">sameAs — Perfiles externos</div>
+seo(p){return `
+<div class="fg">
+  <div class="fg-title">sameAs — Perfiles externos ${tip('sameAs')}</div>
   <p style="font-size:11px;color:var(--text3);margin-bottom:10px">
-    Cluster mínimo: GBP (CID URL) + Doctoralia + Top Doctors + Facebook + Instagram.
+    Cluster mínimo recomendado: GBP (CID URL) · Doctoralia · Top Doctors · Facebook · Instagram
   </p>
   <div id="sameas-list">
     ${(p.sameAs||[]).map((s,i)=>`
-    <div class="row-input">
+    <div class="row-line">
       <input type="url" value="${esc(s)}" placeholder="https://..."
-        oninput="p.sameAs[${i}]=this.value;gen()" />
-      <button class="btn-icon" onclick="p.sameAs.splice(${i},1);renderEditor()">✕</button>
+        oninput="P().sameAs[${i}]=this.value;scheduleSave();generate()" />
+      <button class="btn-icon" onclick="P().sameAs.splice(${i},1);renderEditorBody()">✕</button>
     </div>`).join('')}
   </div>
-  <button class="btn-add-row" onclick="p.sameAs.push('');renderEditor()">+ Añadir URL</button>
+  <button class="btn-add-card" onclick="P().sameAs.push('');renderEditorBody()">+ Añadir URL</button>
 </div>
-<div class="field-group">
+<div class="fg">
   <div class="fg-title">Breadcrumb</div>
   <div id="bc-list">
     ${(p.breadcrumbs||[]).map((b,i)=>`
-    <div class="row-input" style="gap:7px">
-      <input type="text" value="${esc(b.name)}" placeholder="Nombre"
-        style="flex:1" oninput="p.breadcrumbs[${i}].name=this.value;gen()" />
-      <input type="url" value="${esc(b.url)}" placeholder="URL"
-        style="flex:2" oninput="p.breadcrumbs[${i}].url=this.value;gen()" />
-      <button class="btn-icon" onclick="p.breadcrumbs.splice(${i},1);renderEditor()">✕</button>
+    <div class="row-line">
+      <input type="text" value="${esc(b.name)}" placeholder="Nombre (ej: Inicio)" style="flex:1"
+        oninput="P().breadcrumbs[${i}].name=this.value;scheduleSave();generate()" />
+      <input type="url" value="${esc(b.url)}" placeholder="URL" style="flex:2"
+        oninput="P().breadcrumbs[${i}].url=this.value;scheduleSave();generate()" />
+      <button class="btn-icon" onclick="P().breadcrumbs.splice(${i},1);renderEditorBody()">✕</button>
     </div>`).join('')}
   </div>
-  <button class="btn-add-row" onclick="p.breadcrumbs.push({id:uid(),name:'',url:''});renderEditor()">+ Añadir nivel</button>
+  <button class="btn-add-card" onclick="P().breadcrumbs.push({id:uid(),name:'',url:''});renderEditorBody()">+ Añadir nivel</button>
 </div>
-<div class="field-group">
+<div class="fg">
   <div class="fg-title">Meta (WebPage)</div>
-  ${f('Título de página','pageTitle',p.pageTitle,'text','Dentista en Salamanca Madrid | Cleardent')}
-  ${fa('Meta description','metaDesc',p.metaDesc,'Clínica dental en el Barrio de Salamanca, Madrid...')}
+  ${fi('Título de la página','pageTitle',p.pageTitle,'Dentista en Salamanca Madrid | Cleardent')}
+  ${fta('Meta description','metaDesc',p.metaDesc,'Clínica dental Cleardent en Barrio de Salamanca, Madrid. Implantes, ortodoncia y estética dental. Solicita cita.')}
 </div>
 `},
 
-avanzado(p){ return `
-<div class="field-group">
+config(p){return `
+<div class="fg">
   <div class="fg-title">Schemas a generar</div>
   <div class="toggle-row">
     <input type="checkbox" checked disabled />
-    <label>Dentist (siempre activo)</label>
+    <label style="color:var(--green)">✓ Dentist — siempre activo (obligatorio)</label>
   </div>
   <div class="toggle-row">
-    <input type="checkbox" id="ck-webpage" ${p.genWebPage?'checked':''} onchange="set('genWebPage',this.checked)" />
-    <label for="ck-webpage">WebPage + BreadcrumbList</label>
+    <input type="checkbox" id="ck-wp" ${p.genWebPage?'checked':''} onchange="setField('genWebPage',this.checked)" />
+    <label for="ck-wp">WebPage + BreadcrumbList</label>
   </div>
   <div class="toggle-row">
-    <input type="checkbox" id="ck-org" ${p.genOrg?'checked':''} onchange="set('genOrg',this.checked)" />
-    <label for="ck-org">Organization (para homepage de cadena)</label>
+    <input type="checkbox" id="ck-org" ${p.genOrg?'checked':''} onchange="setField('genOrg',this.checked)" />
+    <label for="ck-org">Organization (homepage de cadena)</label>
   </div>
   <div class="toggle-row">
-    <input type="checkbox" id="ck-website" ${p.genWebSite?'checked':''} onchange="set('genWebSite',this.checked)" />
-    <label for="ck-website">WebSite + SearchAction (solo homepage)</label>
+    <input type="checkbox" id="ck-ws" ${p.genWebSite?'checked':''} onchange="setField('genWebSite',this.checked)" />
+    <label for="ck-ws">WebSite + SearchAction (solo homepage)</label>
   </div>
 </div>
-<div class="field-group">
-  <div class="fg-title">Organization / Homepage (cadena)</div>
-  ${f('URL de la homepage','orgUrl',p.orgUrl,'url','https://www.cleardent.es/')}
-  ${f('Nombre de la marca','brandName',p.brandName,'text','Cleardent')}
+<div class="fg">
+  <div class="fg-title">Organization / Cadena</div>
+  ${fi('URL de la homepage de la cadena','orgUrl',p.orgUrl,'https://www.cleardent.es/','url')}
+  ${fi('Nombre de la marca','brandName',p.brandName,'Cleardent')}
   <div class="field">
-    <label>Sucursales — una URL por línea</label>
-    <textarea oninput="set('subOrgUrls',this.value)"
+    <div class="field-label">Sucursales — una URL por línea</div>
+    <textarea oninput="setField('subOrgUrls',this.value)"
       placeholder="https://www.cleardent.es/madrid-salamanca/&#10;https://www.cleardent.es/madrid-centro/"
     >${esc(p.subOrgUrls||'')}</textarea>
+  </div>
+</div>
+<div class="fg">
+  <div class="fg-title">Atajos de teclado</div>
+  <div style="display:flex;flex-direction:column;gap:7px">
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2)">
+      <span>Copiar JSON</span><span><kbd>Ctrl</kbd>+<kbd>C</kbd></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2)">
+      <span>Copiar script tag</span><span><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2)">
+      <span>Guardar</span><span><kbd>Ctrl</kbd>+<kbd>S</kbd></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2)">
+      <span>Nuevo proyecto</span><span><kbd>Ctrl</kbd>+<kbd>N</kbd></span>
+    </div>
   </div>
 </div>
 `},
 };
 
-// ── BLOCK HELPERS ────────────────────────────────────────────────
-function renderHoursBlock(h,i,p){
-  const dayChips=DAYS.map(d=>`<span class="day-chip ${h.days.includes(d)?'on':''}"
-    onclick="toggleDay('${h.id}','${d}')">${DAY_ES[d]}</span>`).join('');
-  return `
-  <div class="list-card">
-    <div class="list-card-header">
-      <span>Bloque ${i+1}</span>
-      <button class="btn-icon" onclick="p.openingHours.splice(${i},1);renderEditor()">✕</button>
-    </div>
-    <div class="hours-days">${dayChips}</div>
-    <div class="grid2">
-      <div class="field">
-        <label>Abre</label>
-        <input type="text" value="${h.opens}" oninput="updateHours('${h.id}','opens',this.value)" />
-      </div>
-      <div class="field">
-        <label>Cierra</label>
-        <input type="text" value="${h.closes}" oninput="updateHours('${h.id}','closes',this.value)" />
-      </div>
-    </div>
-  </div>`;
-}
-
-function renderCatBlock(cat,ci,p){
-  const items=(cat.items||[]).map((item,si)=>`
-    <div style="background:var(--bg3);border-radius:5px;padding:10px;margin-bottom:7px;">
-      <div class="row-input" style="margin-bottom:6px">
-        <input type="text" value="${esc(item.name)}" placeholder="Nombre del tratamiento" style="flex:1.5"
-          oninput="p.services[${ci}].items[${si}].name=this.value;gen()" />
-        <button class="btn-icon" onclick="p.services[${ci}].items.splice(${si},1);renderEditor()">✕</button>
-      </div>
-      <input type="url" value="${esc(item.url)}" placeholder="URL del tratamiento (opcional — genera service page)"
-        style="width:100%;margin-bottom:0"
-        oninput="p.services[${ci}].items[${si}].url=this.value;gen()" />
-    </div>`).join('');
-  return `
-  <div class="list-card">
-    <div class="list-card-header">
-      <span>Categoría ${ci+1}</span>
-      <button class="btn-icon" onclick="p.services.splice(${ci},1);renderEditor()">✕</button>
-    </div>
-    <input type="text" value="${esc(cat.category)}" placeholder="Nombre de la categoría"
-      style="margin-bottom:10px"
-      oninput="p.services[${ci}].category=this.value;gen()" />
-    ${items}
-    <button class="btn-add-row" onclick="p.services[${ci}].items.push({id:uid(),name:'',desc:'',url:'',faqs:[]});renderEditor()">
-      + Tratamiento
-    </button>
-  </div>`;
-}
-
-function renderEmpBlock(e,i,p){
-  return `
-  <div class="list-card">
-    <div class="list-card-header">
-      <span>${e.prefix||'Dr.'} ${esc(e.name)||'(sin nombre)'}</span>
-      <button class="btn-icon" onclick="p.employees.splice(${i},1);renderEditor()">✕</button>
-    </div>
-    <div class="grid2" style="margin-bottom:9px">
-      <div class="field">
-        <label>Prefijo</label>
-        <select onchange="p.employees[${i}].prefix=this.value;gen()">
-          <option ${e.prefix==='Dr.'?'selected':''}>Dr.</option>
-          <option ${e.prefix==='Dra.'?'selected':''}>Dra.</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Nombre completo</label>
-        <input type="text" value="${esc(e.name)}" placeholder="Carlos García"
-          oninput="p.employees[${i}].name=this.value;gen()" />
-      </div>
-    </div>
-    <div class="field" style="margin-bottom:9px">
-      <label>Cargo</label>
-      <input type="text" value="${esc(e.title)}" placeholder="Director Clínico — Implantología"
-        oninput="p.employees[${i}].title=this.value;gen()" />
-    </div>
-    <div class="grid2" style="margin-bottom:9px">
-      <div class="field">
-        <label>URL del perfil</label>
-        <input type="url" value="${esc(e.url)}" placeholder="https://.../equipo/dr-nombre/"
-          oninput="p.employees[${i}].url=this.value;gen()" />
-      </div>
-      <div class="field">
-        <label>URL de la foto</label>
-        <input type="url" value="${esc(e.image||'')}" placeholder="https://.../foto.jpg"
-          oninput="p.employees[${i}].image=this.value;gen()" />
-      </div>
-    </div>
-    <div class="grid2">
-      <div class="field">
-        <label>Top Doctors (URL)</label>
-        <input type="url" value="${esc(e.topdoctors||'')}" placeholder="https://www.topdoctors.es/..."
-          oninput="p.employees[${i}].topdoctors=this.value;gen()" />
-      </div>
-      <div class="field">
-        <label>Doctoralia (URL)</label>
-        <input type="url" value="${esc(e.doctoralia||'')}" placeholder="https://www.doctoralia.es/..."
-          oninput="p.employees[${i}].doctoralia=this.value;gen()" />
-      </div>
-    </div>
-  </div>`;
-}
-
-// ── FIELD HELPERS ────────────────────────────────────────────────
-function f(label,key,val,type='text',ph='',req=false){
+// ── FIELD HELPERS ──────────────────────────────────────
+function fi(label,key,val,ph='',type='text',req=false,tipKey=''){
+  const nested=key.includes('.');
+  const [k1,k2]=nested?key.split('.'):[key,''];
+  const handler=nested?`setNested('${k1}','${k2}',this.value)`:`setField('${k1}',this.value)`;
   const id='f_'+key.replace(/\./g,'_');
-  const dotPath=key.includes('.')?key.split('.'):'';
-  const onin=dotPath?`setDot('${dotPath[0]}','${dotPath[1]}',this.value)`:`set('${key}',this.value)`;
+  const okCls=val?'ok':'';
   return `<div class="field" id="${id}">
-    <label>${label}${req?` <span class="req">*</span>`:''} <span class="warn-dot"></span></label>
-    <input type="${type}" value="${esc(val||'')}" placeholder="${ph}" oninput="${onin};gen()" />
-  </div>`;
-}
-function fa(label,key,val,ph=''){
-  return `<div class="field">
-    <label>${label}</label>
-    <textarea oninput="set('${key}',this.value);gen()" placeholder="${ph}">${esc(val||'')}</textarea>
+    <div class="field-label">
+      ${label}${req?` <span class="req-star">*</span>`:''}
+      ${tipKey?tip(tipKey):''}
+      ${val?`<span class="field-state state-ok" style="margin-left:auto">✓</span>`:req?`<span class="field-state state-err" style="margin-left:auto">✗ requerido</span>`:''}
+    </div>
+    <input type="${type}" value="${esc(val||'')}" placeholder="${ph}"
+      class="${okCls}" oninput="${handler}" />
   </div>`;
 }
 
-// ── SETTERS ──────────────────────────────────────────────────────
-function set(key,val){ const p=currentProject(); if(p){ p[key]=val; saveProjects(); } }
-function setDot(k1,k2,val){ const p=currentProject(); if(p){ if(!p[k1])p[k1]={}; p[k1][k2]=val; saveProjects(); } }
+function fta(label,key,val,ph='',tipKey=''){
+  return `<div class="field">
+    <div class="field-label">${label} ${tipKey?tip(tipKey):''}</div>
+    <textarea oninput="setField('${key}',this.value)" placeholder="${ph}">${esc(val||'')}</textarea>
+  </div>`;
+}
+
+function fEmp(label,key,val,ph,i,type='text'){
+  return `<div class="field">
+    <div class="field-label">${label}</div>
+    <input type="${type}" value="${esc(val||'')}" placeholder="${ph}"
+      oninput="P().employees[${i}].${key}=this.value;scheduleSave();generate()" />
+  </div>`;
+}
+
+function tip(key){
+  const t=TIPS[key]; if(!t) return '';
+  return `<span class="tip-btn" onmouseenter="showTip(event,'${key}')" onmouseleave="hideTip()">?</span>`;
+}
+
+// ══════════════════════════════════════════════════════
+// TOOLTIP
+// ══════════════════════════════════════════════════════
+const tt=()=>document.getElementById('tt');
+function showTip(e,key){
+  const t=TIPS[key]; if(!t) return;
+  const box=tt();
+  const tagCls={required:'tt-required',recommended:'tt-recommended',optional:'tt-optional'}[t.tag]||'tt-optional';
+  const tagLabel={required:'Obligatorio',recommended:'Recomendado',optional:'Opcional'}[t.tag]||'Opcional';
+  box.innerHTML=`<div class="tt-title">${t.title}</div><div class="tt-body">${t.body}</div><span class="tt-tag ${tagCls}">${tagLabel}</span>`;
+  const r=e.target.getBoundingClientRect();
+  box.style.left=(r.left+20)+'px';
+  box.style.top=(r.top-10)+'px';
+  box.classList.add('show');
+}
+function hideTip(){ tt().classList.remove('show') }
+
+// ══════════════════════════════════════════════════════
+// HOURS / DAYS
+// ══════════════════════════════════════════════════════
 function toggleDay(hid,day){
-  const p=currentProject(); if(!p) return;
-  const h=p.openingHours.find(x=>x.id===hid); if(!h) return;
+  const p=P();if(!p)return;
+  const h=p.openingHours.find(x=>x.id===hid);if(!h)return;
   const i=h.days.indexOf(day);
-  if(i>=0) h.days.splice(i,1); else h.days.push(day);
-  saveProjects(); gen();
-  // re-render just the chips
-  document.querySelectorAll('.day-chip').forEach(c=>{
-    if(c.getAttribute('onclick')?.includes(hid)){
-      c.classList.toggle('on', h.days.includes(day) && c.getAttribute('onclick')?.includes(`'${day}'`));
+  i>=0?h.days.splice(i,1):h.days.push(day);
+  // update chips without full re-render
+  document.querySelectorAll(`.day-chip`).forEach(c=>{
+    const onclick=c.getAttribute('onclick')||'';
+    if(onclick.includes(`'${hid}'`)&&onclick.includes(`'${day}'`)){
+      c.classList.toggle('on',h.days.includes(day));
     }
   });
-  document.querySelectorAll('.hours-days').forEach((hd,i2)=>{
-    const block=p.openingHours[i2]; if(!block) return;
-    hd.querySelectorAll('.day-chip').forEach(c=>{
-      const d=c.getAttribute('onclick')?.match(/'([^']+)'\)$/)?.[1];
-      if(d) c.classList.toggle('on',block.days.includes(d));
-    });
-  });
+  scheduleSave();generate();
 }
-function updateHours(hid,field,val){
-  const p=currentProject(); if(!p) return;
-  const h=p.openingHours.find(x=>x.id===hid); if(h){ h[field]=val; saveProjects(); gen(); }
+function updH(hid,field,val){
+  const p=P();if(!p)return;
+  const h=p.openingHours.find(x=>x.id===hid);if(h){h[field]=val;scheduleSave();generate();}
 }
-function uid(){ return Math.random().toString(36).slice(2) }
 
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // SCHEMA BUILDERS
-// ════════════════════════════════════════════════════════════════
-function baseUrl(url){ try{ return new URL('/',url).href }catch{ return '' } }
-function slugify(s){ return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') }
-function clean(o){ return JSON.parse(JSON.stringify(o,(k,v)=>v===undefined||v===null||v===''||( Array.isArray(v)&&!v.length )?undefined:v)) }
+// ══════════════════════════════════════════════════════
+const baseUrl=u=>{try{return new URL('/',u).href}catch{return ''}};
+const slugify=s=>(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const clean=o=>JSON.parse(JSON.stringify(o,(k,v)=>v===undefined||v===null||v===''||(Array.isArray(v)&&!v.length)?undefined:v));
 
 function buildDentist(p){
-  const pageUrl=p.url||'';
-  const dentistId=pageUrl?pageUrl.replace(/\/$/,'')+  '/#Dentist':'';
-  const siteBase=baseUrl(pageUrl);
-  const obj={
-    '@type':'Dentist',
-    '@id':dentistId||undefined,
-    'name':p.name||undefined,
-    'legalName':p.legalName||undefined,
-    'description':p.description||undefined,
-    'url':pageUrl||undefined,
-    'telephone':p.telephone||undefined,
-    'email':p.email||undefined,
+  const pu=p.url||'', id=pu?pu.replace(/\/$/,  '')+'/#Dentist':'', sb=baseUrl(pu);
+  const o={
+    '@type':'Dentist','@id':id||undefined,
+    'name':p.name||undefined,'legalName':p.legalName||undefined,
+    'description':p.description||undefined,'url':pu||undefined,
+    'telephone':p.telephone||undefined,'email':p.email||undefined,
     'priceRange':p.priceRange||'€€',
     'isAcceptingNewPatients':p.isAccepting!==false?true:undefined,
     'medicalSpecialty':'Dentistry',
     'paymentAccepted':'Cash, Credit Card, Bank Transfer, Financing',
     'currenciesAccepted':'EUR',
   };
-  if(siteBase) obj.logo={
-    '@type':'ImageObject',
-    'url':p.logoUrl||siteBase+'logo.png',
-    'width':300,'height':100
+  if(sb) o.logo={'@type':'ImageObject','url':p.logoUrl||sb+'logo.png','width':300,'height':100};
+  if(p.address?.street||p.address?.city) o.address={
+    '@type':'PostalAddress',
+    'streetAddress':p.address.street||undefined,
+    'addressLocality':p.address.city||undefined,
+    'addressRegion':p.address.region||undefined,
+    'postalCode':p.address.postalCode||undefined,
+    'addressCountry':'ES'
   };
-  if(p.address?.street||p.address?.city){
-    obj.address={
-      '@type':'PostalAddress',
-      'streetAddress':p.address.street||undefined,
-      'addressLocality':p.address.city||undefined,
-      'addressRegion':p.address.region||'Comunidad de Madrid',
-      'postalCode':p.address.postalCode||undefined,
-      'addressCountry':p.address.country||'ES'
-    };
-  }
-  if(p.geo?.lat&&p.geo?.lng) obj.geo={'@type':'GeoCoordinates','latitude':String(p.geo.lat),'longitude':String(p.geo.lng)};
-  if(p.mapsUrl) obj.hasMap=p.mapsUrl;
-  if(p.openingHours?.length){
-    obj.openingHoursSpecification=p.openingHours.filter(h=>h.days?.length).map(h=>({
-      '@type':'OpeningHoursSpecification',
-      'dayOfWeek':h.days.length===1?h.days[0]:h.days,
-      'opens':h.opens,
-      'closes':h.closes,
-    }));
-  }
-  if(p.rating?.value&&p.rating?.count){
-    obj.aggregateRating={
-      '@type':'AggregateRating',
-      'ratingValue':String(p.rating.value),
-      'reviewCount':String(p.rating.count),
-      'bestRating':String(p.rating.best||5),
-      'worstRating':'1',
-    };
-  }
-  if(p.services?.filter(c=>c.category).length){
-    obj.hasOfferCatalog={
-      '@type':'OfferCatalog',
-      'name':'Tratamientos Dentales',
-      'itemListElement':p.services.filter(c=>c.category).map(cat=>({
-        '@type':'OfferCatalog',
-        'name':cat.category,
-        'itemListElement':(cat.items||[]).filter(i=>i.name).map(item=>({
-          '@type':'Offer',
-          'itemOffered':clean({'@type':'Service','name':item.name,'description':item.desc||undefined,'url':item.url||undefined})
-        }))
+  if(p.geo?.lat&&p.geo?.lng) o.geo={'@type':'GeoCoordinates','latitude':''+p.geo.lat,'longitude':''+p.geo.lng};
+  if(p.mapsUrl) o.hasMap=p.mapsUrl;
+  if(p.openingHours?.length) o.openingHoursSpecification=p.openingHours.filter(h=>h.days?.length).map(h=>({
+    '@type':'OpeningHoursSpecification',
+    'dayOfWeek':h.days.length===1?h.days[0]:h.days,
+    'opens':h.opens,'closes':h.closes
+  }));
+  if(p.rating?.value&&p.rating?.count) o.aggregateRating={
+    '@type':'AggregateRating','ratingValue':''+p.rating.value,
+    'reviewCount':''+p.rating.count,'bestRating':''+( p.rating.best||5),'worstRating':'1'
+  };
+  const cats=p.services?.filter(c=>c.items?.some(i=>i.name));
+  if(cats?.length) o.hasOfferCatalog={
+    '@type':'OfferCatalog','name':'Tratamientos Dentales',
+    'itemListElement':cats.map(cat=>({
+      '@type':'OfferCatalog','name':cat.category,
+      'itemListElement':cat.items.filter(i=>i.name).map(item=>clean({
+        '@type':'Offer','itemOffered':{'@type':'Service','name':item.name,'description':item.desc||undefined,'url':item.url||undefined}
       }))
-    };
-  }
-  if(p.employees?.filter(e=>e.name).length){
-    obj.employee=p.employees.filter(e=>e.name).map(e=>{
-      const empUrl=e.url||(pageUrl+'equipo/'+slugify(e.name)+'/');
-      return clean({
-        '@type':['Person','Physician'],
-        '@id':empUrl.replace(/\/$/,  '')+'#Person',
-        'name':`${e.prefix||'Dr.'} ${e.name}`,
-        'honorificPrefix':e.prefix||'Dr.',
-        'jobTitle':e.title||undefined,
-        'medicalSpecialty':'Dentistry',
-        'image':e.image||undefined,
-        'url':empUrl||undefined,
-        'worksFor':dentistId?{'@id':dentistId}:undefined,
-        'sameAs':[e.topdoctors,e.doctoralia].filter(Boolean),
-      });
+    }))
+  };
+  if(p.employees?.filter(e=>e.name).length) o.employee=p.employees.filter(e=>e.name).map(e=>{
+    const eu=e.url||(pu+'equipo/'+slugify(e.name)+'/');
+    return clean({'@type':['Person','Physician'],'@id':eu.replace(/\/$/,  '')+'#Person',
+      'name':`${e.prefix||'Dr.'} ${e.name}`,'honorificPrefix':e.prefix||'Dr.',
+      'jobTitle':e.title||undefined,'medicalSpecialty':'Dentistry',
+      'image':e.image||undefined,'url':eu||undefined,
+      'worksFor':id?{'@id':id}:undefined,
+      'sameAs':[e.topdoctors,e.doctoralia].filter(Boolean)
     });
-  }
-  if(p.areaServed?.filter(Boolean).length){
-    obj.areaServed=p.areaServed.filter(Boolean).map(a=>({'@type':'City','name':a}));
-  }
-  const sa=(p.sameAs||[]).filter(Boolean);
-  if(sa.length) obj.sameAs=sa;
-  if(p.isChain&&p.parentOrgId) obj.parentOrganization={'@id':p.parentOrgId};
-  return clean(obj);
+  });
+  if(p.areaServed?.filter(Boolean).length) o.areaServed=p.areaServed.filter(Boolean).map(a=>({'@type':'City','name':a}));
+  const sa=(p.sameAs||[]).filter(Boolean); if(sa.length) o.sameAs=sa;
+  if(p.isChain&&p.parentOrgId) o.parentOrganization={'@id':p.parentOrgId};
+  return clean(o);
 }
 
 function buildWebPage(p){
-  const pageUrl=p.url||'';
-  const dentistId=pageUrl?pageUrl.replace(/\/$/,  '')+'/#Dentist':'';
-  const siteBase=baseUrl(pageUrl);
-  const obj={
-    '@type':'WebPage',
-    '@id':(pageUrl+'#WebPage')||undefined,
-    'url':pageUrl||undefined,
+  const pu=p.url||'', id=pu?pu.replace(/\/$/,  '')+'/#Dentist':'', sb=baseUrl(pu);
+  const o={
+    '@type':'WebPage','@id':pu+'#WebPage','url':pu||undefined,
     'name':p.pageTitle||(p.name?`Dentista en ${p.address?.city||'Madrid'} | ${p.name}`:undefined),
-    'description':p.metaDesc||p.description||undefined,
-    'inLanguage':'es',
-    'isPartOf':siteBase?{'@id':siteBase+'#WebSite'}:undefined,
-    'about':dentistId?{'@id':dentistId}:undefined,
+    'description':p.metaDesc||p.description||undefined,'inLanguage':'es',
+    'isPartOf':sb?{'@id':sb+'#WebSite'}:undefined,
+    'about':id?{'@id':id}:undefined,
   };
-  if(p.breadcrumbs?.filter(b=>b.name&&b.url).length){
-    obj.breadcrumb={
-      '@type':'BreadcrumbList',
-      'itemListElement':p.breadcrumbs.filter(b=>b.name&&b.url).map((b,i)=>({
-        '@type':'ListItem','position':i+1,'name':b.name,'item':b.url
-      }))
-    };
-  }
-  return clean(obj);
+  if(p.breadcrumbs?.filter(b=>b.name&&b.url).length) o.breadcrumb={
+    '@type':'BreadcrumbList',
+    'itemListElement':p.breadcrumbs.filter(b=>b.name&&b.url).map((b,i)=>({'@type':'ListItem','position':i+1,'name':b.name,'item':b.url}))
+  };
+  return clean(o);
 }
 
-function buildOrganization(p){
-  const orgBase=baseUrl(p.orgUrl||p.url);
-  const orgId=(p.orgUrl||orgBase||'').replace(/\/$/,  '')+'/#Organization';
+function buildOrg(p){
+  const ob=baseUrl(p.orgUrl||p.url), oid=(p.orgUrl||ob||'').replace(/\/$/,  '')+'/#Organization';
   return clean({
-    '@type':'Organization',
-    '@id':orgId||undefined,
-    'name':p.brandName||p.name||undefined,
-    'legalName':p.legalName||undefined,
-    'url':p.orgUrl||orgBase||undefined,
-    'foundingDate':p.foundingDate||undefined,
-    'logo':orgBase?{'@type':'ImageObject','url':(p.logoUrl||orgBase+'logo.png'),'width':300,'height':100}:undefined,
-    'subOrganization':(p.subOrgUrls||'').split('\n').map(u=>u.trim()).filter(Boolean).map(u=>({
-      '@id':u.replace(/\/$/,  '')+'/#Dentist','url':u
-    })),
+    '@type':'Organization','@id':oid||undefined,
+    'name':p.brandName||p.name||undefined,'legalName':p.legalName||undefined,
+    'url':p.orgUrl||ob||undefined,'foundingDate':p.foundingDate||undefined,
+    'logo':ob?{'@type':'ImageObject','url':p.logoUrl||ob+'logo.png','width':300,'height':100}:undefined,
+    'subOrganization':(p.subOrgUrls||'').split('\n').map(u=>u.trim()).filter(Boolean).map(u=>({'@id':u.replace(/\/$/,  '')+'/#Dentist','url':u})),
     'sameAs':(p.sameAs||[]).filter(Boolean),
   });
 }
 
 function buildWebSite(p){
-  const siteBase=baseUrl(p.orgUrl||p.url);
+  const sb=baseUrl(p.orgUrl||p.url);
   return clean({
-    '@type':'WebSite',
-    '@id':siteBase+'#WebSite',
-    'url':siteBase||undefined,
-    'name':p.brandName||p.name||undefined,
-    'inLanguage':'es',
-    'publisher':siteBase?{'@id':siteBase.replace(/\/$/,  '')+'/#Organization'}:undefined,
-    'potentialAction':siteBase?{
-      '@type':'SearchAction',
-      'target':{'@type':'EntryPoint','urlTemplate':siteBase+'?s={search_term_string}'},
-      'query-input':'required name=search_term_string'
-    }:undefined
+    '@type':'WebSite','@id':sb+'#WebSite','url':sb||undefined,
+    'name':p.brandName||p.name||undefined,'inLanguage':'es',
+    'publisher':sb?{'@id':sb.replace(/\/$/,  '')+'/#Organization'}:undefined,
+    'potentialAction':sb?{'@type':'SearchAction','target':{'@type':'EntryPoint','urlTemplate':sb+'?s={search_term_string}'},'query-input':'required name=search_term_string'}:undefined
   });
 }
 
-function buildForPageType(p, pt){
-  const graph=[];
+function buildSchema(p, pt){
+  const g=[];
   if(pt==='location'){
-    graph.push(buildDentist(p));
-    if(p.genWebPage) graph.push(buildWebPage(p));
+    g.push(buildDentist(p));
+    if(p.genWebPage) g.push(buildWebPage(p));
   } else if(pt==='homepage'){
-    if(p.genOrg||true) graph.push(buildOrganization(p));
-    if(p.genWebSite||true) graph.push(buildWebSite(p));
+    g.push(buildOrg(p));
+    g.push(buildWebSite(p));
   } else if(pt==='service'){
-    // first service with URL
-    const item=p.services?.flatMap(c=>c.items||[]).find(i=>i.url)||{};
-    const dentistId=(p.url||'').replace(/\/$/,  '')+'/#Dentist';
-    graph.push(clean({
-      '@type':'Service',
-      '@id':(item.url||p.url||'')+'#Service',
-      'name':item.name||p.name,
-      'description':item.desc||p.description||undefined,
-      'url':item.url||undefined,
-      'provider':dentistId?{'@id':dentistId}:undefined,
-      'areaServed':(p.areaServed||[]).filter(Boolean).map(a=>({'@type':'City','name':a})),
-    }));
+    const item=p.services?.flatMap(c=>c.items||[]).find(i=>i.url&&i.name)||{};
+    const did=(p.url||'').replace(/\/$/,  '')+'/#Dentist';
+    const allFaqs=p.services?.flatMap(c=>c.items||[]).flatMap(i=>i.faqs||[])||[];
+    const schema={'@context':'https://schema.org','@graph':[
+      clean({'@type':'Service','@id':(item.url||'')+'#Service',
+        'name':item.name||p.name,'description':item.desc||undefined,
+        'url':item.url||undefined,'serviceType':p.services?.[0]?.category||undefined,
+        'provider':did?{'@id':did}:undefined,
+        'areaServed':(p.areaServed||[]).filter(Boolean).map(a=>({'@type':'City','name':a})),
+      }),
+      ...(allFaqs.length?[clean({'@type':'FAQPage','mainEntity':allFaqs.map(f=>({'@type':'Question','name':f.q,'acceptedAnswer':{'@type':'Answer','text':f.a}}))})]:[])
+    ]};
+    return schema;
   } else if(pt==='person'){
-    const e=p.employees?.[0];
+    const e=p.employees?.[0]; const did=(p.url||'').replace(/\/$/,  '')+'/#Dentist';
     if(e?.name){
-      const empUrl=e.url||(p.url+'equipo/'+slugify(e.name)+'/');
-      graph.push(clean({
-        '@type':['Person','Physician'],
-        '@id':empUrl.replace(/\/$/,  '')+'#Person',
-        'name':`${e.prefix||'Dr.'} ${e.name}`,
-        'honorificPrefix':e.prefix||'Dr.',
-        'jobTitle':e.title||undefined,
-        'medicalSpecialty':'Dentistry',
-        'worksFor':{'@id':(p.url||'').replace(/\/$/,  '')+'/#Dentist'},
-        'sameAs':[e.topdoctors,e.doctoralia].filter(Boolean),
+      const eu=e.url||(p.url+'equipo/'+slugify(e.name)+'/');
+      g.push(clean({'@type':['Person','Physician'],'@id':eu.replace(/\/$/,  '')+'#Person',
+        'name':`${e.prefix||'Dr.'} ${e.name}`,'honorificPrefix':e.prefix||'Dr.',
+        'jobTitle':e.title||undefined,'medicalSpecialty':'Dentistry',
+        'image':e.image||undefined,'url':eu||undefined,
+        'worksFor':{'@id':did},'sameAs':[e.topdoctors,e.doctoralia].filter(Boolean)
       }));
     }
   } else if(pt==='blog'){
     const e=p.employees?.[0];
-    graph.push(clean({
-      '@type':'BlogPosting',
-      'headline': p.pageTitle||'[TITULO DEL ARTÍCULO]',
-      'description':p.metaDesc||'[DESCRIPCIÓN]',
-      'url':p.url||undefined,
-      'datePublished':'YYYY-MM-DD',
-      'dateModified':'YYYY-MM-DD',
-      'inLanguage':'es',
+    g.push(clean({'@type':'BlogPosting',
+      'headline':p.pageTitle||'[TÍTULO DEL ARTÍCULO]',
+      'description':p.metaDesc||undefined,'url':p.url||undefined,
+      'datePublished':'YYYY-MM-DD','dateModified':'YYYY-MM-DD','inLanguage':'es',
       'author':e?.name?{'@type':['Person','Physician'],'@id':(e.url||'').replace(/\/$/,  '')+'#Person','name':`${e.prefix||'Dr.'} ${e.name}`}:undefined,
-      'publisher':{'@id':(baseUrl(p.url)||'').replace(/\/$/,  '')+'/#Organization'},
+      'publisher':{'@id':(baseUrl(p.url)||'').replace(/\/$/,  '')+'/#Organization'}
     }));
   }
-  return {'@context':'https://schema.org','@graph':graph};
+  return {'@context':'https://schema.org','@graph':g};
 }
 
-// ════════════════════════════════════════════════════════════════
-// GENERATE + DISPLAY
-// ════════════════════════════════════════════════════════════════
-function gen(){ generate(); }
-
+// ══════════════════════════════════════════════════════
+// GENERATE
+// ══════════════════════════════════════════════════════
 function generate(){
-  const p=currentProject(); if(!p) return;
-  const schema=buildForPageType(p, activePageType);
-  let filtered=schema;
-  if(outputFilter==='dentist'){
-    filtered={...schema,'@graph':schema['@graph'].filter(n=>n['@type']==='Dentist'||n['@type']?.[0]==='Dentist')};
-  } else if(outputFilter==='webpage'){
-    filtered={...schema,'@graph':schema['@graph'].filter(n=>n['@type']==='WebPage')};
-  }
-  const jsonStr=JSON.stringify(filtered,null,2);
-  document.getElementById('code-output').innerHTML=highlight(jsonStr);
-  const lines=jsonStr.split('\n').length;
-  document.getElementById('out-lines-count').textContent=`${lines} líneas · ${Math.round(jsonStr.length/1024*10)/10}kb`;
-  validateSchema(p);
-  saveProjects();
+  const p=P();if(!p)return;
+  const schema=buildSchema(p, activePT);
+  let out=schema;
+  if(jsonFilter==='dentist') out={...schema,'@graph':schema['@graph']?.filter(n=>n['@type']==='Dentist'||n['@type']?.[0]==='Dentist')||[]};
+  else if(jsonFilter==='webpage') out={...schema,'@graph':schema['@graph']?.filter(n=>n['@type']==='WebPage')||[]};
+
+  const str=JSON.stringify(out,null,2);
+  const el=document.getElementById('json-code');
+  // preserve copy-flash
+  el.innerHTML=highlight(str)+'<span class="copy-flash" id="copy-flash">¡Copiado!</span>';
+  document.getElementById('json-lines').textContent=`${str.split('\n').length} líneas · ${(str.length/1024).toFixed(1)}kb`;
+
+  // script tag
+  const scriptStr=`<script type="application/ld+json">\n${JSON.stringify(schema,null,2)}\n<\/script>`;
+  document.getElementById('script-code').innerHTML=highlight(scriptStr);
+
+  // serp
+  renderSerp(p);
+
+  // validation
+  validate(p);
+  scheduleSave();
 }
 
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// SERP PREVIEW
+// ══════════════════════════════════════════════════════
+function renderSerp(p){
+  const el=document.getElementById('serp-content');
+  if(!el) return;
+  const name=p.name||'Nombre de la clínica';
+  const city=p.address?.city||'Madrid';
+  const url=p.url||'https://www.miclinica.es/';
+  const urlClean=url.replace(/https?:\/\//,'').replace(/\/$/,'');
+  const desc=p.metaDesc||p.description||'Clínica dental en '+city+'. Especialistas en implantes dentales, ortodoncia y estética dental.';
+  const rating=p.rating?.value,count=p.rating?.count;
+  const starsFull=Math.floor(parseFloat(rating)||0);
+  const starsStr='★'.repeat(Math.min(starsFull,5))+'☆'.repeat(Math.max(0,5-starsFull));
+  const isOpen=isOpenNow(p);
+  const allFaqs=p.services?.flatMap(c=>c.items||[]).flatMap(i=>i.faqs||[])||[];
+
+  let html=`<div class="serp-label">Resultado orgánico</div>`;
+
+  // Organic card
+  html+=`<div class="serp-organic">
+    <div class="serp-breadcrumb">
+      <div class="serp-favicon">${(name[0]||'C').toUpperCase()}</div>
+      <span class="serp-site">${esc(urlClean)}</span>
+    </div>
+    <div class="serp-title">${esc(p.pageTitle||`Dentista en ${city} | ${name}`)}</div>
+    ${rating&&count?`<div class="serp-stars">
+      <span class="serp-star-val">${rating}</span>
+      <span class="serp-stars-ico">${starsStr}</span>
+      <span class="serp-review-count">(${count} reseñas)</span>
+    </div>`:''}
+    <div class="serp-desc">${esc(desc.slice(0,200))}${desc.length>200?'…':''}</div>
+  </div>`;
+
+  // Local card
+  html+=`<div class="serp-label">Google Local Pack</div>
+  <div class="serp-local">
+    <div class="serp-local-name">${esc(name)}</div>
+    <div class="serp-local-type">Clínica dental · ${p.priceRange||'€€'}</div>
+    ${rating?`<div class="serp-stars" style="margin-bottom:6px">
+      <span class="serp-star-val">${rating}</span>
+      <span class="serp-stars-ico">${starsStr}</span>
+      <span class="serp-review-count">${count||0} reseñas de Google</span>
+    </div>`:''}
+    ${p.address?.street?`<div class="serp-local-row"><span class="serp-local-ico">📍</span>${esc(p.address.street+', '+city)}</div>`:''}
+    ${p.telephone?`<div class="serp-local-row"><span class="serp-local-ico">📞</span>${esc(p.telephone)}</div>`:''}
+    <div class="serp-local-row"><span class="serp-local-ico">🕐</span>
+      <span class="${isOpen?'serp-open':'serp-closed'}">${isOpen?'Abierto ahora':'Cerrado ahora'}</span>
+      ${getHoursToday(p)?` · ${getHoursToday(p)}`:''}
+    </div>
+    ${p.isAccepting?`<div class="serp-local-row"><span class="serp-local-ico">✓</span>Aceptando nuevos pacientes</div>`:''}
+    <div class="serp-local-actions">
+      <button class="serp-action-btn">🗺 Cómo llegar</button>
+      <button class="serp-action-btn">📞 Llamar</button>
+      <button class="serp-action-btn">🌐 Sitio web</button>
+    </div>
+  </div>`;
+
+  // FAQ
+  if(allFaqs.length){
+    html+=`<div class="serp-label">FAQ Rich Result</div><div class="serp-faq">
+      ${allFaqs.slice(0,4).map((f,i)=>`
+      <div class="serp-faq-item" onclick="this.classList.toggle('open');this.nextElementSibling.style.maxHeight=this.classList.contains('open')?'200px':'0px';this.nextElementSibling.style.padding=this.classList.contains('open')?'0 20px 12px':'0 20px'">
+        <span class="serp-faq-q">${esc(f.q)}</span>
+        <span class="serp-faq-ico">▾</span>
+      </div>
+      <div class="serp-faq-a" style="max-height:0;padding:0 20px">${esc(f.a)}</div>`).join('')}
+    </div>`;
+  }
+
+  el.innerHTML=html;
+}
+
+function isOpenNow(p){
+  const now=new Date(), dayName=DAYS[now.getDay()===0?6:now.getDay()-1];
+  const hh=p.openingHours||[];
+  for(const h of hh){
+    if(!h.days?.includes(dayName)) continue;
+    const [oh,om]=h.opens.split(':').map(Number);
+    const [ch,cm]=h.closes.split(':').map(Number);
+    const cur=now.getHours()*60+now.getMinutes();
+    if(cur>=oh*60+om&&cur<=ch*60+cm) return true;
+  }
+  return false;
+}
+
+function getHoursToday(p){
+  const now=new Date(), dayName=DAYS[now.getDay()===0?6:now.getDay()-1];
+  const h=(p.openingHours||[]).find(h=>h.days?.includes(dayName));
+  return h?`${h.opens}–${h.closes}`:'';
+}
+
+// ══════════════════════════════════════════════════════
 // VALIDATION
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 const CHECKS=[
-  {label:'name',fn:p=>!!p.name,req:true},
-  {label:'url',fn:p=>!!p.url,req:true},
-  {label:'telephone',fn:p=>!!p.telephone,req:true},
-  {label:'address.street',fn:p=>!!p.address?.street,req:true},
-  {label:'address.city',fn:p=>!!p.address?.city,req:true},
-  {label:'geo (lat/lng)',fn:p=>!!p.geo?.lat&&!!p.geo?.lng,req:true},
-  {label:'geo 5 decimales',fn:p=>{
-    const l=String(p.geo?.lat||''); return l.includes('.')&&l.split('.')[1]?.length>=4;
-  },req:false},
-  {label:'openingHours',fn:p=>(p.openingHours||[]).some(h=>h.days?.length),req:true},
-  {label:'aggregateRating',fn:p=>!!p.rating?.value&&!!p.rating?.count,req:false},
-  {label:'hasOfferCatalog',fn:p=>(p.services||[]).some(c=>c.items?.some(i=>i.name)),req:false},
-  {label:'employee',fn:p=>(p.employees||[]).some(e=>e.name),req:false},
-  {label:'sameAs GBP',fn:p=>(p.sameAs||[]).some(s=>s.includes('google.com/maps')),req:false},
-  {label:'sameAs Doctoralia',fn:p=>(p.sameAs||[]).some(s=>s.includes('doctoralia')),req:false},
-  {label:'sameAs Top Doctors',fn:p=>(p.sameAs||[]).some(s=>s.includes('topdoctors')),req:false},
-  {label:'isAcceptingNewPatients',fn:p=>p.isAccepting!==false,req:false},
-  {label:'breadcrumbs',fn:p=>(p.breadcrumbs||[]).some(b=>b.name&&b.url),req:false},
-  {label:'description',fn:p=>!!p.description&&p.description.length>50,req:false},
-  {label:'logo URL',fn:p=>!!(p.logoUrl||(p.url&&baseUrl(p.url))),req:false},
+  {label:'name',           req:true,  p:p=>!!p.name},
+  {label:'url',            req:true,  p:p=>!!p.url},
+  {label:'telephone',      req:true,  p:p=>!!p.telephone},
+  {label:'address.street', req:true,  p:p=>!!p.address?.street},
+  {label:'address.city',   req:true,  p:p=>!!p.address?.city},
+  {label:'geo.lat',        req:true,  p:p=>!!p.geo?.lat},
+  {label:'geo.lng',        req:true,  p:p=>!!p.geo?.lng},
+  {label:'geo 5 decimales',req:false, p:p=>{ const l=''+( p.geo?.lat||''); return l.includes('.')&&l.split('.')[1]?.length>=4 }},
+  {label:'openingHours',   req:true,  p:p=>(p.openingHours||[]).some(h=>h.days?.length)},
+  {label:'description',    req:false, p:p=>p.description?.length>40},
+  {label:'aggregateRating',req:false, p:p=>!!p.rating?.value&&!!p.rating?.count},
+  {label:'hasOfferCatalog',req:false, p:p=>(p.services||[]).some(c=>c.items?.some(i=>i.name))},
+  {label:'employee',       req:false, p:p=>(p.employees||[]).some(e=>e.name)},
+  {label:'sameAs GBP',     req:false, p:p=>(p.sameAs||[]).some(s=>s.includes('google.com/maps'))},
+  {label:'sameAs Doctoralia',req:false,p:p=>(p.sameAs||[]).some(s=>s.includes('doctoralia'))},
+  {label:'sameAs Top Doctors',req:false,p:p=>(p.sameAs||[]).some(s=>s.includes('topdoctors'))},
+  {label:'isAcceptingNewPatients',req:false,p:p=>p.isAccepting!==false},
+  {label:'breadcrumbs',    req:false, p:p=>(p.breadcrumbs||[]).some(b=>b.name&&b.url)},
+  {label:'priceRange',     req:false, p:p=>!!p.priceRange},
+  {label:'logo',           req:false, p:p=>!!(p.logoUrl||p.url)},
 ];
 
-function validateSchema(p){
-  const items=document.getElementById('val-items');
-  let pass=0;
-  const html=CHECKS.map(c=>{
-    const ok=c.fn(p);
-    if(ok) pass++;
-    const cls=ok?'val-ok':c.req?'val-err':'val-warn';
-    const ico=ok?'✓':c.req?'✗':'!';
-    return `<div class="val-item ${cls}"><span class="vi">${ico}</span> ${c.label}</div>`;
-  }).join('');
-  items.innerHTML=html;
-  const score=Math.round(pass/CHECKS.length*100);
-  document.getElementById('val-score-text').textContent=score+'%';
-  document.getElementById('score-badge').textContent=score+'%';
-  const fill=document.getElementById('val-score-fill');
+function calcScore(p){
+  if(!p) return 0;
+  return Math.round(CHECKS.filter(c=>c.p(p)).length/CHECKS.length*100);
+}
+
+function validate(p){
+  const score=calcScore(p);
+  document.getElementById('score-top').textContent=score+'%';
+  document.getElementById('score-top').style.color=score>=80?'var(--green)':score>=50?'var(--yellow)':'var(--red)';
+  const fill=document.getElementById('val-fill');
   fill.style.width=score+'%';
   fill.style.background=score>=80?'var(--green)':score>=50?'var(--yellow)':'var(--red)';
+  document.getElementById('val-pct').textContent=score+'%';
+  document.getElementById('val-pct').style.color=score>=80?'var(--green)':score>=50?'var(--yellow)':'var(--red)';
+
+  const req=CHECKS.filter(c=>c.req), rec=CHECKS.filter(c=>!c.req);
+  const chips=(arr)=>arr.map(c=>{
+    const ok=c.p(p);
+    const cls=ok?'ok':c.req?'err':'warn';
+    const ico=ok?'✓':c.req?'✗':'!';
+    return `<div class="vchip ${cls}" title="${c.label}"><span class="vi">${ico}</span>${c.label}</div>`;
+  }).join('');
+
+  document.getElementById('val-body').innerHTML=`
+    <div class="val-section">
+      <div class="val-section-title">Obligatorios</div>
+      <div class="val-chips">${chips(req)}</div>
+    </div>
+    <div class="val-section">
+      <div class="val-section-title">Recomendados</div>
+      <div class="val-chips">${chips(rec)}</div>
+    </div>`;
 }
 
-// ════════════════════════════════════════════════════════════════
-// OUTPUT ACTIONS
-// ════════════════════════════════════════════════════════════════
+function toggleValDetail(){
+  valDetailMode=!valDetailMode;
+}
+
+// ══════════════════════════════════════════════════════
+// OUTPUT CONTROLS
+// ══════════════════════════════════════════════════════
+function setPageType(pt){
+  activePT=pt;
+  document.querySelectorAll('.pt-pill').forEach(p=>p.classList.toggle('active',p.dataset.pt===pt));
+  const labels={location:'Dentist + WebPage',service:'Service + FAQPage',person:'Person + Physician',homepage:'Organization + WebSite',blog:'BlogPosting'};
+  document.getElementById('json-type-label').textContent=labels[pt]||pt;
+  generate();
+}
+
+function setOutTab(ot){
+  activeOT=ot;
+  document.querySelectorAll('.otab').forEach(t=>t.classList.toggle('active',t.dataset.ot===ot));
+  document.getElementById('json-view').style.display=ot==='json'?'flex':'none';
+  document.getElementById('script-view').style.display=ot==='script'?'flex':'none';
+  document.getElementById('serp-view').style.display=ot==='serp'?'block':'none';
+}
+
+function filterJson(f){
+  jsonFilter=f;generate();
+}
+
+// ══════════════════════════════════════════════════════
+// COPY / DOWNLOAD
+// ══════════════════════════════════════════════════════
 function getRawJson(){
-  const p=currentProject(); if(!p) return '{}';
-  return JSON.stringify(buildForPageType(p, activePageType),null,2);
+  const p=P();if(!p)return'{}';
+  return JSON.stringify(buildSchema(p,activePT),null,2);
 }
-
 function getScriptTag(){
   return `<script type="application/ld+json">\n${getRawJson()}\n<\/script>`;
 }
 
-function copyOutput(){
-  navigator.clipboard.writeText(getRawJson()).then(()=>toast('JSON copiado ✓'));
+function copyJson(){
+  navigator.clipboard.writeText(getRawJson()).then(()=>{
+    const f=document.getElementById('copy-flash');
+    f.classList.add('show');setTimeout(()=>f.classList.remove('show'),1500);
+    toast('JSON copiado ✓','ok');
+  });
 }
+
 function copyScriptTag(){
-  navigator.clipboard.writeText(getScriptTag()).then(()=>toast('<script> tag copiado ✓'));
+  navigator.clipboard.writeText(getScriptTag()).then(()=>toast('<script> tag copiado ✓','ok'));
 }
 
 function downloadAll(){
-  const p=currentProject(); if(!p) return;
-  const types=['location','service','person','homepage','blog'];
-  const zip=[];
-  types.forEach(pt=>{
-    const schema=buildForPageType(p,pt);
-    if(schema['@graph']?.length){
-      const blob=new Blob([JSON.stringify(schema,null,2)],{type:'application/json'});
-      const a=document.createElement('a');
-      a.href=URL.createObjectURL(blob);
-      a.download=`schema-${slugify(p.name||'clinica')}-${pt}.json`;
-      a.click();
-    }
+  const p=P();if(!p) return;
+  ['location','service','person','homepage','blog'].forEach(pt=>{
+    const s=buildSchema(p,pt);
+    if(!s['@graph']?.length&&pt!=='service') return;
+    const b=new Blob([JSON.stringify(s,null,2)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(b);
+    a.download=`schema-${slugify(p.name||'clinica')}-${pt}.json`;
+    a.click();
   });
-  toast('Todos los schemas descargados ✓');
+  toast('Todos los schemas descargados ✓','ok');
 }
 
-// ════════════════════════════════════════════════════════════════
-// SYNTAX HIGHLIGHT
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// IMPORT
+// ══════════════════════════════════════════════════════
+function openImport(){ document.getElementById('import-modal').classList.add('open') }
+function closeImport(){ document.getElementById('import-modal').classList.remove('open') }
+
+function doImport(){
+  const raw=document.getElementById('import-textarea').value.trim();
+  if(!raw){ toast('Pega un JSON válido','err'); return; }
+  let j;
+  try{ j=JSON.parse(raw) }catch(e){ toast('JSON inválido: '+e.message,'err'); return; }
+  const p=P();if(!p)return;
+  // Try to extract Dentist node
+  const nodes=j['@graph']||[j];
+  const dentist=nodes.find(n=>n['@type']==='Dentist'||(Array.isArray(n['@type'])&&n['@type'].includes('Dentist')));
+  if(dentist){
+    if(dentist.name) p.name=dentist.name;
+    if(dentist.url) p.url=dentist.url;
+    if(dentist.telephone) p.telephone=dentist.telephone;
+    if(dentist.email) p.email=dentist.email;
+    if(dentist.description) p.description=dentist.description;
+    if(dentist.priceRange) p.priceRange=dentist.priceRange;
+    if(dentist.address){
+      p.address={
+        street:dentist.address.streetAddress||'',
+        city:dentist.address.addressLocality||'',
+        region:dentist.address.addressRegion||'',
+        postalCode:dentist.address.postalCode||'',
+        country:dentist.address.addressCountry||'ES',
+      };
+    }
+    if(dentist.geo){
+      p.geo={ lat:dentist.geo.latitude||'', lng:dentist.geo.longitude||'' };
+    }
+    if(dentist.hasMap) p.mapsUrl=dentist.hasMap;
+    if(dentist.aggregateRating){
+      p.rating={
+        value:dentist.aggregateRating.ratingValue||'',
+        count:dentist.aggregateRating.reviewCount||'',
+        best:dentist.aggregateRating.bestRating||'5',
+      };
+    }
+    if(dentist.sameAs) p.sameAs=Array.isArray(dentist.sameAs)?dentist.sameAs:[dentist.sameAs];
+    if(typeof dentist.isAcceptingNewPatients==='boolean') p.isAccepting=dentist.isAcceptingNewPatients;
+  }
+  closeImport();
+  save();renderAll();
+  toast('Schema importado correctamente ✓','ok');
+}
+
+// ══════════════════════════════════════════════════════
+// HIGHLIGHT
+// ══════════════════════════════════════════════════════
 function highlight(json){
   return json
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,m=>{
       if(/^"/.test(m)){
-        if(/:$/.test(m)) return `<span style="color:#93c5fd">${m}</span>`;
-        return `<span style="color:#86efac">${m}</span>`;
+        if(/:$/.test(m)) return`<span style="color:#93c5fd">${m}</span>`;
+        return`<span style="color:#86efac">${m}</span>`;
       }
-      if(/true|false/.test(m)) return `<span style="color:#f472b6">${m}</span>`;
-      if(/null/.test(m)) return `<span style="color:#475569">${m}</span>`;
-      return `<span style="color:#fbbf24">${m}</span>`;
+      if(/true|false/.test(m)) return`<span style="color:#f472b6">${m}</span>`;
+      if(/null/.test(m)) return`<span style="color:#475569">${m}</span>`;
+      return`<span style="color:#fbbf24">${m}</span>`;
     });
 }
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+function uid(){ return Math.random().toString(36).slice(2,9) }
 
-function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2200);
+// ══════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════
+let toastTimer;
+function toast(msg,type='ok'){
+  clearTimeout(toastTimer);
+  const el=document.getElementById('toast');
+  const ico=document.getElementById('toast-ico');
+  const lbl=document.getElementById('toast-msg');
+  const icons={ok:'✓',err:'✗',warn:'⚠',info:'✦'};
+  const colors={ok:'var(--green)',err:'var(--red)',warn:'var(--yellow)',info:'var(--purple2)'};
+  ico.textContent=icons[type]||'✓';
+  ico.style.color=colors[type];
+  lbl.textContent=msg;
+  el.classList.add('show');
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2500);
 }
 
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // RESIZE HANDLE
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 (function(){
-  const handle=document.getElementById('resize-handle');
-  const editor=document.getElementById('editor');
-  let dragging=false,startX=0,startW=0;
-  handle.addEventListener('mousedown',e=>{
-    dragging=true;startX=e.clientX;startW=editor.offsetWidth;
-    handle.classList.add('dragging');
-    document.body.style.cursor='col-resize';
-    document.body.style.userSelect='none';
-  });
-  document.addEventListener('mousemove',e=>{
-    if(!dragging) return;
-    const w=Math.min(Math.max(startW+(e.clientX-startX),300),700);
-    editor.style.width=w+'px';editor.style.minWidth=w+'px';
-  });
-  document.addEventListener('mouseup',()=>{
-    dragging=false;handle.classList.remove('dragging');
-    document.body.style.cursor='';document.body.style.userSelect='';
-  });
+  const h=document.getElementById('rh'),ep=document.getElementById('editor-panel');
+  let drag=false,sx=0,sw=0;
+  h.addEventListener('mousedown',e=>{drag=true;sx=e.clientX;sw=ep.offsetWidth;h.classList.add('drag');document.body.style.cursor='col-resize';document.body.style.userSelect='none'});
+  document.addEventListener('mousemove',e=>{if(!drag)return;ep.style.width=Math.min(Math.max(sw+(e.clientX-sx),280),750)+'px';ep.style.minWidth=ep.style.width});
+  document.addEventListener('mouseup',()=>{drag=false;h.classList.remove('drag');document.body.style.cursor='';document.body.style.userSelect=''});
 })();
 
-// ════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ══════════════════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey||e.metaKey){
+    if(e.shiftKey&&e.key==='C'){e.preventDefault();copyScriptTag();return}
+    if(e.key==='s'){e.preventDefault();save();toast('Guardado','ok');return}
+    if(e.key==='n'&&!e.shiftKey){e.preventDefault();newProject();return}
+    if(e.key==='c'&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){
+      e.preventDefault();copyJson();return;
+    }
+  }
+});
+
+// close modal on backdrop
+document.getElementById('import-modal').addEventListener('click',function(e){
+  if(e.target===this)closeImport();
+});
+
+// ══════════════════════════════════════════════════════
 // BOOT
-// ════════════════════════════════════════════════════════════════
-loadProjects();
+// ══════════════════════════════════════════════════════
+load();
 renderAll();
-showView('editor');
+setOutTab('json');
 </script>
 </body>
 </html>
