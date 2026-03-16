@@ -46,10 +46,23 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
 .project-item.active{background:var(--bg4);border-left:3px solid var(--accent)}
 .project-item.active .proj-name{color:var(--text)}
 .proj-icon{font-size:14px;flex-shrink:0}
-.proj-name{font-size:12px;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.proj-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;opacity:0;transition:opacity .2s;padding:2px 4px;border-radius:3px}
-.project-item:hover .proj-del{opacity:1}
+.proj-name{font-size:12px;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:text}
+.proj-name-input{font-size:12px;color:var(--text);flex:1;background:#1e2338;border:1px solid var(--accent);border-radius:3px;padding:1px 5px;outline:none;min-width:0}
+.proj-score{font-size:9px;font-weight:700;padding:1px 4px;border-radius:3px;background:#1e2338;color:var(--text3);flex-shrink:0;margin-right:2px}
+.proj-score.good{background:#052e16;color:#34d399}
+.proj-score.mid{background:#2d1f00;color:#fbbf24}
+.proj-score.low{background:#2d0f0f;color:#f87171}
+.proj-actions{display:flex;gap:2px;opacity:0;transition:opacity .2s;flex-shrink:0}
+.project-item:hover .proj-actions{opacity:1}
+.proj-del,.proj-dup,.proj-ren{background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;padding:2px 4px;border-radius:3px;transition:all .15s}
 .proj-del:hover{color:var(--danger);background:rgba(255,71,87,.15)}
+.proj-dup:hover{color:#60a5fa;background:rgba(96,165,250,.15)}
+.proj-ren:hover{color:#a78bfa;background:rgba(167,139,250,.15)}
+#sidebar-footer{padding:10px 12px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+#sidebar-footer-text{font-size:10px;color:var(--text3)}
+.sidebar-footer-btns{display:flex;gap:4px}
+.sidebar-footer-btn{background:none;border:1px solid var(--border);color:var(--text3);font-size:10px;padding:3px 7px;border-radius:3px;cursor:pointer;transition:all .15s}
+.sidebar-footer-btn:hover{color:var(--text2);border-color:var(--text3)}
 #sidebar-footer{padding:10px 12px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);text-align:center}
 
 /* RESIZE HANDLE */
@@ -313,7 +326,13 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
       <button class="icon-btn" title="Nuevo proyecto (Ctrl+N)" onclick="newProject()">+</button>
     </div>
     <div id="project-list"></div>
-    <div id="sidebar-footer">Schema SEO Tool v2.0</div>
+    <div id="sidebar-footer">
+      <span id="sidebar-footer-text">Schema SEO Tool v2.1</span>
+      <div class="sidebar-footer-btns">
+        <button class="sidebar-footer-btn" onclick="exportProjects()" title="Exportar todos los proyectos como JSON">⬇ Export</button>
+        <label class="sidebar-footer-btn" title="Importar proyectos desde JSON" style="cursor:pointer">⬆ Import<input type="file" accept=".json" style="display:none" onchange="importProjects(event)"></label>
+      </div>
+    </div>
   </div>
   <div class="resize-handle" id="rh1"></div>
 
@@ -988,6 +1007,7 @@ function deleteProject(id, e){
 function resetProject(){
   if(!confirm('¿Restablecer proyecto? Se perderán todos los datos.')) return;
   const p = getProject();
+  if(!p) return;
   const id=p.id, name=p.name;
   const fresh = JSON.parse(JSON.stringify(DEFAULT_PROJECT));
   fresh.id=id; fresh.name=name;
@@ -999,14 +1019,127 @@ function resetProject(){
 
 function renderSidebar(){
   const list = document.getElementById('project-list');
+  if(!list) return;
   list.innerHTML='';
   projects.forEach(p=>{
+    const score = calcProjectScore(p);
+    const scoreCls = score>=8?'good':score>=5?'mid':'low';
     const div=document.createElement('div');
     div.className='project-item'+(p.id===activeId?' active':'');
-    div.innerHTML=`<span class="proj-icon">🦷</span><span class="proj-name" title="${esc(p.name||'Sin nombre')}">${esc(p.name||'Sin nombre')}</span><button class="proj-del" onclick="deleteProject('${p.id}',event)" title="Eliminar">✕</button>`;
-    div.onclick=(e)=>{ if(!e.target.classList.contains('proj-del')) switchProject(p.id) };
+    div.innerHTML=`<span class="proj-icon">🦷</span><span class="proj-name" title="Doble clic para renombrar&#10;${esc(p.name||'Sin nombre')}">${esc(p.name||'Sin nombre')}</span><span class="proj-score ${scoreCls}" title="Puntuación schema">${score}/10</span><div class="proj-actions"><button class="proj-ren" onclick="startRename('${p.id}',event)" title="Renombrar (F2)">✎</button><button class="proj-dup" onclick="duplicateProject('${p.id}',event)" title="Duplicar proyecto">⎘</button><button class="proj-del" onclick="deleteProject('${p.id}',event)" title="Eliminar">✕</button></div>`;
+    div.onclick=(e)=>{
+      if(e.target.classList.contains('proj-del')||e.target.classList.contains('proj-dup')||e.target.classList.contains('proj-ren')||e.target.classList.contains('proj-name-input')) return;
+      if(e.target.classList.contains('proj-name')&&p.id===activeId){ startRename(p.id,e); return; }
+      switchProject(p.id);
+    };
     list.appendChild(div);
   });
+}
+
+function calcProjectScore(p){
+  // Quick score for sidebar badge based on key fields
+  let s=0;
+  if(p.clinicName) s++;
+  if(p.phone) s++;
+  if(p.url) s++;
+  if(p.street&&p.city) s++;
+  if(p.geo&&p.geo.lat&&p.geo.lng) s++;
+  if(p.openingHours&&p.openingHours.length) s++;
+  if(p.rating&&p.ratingCount) s++;
+  if(p.logo) s++;
+  if(p.services&&p.services.length>=2) s++;
+  if(p.employees&&p.employees.length) s++;
+  return s;
+}
+
+function startRename(id, e){
+  if(e) e.stopPropagation();
+  const list = document.getElementById('project-list');
+  const items = list.querySelectorAll('.project-item');
+  let targetItem = null;
+  items.forEach(item=>{
+    const btn = item.querySelector('.proj-ren');
+    if(btn && btn.getAttribute('onclick').includes(id)) targetItem=item;
+  });
+  if(!targetItem) return;
+  const nameSpan = targetItem.querySelector('.proj-name');
+  if(!nameSpan) return;
+  const p = projects.find(x=>x.id===id);
+  if(!p) return;
+  const input = document.createElement('input');
+  input.className='proj-name-input';
+  input.value=p.name||'';
+  input.maxLength=50;
+  nameSpan.replaceWith(input);
+  input.focus();
+  input.select();
+  const finish=(cancel)=>{
+    const newName=(input.value||'').trim()||p.name||'Nueva clínica';
+    if(!cancel && newName!==p.name){
+      p.name=newName;
+      if(activeId===id){
+        collectForm();
+        const proj=getProject();
+        if(proj) proj.name=newName;
+      }
+      saveStorage();
+      toast('Proyecto renombrado','info');
+    }
+    renderSidebar();
+  };
+  input.addEventListener('keydown',ev=>{
+    if(ev.key==='Enter'){ ev.preventDefault(); finish(false); }
+    if(ev.key==='Escape'){ finish(true); }
+  });
+  input.addEventListener('blur',()=>finish(false));
+}
+
+function duplicateProject(id, e){
+  if(e) e.stopPropagation();
+  collectForm(); saveStorage();
+  const src = projects.find(p=>p.id===id);
+  if(!src) return;
+  const copy = JSON.parse(JSON.stringify(src));
+  copy.id = uid();
+  copy.name = src.name+' (copia)';
+  const idx = projects.findIndex(p=>p.id===id);
+  projects.splice(idx+1, 0, copy);
+  activeId = copy.id;
+  saveStorage(); renderSidebar(); fillForm(); updateOutput();
+  toast('Proyecto duplicado','info');
+}
+
+function exportProjects(){
+  const data = JSON.stringify(projects, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'schema-seo-proyectos-'+(new Date().toISOString().slice(0,10))+'.json';
+  a.click();
+  toast('Proyectos exportados','success');
+}
+
+function importProjects(ev){
+  const file = ev.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const imported = JSON.parse(e.target.result);
+      const arr = Array.isArray(imported)?imported:[imported];
+      if(!arr.length||!arr[0].id) throw new Error('Formato inválido');
+      // Merge: add imported projects that don't exist yet (by id)
+      let added=0;
+      arr.forEach(imp=>{
+        if(!projects.find(p=>p.id===imp.id)){ projects.push(imp); added++; }
+      });
+      if(!added){ toast('Todos los proyectos ya existen','info'); return; }
+      saveStorage(); renderSidebar();
+      toast(added+' proyecto(s) importado(s)','success');
+    }catch(err){ toast('Error al importar: '+err.message,'error'); }
+  };
+  reader.readAsText(file);
+  ev.target.value=''; // reset input
 }
 
 // ============================================================
@@ -2935,7 +3068,9 @@ document.addEventListener('keydown',e=>{
   if(e.ctrlKey&&e.shiftKey&&e.key==='C'){ e.preventDefault(); copyOutput(); }
   else if(e.ctrlKey&&e.key==='s'){ e.preventDefault(); collectForm(); saveStorage(); toast('Guardado','success'); }
   else if(e.ctrlKey&&e.key==='n'){ e.preventDefault(); newProject(); }
-  else if(e.key==='Escape'){ closeModal(); }
+  else if(e.ctrlKey&&e.key==='d'){ e.preventDefault(); if(activeId) duplicateProject(activeId,null); }
+  else if(e.key==='F2'){ e.preventDefault(); if(activeId) startRename(activeId,null); }
+  else if(e.key==='Escape'){ closeModal(); closeOptimizer(); }
 });
 
 // ============================================================
