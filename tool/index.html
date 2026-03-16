@@ -224,6 +224,58 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
 .exception-fields{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px;margin-top:8px}
 .toggle-check{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2);user-select:none;margin-bottom:8px}
 .toggle-check input{accent-color:var(--accent);cursor:pointer}
+
+/* ── OPTIMIZER MODAL ───────────────────────────── */
+#opt-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;display:none;flex-direction:column;overflow:hidden}
+#opt-overlay.open{display:flex}
+#opt-header{display:flex;align-items:center;gap:14px;padding:12px 20px;background:#10121f;border-bottom:1px solid #1e2338;flex-shrink:0}
+#opt-header h2{font-size:15px;font-weight:700;color:#e2e8f0;display:flex;align-items:center;gap:8px}
+#opt-header p{font-size:12px;color:#506080;flex:1}
+.opt-body{display:flex;flex:1;overflow:hidden}
+.opt-col{display:flex;flex-direction:column;overflow:hidden;border-right:1px solid #1e2338}
+.opt-col:last-child{border-right:none}
+.opt-col-a{width:31%;min-width:260px}
+.opt-col-b{width:27%;min-width:220px;background:#0e1020}
+.opt-col-c{flex:1}
+.opt-col-header{padding:10px 16px;background:#141828;border-bottom:1px solid #1e2338;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.opt-col-header h3{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em}
+.opt-col-header span{font-size:11px;color:#506080}
+.opt-col-body{flex:1;overflow-y:auto;padding:14px 16px}
+.opt-col-body::-webkit-scrollbar{width:4px}
+.opt-col-body::-webkit-scrollbar-thumb{background:#272d47;border-radius:2px}
+#opt-input{width:100%;height:100%;resize:none;background:#0b0d14;border:none;color:#e2e8f0;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;line-height:1.7;padding:14px 16px;outline:none}
+.opt-footer{padding:10px 16px;background:#141828;border-top:1px solid #1e2338;display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn-opt{padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-opt-analyze{background:linear-gradient(135deg,#7c6ff7,#4f46e5);color:#fff}
+.btn-opt-analyze:hover{opacity:.9;transform:translateY(-1px)}
+.btn-opt-copy{background:#052e16;color:#34d399;border:1px solid #065f46}
+.btn-opt-copy:hover{background:#065f46}
+.btn-opt-import{background:#1a1635;color:#a78bfa;border:1px solid #4f46e5}
+.btn-opt-import:hover{background:#2d2060}
+.btn-opt-close{background:#1a1e30;color:#94a3b8;border:1px solid #272d47;margin-left:auto}
+.btn-opt-close:hover{border-color:#f87171;color:#f87171}
+.gap-section{margin-bottom:14px}
+.gap-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#3a4a6a;margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid #1e2338}
+.gap-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:6px;margin-bottom:5px;border:1px solid;font-size:12px;line-height:1.4}
+.gap-ok{background:#052e16;border-color:#065f46;color:#34d399}
+.gap-fixed{background:#1a1635;border-color:#4f46e5;color:#a78bfa}
+.gap-warn{background:#2d1f00;border-color:#78350f;color:#fbbf24}
+.gap-err{background:#2d0f0f;border-color:#7f1d1d;color:#f87171}
+.gap-ico{font-size:13px;flex-shrink:0;margin-top:1px}
+.gap-text b{display:block;font-weight:600;margin-bottom:2px}
+.gap-text small{font-size:10px;opacity:.72}
+.opt-score-box{background:#141828;border:1px solid #272d47;border-radius:8px;padding:14px;margin-bottom:16px;text-align:center}
+.opt-score-num{font-size:38px;font-weight:800;line-height:1}
+.opt-score-before{font-size:12px;color:#506080;margin-top:3px}
+.opt-score-arrow{font-size:18px;color:#a78bfa;margin:4px 0}
+.opt-score-label{font-size:11px;color:#506080;margin-top:4px}
+.opt-score-bar{height:6px;background:#1e2338;border-radius:3px;margin:10px 0 4px;overflow:hidden}
+.opt-score-fill{height:100%;border-radius:3px;transition:width .6s,background .4s}
+.opt-summary{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.opt-summary-chip{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid}
+#opt-output{width:100%;height:100%;padding:14px 16px;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;line-height:1.75;white-space:pre;overflow:auto;background:#0b0d14;color:#e2e8f0}
+.opt-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:#3a4a6a;font-size:13px}
+.opt-empty .ico{font-size:40px;opacity:.3}
 </style>
 </head>
 <body>
@@ -234,6 +286,7 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
   <span id="save-indicator">Todos los cambios guardados</span>
   <div class="tb-spacer"></div>
   <button class="tb-btn" onclick="openImport()">Importar JSON-LD</button>
+  <button class="tb-btn" onclick="openOptimizer()" style="background:linear-gradient(135deg,#7c6ff7,#4f46e5);color:#fff;border-color:transparent">⚡ Optimizador de Schema</button>
   <button class="tb-btn primary" onclick="copyOutput()">Copiar JSON-LD <kbd>Ctrl+Shift+C</kbd></button>
 </div>
 
@@ -636,6 +689,73 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
 
 <!-- TOAST CONTAINER -->
 <div id="toast-container"></div>
+
+<!-- OPTIMIZER MODAL -->
+<div id="opt-overlay">
+  <div id="opt-header">
+    <h2>⚡ Optimizador de Schema</h2>
+    <p>Pega tu schema actual → analiza qué falta → genera la versión perfecta automáticamente</p>
+    <button class="btn-opt btn-opt-close" onclick="closeOptimizer()">✕ Cerrar</button>
+  </div>
+  <div class="opt-body">
+    <!-- COL A: INPUT -->
+    <div class="opt-col opt-col-a">
+      <div class="opt-col-header">
+        <h3>📋 Tu schema actual</h3>
+        <span>Pega aquí y analiza</span>
+      </div>
+      <textarea id="opt-input" placeholder='Pega aquí tu JSON-LD actual, por ejemplo:
+
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Mi Clínica Dental",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Calle Serrano 45",
+    "addressLocality": "Madrid"
+  },
+  "telephone": "+34 91 555 0000"
+}'></textarea>
+      <div class="opt-footer">
+        <button class="btn-opt btn-opt-analyze" onclick="runOptimizer()">⚡ Analizar y optimizar</button>
+        <span id="opt-status" style="font-size:11px;color:#506080"></span>
+      </div>
+    </div>
+    <!-- COL B: GAP REPORT -->
+    <div class="opt-col opt-col-b">
+      <div class="opt-col-header">
+        <h3>🔍 Análisis de gaps</h3>
+        <span id="opt-gap-summary"></span>
+      </div>
+      <div class="opt-col-body" id="opt-gap-body">
+        <div class="opt-empty">
+          <div class="ico">🔍</div>
+          <span>Pega un schema y pulsa Analizar</span>
+        </div>
+      </div>
+    </div>
+    <!-- COL C: OUTPUT -->
+    <div class="opt-col opt-col-c">
+      <div class="opt-col-header">
+        <h3>✅ Schema optimizado</h3>
+        <span id="opt-out-meta"></span>
+      </div>
+      <div id="opt-output-wrap" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+        <div class="opt-empty" id="opt-output-empty" style="flex:1">
+          <div class="ico">✨</div>
+          <span>El schema optimizado aparecerá aquí</span>
+        </div>
+        <pre id="opt-output" style="display:none"></pre>
+      </div>
+      <div class="opt-footer" id="opt-out-footer" style="display:none">
+        <button class="btn-opt btn-opt-copy" onclick="copyOptimized()">Copiar JSON-LD</button>
+        <button class="btn-opt btn-opt-copy" onclick="copyOptimizedScript()" style="background:#0c1f3d;color:#60a5fa;border-color:#1e3a5f">&lt;script&gt; Copiar tag</button>
+        <button class="btn-opt btn-opt-import" onclick="importOptimizedToEditor()">→ Cargar en editor</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- IMPORT MODAL -->
 <div id="modal-overlay">
@@ -1992,6 +2112,358 @@ function toast(msg,type='info'){
   c.appendChild(t);
   requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ t.classList.add('show'); }); });
   setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(),400); },3000);
+}
+
+// ============================================================
+// SCHEMA OPTIMIZER
+// ============================================================
+let optimizedSchema = null;
+
+function openOptimizer(){ document.getElementById('opt-overlay').classList.add('open') }
+function closeOptimizer(){ document.getElementById('opt-overlay').classList.remove('open') }
+
+function hlOpt(json){
+  return json.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,m=>{
+      if(/^"/.test(m)) return /:$/.test(m)?`<span style="color:#93c5fd">${m}</span>`:`<span style="color:#86efac">${m}</span>`;
+      if(/true|false/.test(m)) return `<span style="color:#f472b6">${m}</span>`;
+      if(/null/.test(m)) return `<span style="color:#475569">${m}</span>`;
+      return `<span style="color:#fbbf24">${m}</span>`;
+    });
+}
+
+function cleanObj(o){ return JSON.parse(JSON.stringify(o,(k,v)=>v===undefined||v===null||v===''||(Array.isArray(v)&&!v.length)?undefined:v)) }
+
+function scoreSchema(d){
+  // Extract dentist node
+  const nodes = d['@graph']||[d];
+  const dn = nodes.find(n=>['Dentist','LocalBusiness','MedicalBusiness'].includes(n['@type'])||( Array.isArray(n['@type'])&&n['@type'].some(t=>['Dentist','LocalBusiness'].includes(t))));
+  if(!dn) return 0;
+  let s=0;
+  if(dn.name) s+=8;
+  if(dn.url) s+=7;
+  if(dn.telephone) s+=7;
+  if(dn.address?.streetAddress) s+=6;
+  if(dn.address?.addressLocality) s+=4;
+  if(dn.geo?.latitude) s+=8;
+  if(dn.openingHoursSpecification) s+=7;
+  else if(dn.openingHours) s+=3;
+  if(dn.aggregateRating) s+=7;
+  if(dn.review?.length) s+=5;
+  if(dn.hasOfferCatalog) s+=6;
+  if(dn.employee?.length) s+=5;
+  if(dn.sameAs?.some(u=>u.includes('google.com/maps'))) s+=5;
+  if(dn.sameAs?.some(u=>u.includes('doctoralia'))) s+=3;
+  if(dn.sameAs?.some(u=>u.includes('topdoctors'))) s+=3;
+  if(dn.isAcceptingNewPatients) s+=4;
+  if(dn.medicalSpecialty) s+=3;
+  if(dn['@id']) s+=3;
+  if(dn['@type']==='Dentist') s+=4;
+  if(dn.amenityFeature?.length) s+=2;
+  if(dn.contactPoint?.length) s+=2;
+  return Math.min(s,100);
+}
+
+function runOptimizer(){
+  const raw = document.getElementById('opt-input').value.trim();
+  if(!raw){ toast('Pega un schema JSON-LD primero','error'); return; }
+
+  let data;
+  try{ data = JSON.parse(raw); }
+  catch(e){ toast('JSON inválido: '+e.message,'error'); return; }
+
+  document.getElementById('opt-status').textContent='Analizando…';
+
+  // Extract Dentist/LocalBusiness node
+  const nodes = data['@graph']||[data];
+  const dn = nodes.find(n=>['Dentist','LocalBusiness','MedicalBusiness'].includes(n['@type'])||
+    (Array.isArray(n['@type'])&&n['@type'].some(t=>['Dentist','LocalBusiness','MedicalBusiness'].includes(t)))
+  ) || nodes[0] || data;
+
+  const scoreBefore = scoreSchema(data);
+  const gaps = [];
+  const fixes = [];
+
+  // Build optimized dentist
+  const opt = {};
+
+  // 1. @type
+  const origType = Array.isArray(dn['@type'])?dn['@type'].join(', '):dn['@type']||'';
+  if(dn['@type']==='Dentist'){
+    opt['@type']='Dentist'; gaps.push({s:'ok',label:'@type: Dentist',note:'Tipo correcto — más específico para clínicas dentales'});
+  } else {
+    opt['@type']='Dentist'; fixes.push('LocalBusiness/MedicalBusiness → Dentist');
+    gaps.push({s:'fixed',label:'@type mejorado: LocalBusiness → Dentist',note:'El tipo Dentist activa señales médicas en el Knowledge Graph'});
+  }
+
+  // 2. @id
+  if(dn['@id']){ opt['@id']=dn['@id']; gaps.push({s:'ok',label:'@id presente',note:dn['@id']}); }
+  else if(dn.url){
+    opt['@id'] = dn.url.replace(/\/$/,'')+'/#Dentist'; fixes.push('@id generado desde URL');
+    gaps.push({s:'fixed',label:'@id añadido automáticamente',note:opt['@id']});
+  } else {
+    gaps.push({s:'err',label:'@id — falta (y falta URL)',note:'Necesitas URL para generar el @id único'});
+  }
+
+  // 3. name
+  if(dn.name){ opt.name=dn.name; gaps.push({s:'ok',label:'name: '+dn.name}); }
+  else { gaps.push({s:'err',label:'name — REQUERIDO',note:'El nombre es obligatorio para Google Business'}); }
+
+  // 4. legalName
+  if(dn.legalName){ opt.legalName=dn.legalName; gaps.push({s:'ok',label:'legalName presente'}); }
+  else { gaps.push({s:'warn',label:'legalName — no incluido',note:'Recomendado para entidades comerciales'}); }
+
+  // 5. description
+  if(dn.description){ opt.description=dn.description; gaps.push({s:'ok',label:'description presente'}); }
+  else { gaps.push({s:'warn',label:'description — falta',note:'Añade descripción de 150-200 chars con ciudad y especialidades'}); }
+
+  // 6. url
+  if(dn.url){ opt.url=dn.url; gaps.push({s:'ok',label:'url: '+dn.url}); }
+  else { gaps.push({s:'err',label:'url — REQUERIDO',note:'URL única de esta página de ubicación'}); }
+
+  // 7. telephone
+  if(dn.telephone){ opt.telephone=dn.telephone; gaps.push({s:'ok',label:'telephone: '+dn.telephone}); }
+  else { gaps.push({s:'err',label:'telephone — REQUERIDO',note:'Con prefijo +34'}); }
+
+  // 8. email
+  if(dn.email){ opt.email=dn.email; gaps.push({s:'ok',label:'email presente'}); }
+  else { gaps.push({s:'warn',label:'email — no incluido'}); }
+
+  // 9. priceRange
+  opt.priceRange = dn.priceRange||'€€';
+  if(dn.priceRange) gaps.push({s:'ok',label:'priceRange: '+dn.priceRange});
+  else { fixes.push('priceRange añadido (€€ por defecto)'); gaps.push({s:'fixed',label:'priceRange añadido: €€',note:'Ajusta según tu clínica'}); }
+
+  // 10. isAcceptingNewPatients
+  if(dn.isAcceptingNewPatients!==undefined){ opt.isAcceptingNewPatients=dn.isAcceptingNewPatients; gaps.push({s:'ok',label:'isAcceptingNewPatients: '+dn.isAcceptingNewPatients}); }
+  else { opt.isAcceptingNewPatients=true; fixes.push('isAcceptingNewPatients: true añadido'); gaps.push({s:'fixed',label:'isAcceptingNewPatients: true añadido',note:'Clave para AI Overviews y Gemini Search'}); }
+
+  // 11. medicalSpecialty
+  if(dn.medicalSpecialty){ opt.medicalSpecialty=dn.medicalSpecialty; gaps.push({s:'ok',label:'medicalSpecialty presente'}); }
+  else { opt.medicalSpecialty='Dentistry'; fixes.push('medicalSpecialty: Dentistry añadido'); gaps.push({s:'fixed',label:'medicalSpecialty: Dentistry añadido',note:'Activa clasificación médica en el Knowledge Graph'}); }
+
+  // 12. paymentAccepted + currenciesAccepted
+  opt.paymentAccepted = dn.paymentAccepted||'Cash, Credit Card, Bank Transfer, Financing';
+  opt.currenciesAccepted = dn.currenciesAccepted||'EUR';
+  if(!dn.paymentAccepted){ fixes.push('paymentAccepted añadido'); gaps.push({s:'fixed',label:'paymentAccepted añadido',note:'Cash, Credit Card, Bank Transfer, Financing'}); }
+  else gaps.push({s:'ok',label:'paymentAccepted presente'});
+
+  // 13. logo
+  if(dn.logo){ opt.logo=dn.logo; gaps.push({s:'ok',label:'logo presente'}); }
+  else if(dn.url){ const b=dn.url.replace(/\/$/,'').split('/').slice(0,3).join('/'); opt.logo={'@type':'ImageObject','url':b+'/logo.png','width':300,'height':100}; fixes.push('logo ImageObject añadido'); gaps.push({s:'fixed',label:'logo ImageObject añadido',note:'Actualiza la URL real del logo'}); }
+  else { gaps.push({s:'warn',label:'logo — falta'}); }
+
+  // 14. address
+  if(dn.address){
+    opt.address={'@type':'PostalAddress',...dn.address};
+    if(!opt.address['@type']) opt.address['@type']='PostalAddress';
+    if(!opt.address.addressCountry) opt.address.addressCountry='ES';
+    const missing=[];
+    if(!dn.address.streetAddress) missing.push('streetAddress');
+    if(!dn.address.addressLocality) missing.push('addressLocality');
+    if(!dn.address.postalCode) missing.push('postalCode');
+    if(missing.length){ gaps.push({s:'warn',label:'address incompleto',note:'Faltan: '+missing.join(', ')}); }
+    else { gaps.push({s:'ok',label:'address completo'}); }
+  } else { gaps.push({s:'err',label:'address — REQUERIDO',note:'PostalAddress completo obligatorio'}); }
+
+  // 15. geo
+  if(dn.geo?.latitude&&dn.geo?.longitude){
+    opt.geo={'@type':'GeoCoordinates','latitude':''+dn.geo.latitude,'longitude':''+dn.geo.longitude};
+    const dec = (''+dn.geo.latitude).split('.')[1]?.length||0;
+    if(dec<4) gaps.push({s:'warn',label:'geo con pocos decimales ('+dec+')',note:'Mínimo 5 decimales para precisión local óptima'});
+    else gaps.push({s:'ok',label:'geo con '+dec+' decimales'});
+  } else { gaps.push({s:'err',label:'geo — REQUERIDO (GeoCoordinates)',note:'Mínimo 5 decimales. Obtén las coordenadas exactas de Google Maps'}); }
+
+  // 16. hasMap
+  if(dn.hasMap){ opt.hasMap=dn.hasMap; gaps.push({s:'ok',label:'hasMap presente'}); }
+  else { gaps.push({s:'warn',label:'hasMap — falta (URL Google Maps)',note:'Añade la URL de Google Maps con el CID'}); }
+
+  // 17. openingHours → openingHoursSpecification
+  if(dn.openingHoursSpecification){
+    opt.openingHoursSpecification=dn.openingHoursSpecification;
+    gaps.push({s:'ok',label:'openingHoursSpecification estructurado'});
+  } else if(dn.openingHours){
+    // Convert legacy string format
+    const parsed = parseOpeningHoursLegacy(dn.openingHours);
+    opt.openingHoursSpecification = parsed;
+    fixes.push('openingHours string → openingHoursSpecification estructurado');
+    gaps.push({s:'fixed',label:'openingHours convertido a formato estructurado',note:'Formato preferido por Google'});
+  } else { gaps.push({s:'err',label:'openingHoursSpecification — REQUERIDO',note:'Declara horarios estructurados por día'}); }
+
+  // 18. aggregateRating
+  if(dn.aggregateRating){ opt.aggregateRating=dn.aggregateRating; gaps.push({s:'ok',label:'aggregateRating presente ('+dn.aggregateRating.ratingValue+'★ · '+dn.aggregateRating.reviewCount+' reseñas)'}); }
+  else { gaps.push({s:'warn',label:'aggregateRating — falta',note:'Aumenta CTR un 15-30%. Solo si tienes reseñas reales'}); }
+
+  // 19. review[]
+  if(dn.review?.length){ opt.review=dn.review; gaps.push({s:'ok',label:'review[] presente ('+dn.review.length+' reseñas)'}); }
+  else { gaps.push({s:'warn',label:'review[] individual — falta',note:'Añade 2-3 reseñas reales verificables para reforzar la señal'}); }
+
+  // 20. hasOfferCatalog
+  if(dn.hasOfferCatalog){ opt.hasOfferCatalog=dn.hasOfferCatalog; gaps.push({s:'ok',label:'hasOfferCatalog presente'}); }
+  else { gaps.push({s:'warn',label:'hasOfferCatalog — falta',note:'Añade catálogo de servicios en dos niveles: categoría → tratamiento'}); }
+
+  // 21. employee
+  if(dn.employee?.length){ opt.employee=dn.employee; gaps.push({s:'ok',label:'employee[] presente ('+dn.employee.length+' doctores)'}); }
+  else { gaps.push({s:'warn',label:'employee[] — falta',note:'Añade doctores con tipo [Person, Physician] para señales E-E-A-T'}); }
+
+  // 22. areaServed
+  if(dn.areaServed){ opt.areaServed=dn.areaServed; gaps.push({s:'ok',label:'areaServed presente'}); }
+  else if(dn.address?.addressLocality){
+    opt.areaServed=[{'@type':'City','name':dn.address.addressLocality}];
+    fixes.push('areaServed generado desde addressLocality');
+    gaps.push({s:'fixed',label:'areaServed añadido desde ciudad',note:'Amplía con barrios/zonas específicas'});
+  } else { gaps.push({s:'warn',label:'areaServed — falta',note:'Añade las zonas de cobertura de la clínica'}); }
+
+  // 23. sameAs
+  if(dn.sameAs?.length){
+    opt.sameAs=dn.sameAs;
+    const hasMaps=dn.sameAs.some(u=>u.includes('google.com/maps'));
+    const hasDoct=dn.sameAs.some(u=>u.includes('doctoralia'));
+    const hasTop=dn.sameAs.some(u=>u.includes('topdoctors'));
+    if(!hasMaps) gaps.push({s:'warn',label:'sameAs: falta GBP (google.com/maps?cid=)',note:'La URL del CID de Google Business Profile es la señal de identidad más importante'});
+    else gaps.push({s:'ok',label:'sameAs: GBP presente'});
+    if(!hasDoct) gaps.push({s:'warn',label:'sameAs: falta Doctoralia',note:'Principal directorio médico en España'});
+    else gaps.push({s:'ok',label:'sameAs: Doctoralia presente'});
+    if(!hasTop) gaps.push({s:'warn',label:'sameAs: falta Top Doctors'});
+    else gaps.push({s:'ok',label:'sameAs: Top Doctors presente'});
+  } else {
+    gaps.push({s:'err',label:'sameAs — falta',note:'Añade mínimo: GBP CID + Doctoralia + Top Doctors + Facebook + Instagram'});
+  }
+
+  // 24. amenityFeature
+  if(dn.amenityFeature?.length){ opt.amenityFeature=dn.amenityFeature; gaps.push({s:'ok',label:'amenityFeature presente ('+dn.amenityFeature.length+' características)'}); }
+  else { gaps.push({s:'warn',label:'amenityFeature — falta',note:'Añade características: accesibilidad, parking, wifi, financiación'}); }
+
+  // 25. contactPoint
+  if(dn.contactPoint?.length){ opt.contactPoint=dn.contactPoint; gaps.push({s:'ok',label:'contactPoint presente'}); }
+  else { gaps.push({s:'warn',label:'contactPoint — falta',note:'Añade canales de contacto: teléfono, citas, urgencias'}); }
+
+  // 26. parentOrganization
+  if(dn.parentOrganization){ opt.parentOrganization=dn.parentOrganization; gaps.push({s:'ok',label:'parentOrganization presente'}); }
+  else { gaps.push({s:'warn',label:'parentOrganization — no declarado',note:'Si es sucursal de una cadena, enlaza con la Organization padre'}); }
+
+  // Build final optimized schema
+  const finalSchema = cleanObj({'@context':'https://schema.org','@graph':[opt]});
+  optimizedSchema = finalSchema;
+
+  const scoreAfter = scoreSchema(finalSchema);
+  const nOk = gaps.filter(g=>g.s==='ok').length;
+  const nFixed = gaps.filter(g=>g.s==='fixed').length;
+  const nWarn = gaps.filter(g=>g.s==='warn').length;
+  const nErr = gaps.filter(g=>g.s==='err').length;
+
+  // Render gap report
+  const gapHtml = `
+    <div class="opt-score-box">
+      <div class="opt-score-num" style="color:${scoreBefore>=80?'#34d399':scoreBefore>=50?'#fbbf24':'#f87171'}">${scoreBefore}%</div>
+      <div class="opt-score-before">Score original</div>
+      <div class="opt-score-arrow">↓ optimizado</div>
+      <div class="opt-score-num" style="color:${scoreAfter>=80?'#34d399':scoreAfter>=50?'#fbbf24':'#f87171'}">${scoreAfter}%</div>
+      <div class="opt-score-label">Score optimizado</div>
+      <div class="opt-score-bar"><div class="opt-score-fill" style="width:${scoreAfter}%;background:${scoreAfter>=80?'#34d399':scoreAfter>=50?'#fbbf24':'#f87171'}"></div></div>
+    </div>
+    <div class="opt-summary">
+      <span class="opt-summary-chip" style="background:#052e16;border-color:#065f46;color:#34d399">✓ ${nOk} ya presentes</span>
+      <span class="opt-summary-chip" style="background:#1a1635;border-color:#4f46e5;color:#a78bfa">⚡ ${nFixed} auto-mejorados</span>
+      ${nWarn?`<span class="opt-summary-chip" style="background:#2d1f00;border-color:#78350f;color:#fbbf24">! ${nWarn} necesitan datos</span>`:''}
+      ${nErr?`<span class="opt-summary-chip" style="background:#2d0f0f;border-color:#7f1d1d;color:#f87171">✗ ${nErr} requeridos faltantes</span>`:''}
+    </div>
+    ${nFixed?`<div class="gap-section"><div class="gap-section-title">⚡ Mejoras aplicadas automáticamente</div>
+      ${gaps.filter(g=>g.s==='fixed').map(g=>`<div class="gap-item gap-fixed"><span class="gap-ico">⚡</span><div class="gap-text"><b>${g.label}</b>${g.note?`<small>${g.note}</small>`:''}</div></div>`).join('')}
+    </div>`:''}
+    ${nOk?`<div class="gap-section"><div class="gap-section-title">✅ Ya estaba bien</div>
+      ${gaps.filter(g=>g.s==='ok').map(g=>`<div class="gap-item gap-ok"><span class="gap-ico">✓</span><div class="gap-text">${g.label}</div></div>`).join('')}
+    </div>`:''}
+    ${nWarn?`<div class="gap-section"><div class="gap-section-title">⚠️ Necesitan tus datos (añade en el editor)</div>
+      ${gaps.filter(g=>g.s==='warn').map(g=>`<div class="gap-item gap-warn"><span class="gap-ico">!</span><div class="gap-text"><b>${g.label}</b>${g.note?`<small>${g.note}</small>`:''}</div></div>`).join('')}
+    </div>`:''}
+    ${nErr?`<div class="gap-section"><div class="gap-section-title">✗ Requeridos — faltantes críticos</div>
+      ${gaps.filter(g=>g.s==='err').map(g=>`<div class="gap-item gap-err"><span class="gap-ico">✗</span><div class="gap-text"><b>${g.label}</b>${g.note?`<small>${g.note}</small>`:''}</div></div>`).join('')}
+    </div>`:''}
+  `;
+  document.getElementById('opt-gap-body').innerHTML=gapHtml;
+  document.getElementById('opt-gap-summary').textContent=nFixed+' mejoras aplicadas';
+
+  // Render output
+  const str = JSON.stringify(finalSchema, null, 2);
+  const outEl = document.getElementById('opt-output');
+  outEl.innerHTML = hlOpt(str);
+  outEl.style.display='block';
+  document.getElementById('opt-output-empty').style.display='none';
+  document.getElementById('opt-out-footer').style.display='flex';
+  document.getElementById('opt-out-meta').textContent=str.split('\n').length+' líneas · '+(str.length/1024).toFixed(1)+'kb';
+  document.getElementById('opt-status').textContent='✓ Análisis completado — '+fixes.length+' mejoras automáticas';
+
+  toast('Schema analizado: '+scoreBefore+'% → '+scoreAfter+'%','success');
+}
+
+function parseOpeningHoursLegacy(oh){
+  // Converts "Mo-Fr 09:00-18:00" format to openingHoursSpecification
+  const dayMap={Mo:'Monday',Tu:'Tuesday',We:'Wednesday',Th:'Thursday',Fr:'Friday',Sa:'Saturday',Su:'Sunday'};
+  const arr = Array.isArray(oh)?oh:[oh];
+  return arr.map(s=>{
+    const m=s.match(/([A-Z][a-z](?:-[A-Z][a-z])?)\s+(\d{2}:\d{2})-(\d{2}:\d{2})/);
+    if(!m) return null;
+    const [,dayPart,opens,closes]=m;
+    let days=[];
+    if(dayPart.includes('-')){
+      const [startD,endD]=dayPart.split('-');
+      const allDays=['Mo','Tu','We','Th','Fr','Sa','Su'];
+      const si=allDays.indexOf(startD), ei=allDays.indexOf(endD);
+      if(si>=0&&ei>=0) days=allDays.slice(si,ei+1).map(d=>dayMap[d]).filter(Boolean);
+    } else { days=[dayMap[dayPart]].filter(Boolean); }
+    if(!days.length) return null;
+    return {'@type':'OpeningHoursSpecification','dayOfWeek':days.length===1?days[0]:days,opens,closes};
+  }).filter(Boolean);
+}
+
+function copyOptimized(){
+  if(!optimizedSchema){ toast('Primero analiza un schema','error'); return; }
+  navigator.clipboard.writeText(JSON.stringify(optimizedSchema,null,2))
+    .then(()=>toast('JSON-LD optimizado copiado ✓','success'));
+}
+
+function copyOptimizedScript(){
+  if(!optimizedSchema){ toast('Primero analiza un schema','error'); return; }
+  const s=`<script type="application/ld+json">\n${JSON.stringify(optimizedSchema,null,2)}\n<\/script>`;
+  navigator.clipboard.writeText(s).then(()=>toast('<script> tag copiado ✓','success'));
+}
+
+function importOptimizedToEditor(){
+  if(!optimizedSchema){ toast('Primero analiza un schema','error'); return; }
+  const p = getProject(); if(!p) return;
+  const nodes = optimizedSchema['@graph']||[optimizedSchema];
+  const dn = nodes.find(n=>n['@type']==='Dentist'||n['@type']==='LocalBusiness')||nodes[0];
+  if(!dn){ toast('No se encontró entidad para importar','error'); return; }
+  if(dn.name) p.clinicName=dn.name;
+  if(dn.legalName) p.legalName=dn.legalName;
+  if(dn.description) p.desc=dn.description;
+  if(dn.telephone) p.phone=dn.telephone;
+  if(dn.email) p.email=dn.email;
+  if(dn.url) p.url=dn.url;
+  if(dn.priceRange) p.priceRange=dn.priceRange;
+  if(typeof dn.isAcceptingNewPatients==='boolean') p.accepting=dn.isAcceptingNewPatients;
+  if(dn.address){
+    p.street=dn.address.streetAddress||p.street;
+    p.city=dn.address.addressLocality||p.city;
+    p.region=dn.address.addressRegion||p.region;
+    p.postal=dn.address.postalCode||p.postal;
+  }
+  if(dn.geo){ p.geo={lat:dn.geo.latitude||'',lng:dn.geo.longitude||''}; }
+  if(dn.hasMap) p.maps=dn.hasMap;
+  if(dn.aggregateRating){ p.rating=dn.aggregateRating.ratingValue||''; p.ratingCount=dn.aggregateRating.reviewCount||''; }
+  if(dn.sameAs){
+    const sa=Array.isArray(dn.sameAs)?dn.sameAs:[dn.sameAs];
+    const maps=sa.find(u=>u.includes('google.com/maps')); if(maps) p.maps=maps;
+    const doct=sa.find(u=>u.includes('doctoralia')); if(doct) p.doctoralia=doct;
+  }
+  if(dn.openingHoursSpecification){
+    p.hours = (Array.isArray(dn.openingHoursSpecification)?dn.openingHoursSpecification:[dn.openingHoursSpecification])
+      .map(h=>({ days:Array.isArray(h.dayOfWeek)?h.dayOfWeek:[h.dayOfWeek], opens:h.opens||'09:00', closes:h.closes||'18:00' }));
+  }
+  saveStorage(); fillForm(); updateOutput();
+  closeOptimizer();
+  toast('Schema cargado en el editor ✓ — revisa los campos en amarillo','success');
 }
 
 // ============================================================
