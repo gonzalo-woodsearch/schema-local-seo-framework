@@ -166,6 +166,21 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
 .serp-desc{font-size:13px;color:#bdc1c6;line-height:1.5}
 .serp-rating{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:13px;color:#bdc1c6}
 .serp-stars{color:#fabb05;font-size:14px}
+.serp-service{background:#202124;border-radius:8px;padding:14px 16px;font-family:Arial,sans-serif}
+.serp-service-title{font-size:16px;color:#8ab4f8;font-weight:500;margin-bottom:4px;cursor:pointer}
+.serp-service-price{font-size:13px;color:#34d399;font-weight:600;margin-bottom:4px}
+.serp-service-desc{font-size:13px;color:#bdc1c6;line-height:1.5}
+/* COORD WARNING */
+.coord-warning{font-size:11px;color:var(--warn);margin-top:4px;display:none}
+.coord-warning.show{display:block}
+/* SCORE BREAKDOWN */
+.score-breakdown{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.score-cat{display:flex;flex-direction:column;gap:3px}
+.score-cat-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text2)}
+.score-cat-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.score-cat-fill{height:100%;border-radius:2px;transition:width .4s}
+/* AREA SERVED TAGS */
+.area-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
 .serp-local{background:#202124;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif}
 .serp-local-header{padding:10px 14px;border-bottom:1px solid #3c4043;font-size:12px;color:#bdc1c6}
 .serp-local-item{padding:10px 14px;border-bottom:1px solid #3c4043;display:flex;gap:10px;align-items:flex-start}
@@ -399,6 +414,38 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
         </div>
       </div>
 
+      <!-- DIRECTORIES / sameAs extra -->
+      <div class="section">
+        <div class="section-title">Directorios médicos (sameAs adicionales)</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Top Doctors URL</label>
+            <input type="url" id="f-topdoctors" placeholder="https://www.topdoctors.es/...">
+          </div>
+          <div class="form-group">
+            <label>Colegio de Dentistas URL</label>
+            <input type="url" id="f-colegio" placeholder="https://coem.org.es/...">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Yelp URL</label>
+            <input type="url" id="f-yelp" placeholder="https://www.yelp.es/biz/...">
+          </div>
+          <div class="form-group">
+            <label>Tuotromedico URL</label>
+            <input type="url" id="f-tuotromedico" placeholder="https://www.tuotromedico.com/...">
+          </div>
+        </div>
+      </div>
+
+      <!-- AWARDS / CERTIFICATIONS -->
+      <div class="section">
+        <div class="section-title">Premios y certificaciones (award / hasCredential)</div>
+        <div id="awards-list"></div>
+        <button class="add-btn" onclick="addAward()">+ Añadir certificación / premio</button>
+      </div>
+
       <!-- CONTACT POINTS -->
       <div class="section">
         <div class="section-title">Puntos de contacto (contactPoint)</div>
@@ -484,11 +531,13 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
         <div class="form-row">
           <div class="form-group">
             <label>Latitud</label>
-            <input type="number" id="f-lat" placeholder="40.4168" step="any">
+            <input type="number" id="f-lat" placeholder="40.41650" step="0.00001" oninput="checkCoordPrecision()">
+            <span class="coord-warning" id="lat-warning">&#9888; Menos de 5 decimales — precisión insuficiente para SEO local óptimo</span>
           </div>
           <div class="form-group">
             <label>Longitud</label>
-            <input type="number" id="f-lng" placeholder="-3.7038" step="any">
+            <input type="number" id="f-lng" placeholder="-3.70379" step="0.00001" oninput="checkCoordPrecision()">
+            <span class="coord-warning" id="lng-warning">&#9888; Menos de 5 decimales — precisión insuficiente para SEO local óptimo</span>
           </div>
         </div>
       </div>
@@ -501,6 +550,15 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
           </div>
         </div>
         <p class="text-sm" style="margin-top:4px">Si rellenas este campo junto con las coordenadas, se generará un GeoCircle en areaServed.</p>
+        <div style="margin-top:14px">
+          <label style="font-size:11px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px">Zonas de cobertura (areaServedList)</label>
+          <div class="area-tags" id="area-tags-list"></div>
+          <div class="tag-input-row">
+            <input type="text" id="area-zone-input" placeholder="Madrid, Barrio de Salamanca, Retiro…">
+            <button onclick="addAreaZone()">Añadir</button>
+          </div>
+          <p class="text-sm" style="margin-top:4px">Escribe una zona y pulsa Añadir. Genera areaServed[] con City/Place entries.</p>
+        </div>
       </div>
     </div>
 
@@ -630,6 +688,48 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
           </div>
         </div>
       </div>
+
+      <!-- PARENT ORGANIZATION -->
+      <div class="section">
+        <div class="section-title">Organización padre (cadena / grupo)</div>
+        <label class="toggle-check" style="margin-bottom:12px">
+          <input type="checkbox" id="f-hasParentOrg" onchange="toggleParentOrgFields()">
+          Es parte de una cadena o grupo clínico
+        </label>
+        <div id="parent-org-fields" style="display:none">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nombre de la organización padre</label>
+              <input type="text" id="f-parentOrgName" placeholder="Cleardent">
+            </div>
+            <div class="form-group">
+              <label>URL de la organización padre</label>
+              <input type="url" id="f-parentOrgUrl" placeholder="https://www.cleardent.es/">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>@id de la organización padre</label>
+              <input type="url" id="f-parentOrgId" placeholder="https://www.cleardent.es/#Organization">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MULTI-LOCATION MODE -->
+      <div class="section">
+        <div class="section-title">Modo cadena / multi-sucursal</div>
+        <label class="toggle-check" style="margin-bottom:12px">
+          <input type="checkbox" id="f-multiLocation" onchange="toggleMultiLocationFields()">
+          Modo cadena / multi-sucursal (incluye subOrganization)
+        </label>
+        <div id="multi-location-fields" style="display:none">
+          <p class="text-sm" style="margin-bottom:10px">Este schema incluirá subOrganization refs a otras sucursales en el nodo Organization.</p>
+          <div id="branches-list"></div>
+          <button class="add-btn" onclick="addBranch()">+ Añadir sucursal</button>
+        </div>
+      </div>
+
       <div class="section">
         <div class="section-title">Acciones destructivas</div>
         <button class="tb-btn" style="background:rgba(255,71,87,.1);border-color:var(--danger);color:var(--danger)" onclick="resetProject()">Restablecer proyecto actual</button>
@@ -659,6 +759,7 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
           <option value="blog">Blog / artículo</option>
         </select>
         <button class="tb-btn" onclick="copyOutput()" style="white-space:nowrap;font-size:11px">Copiar</button>
+        <button class="tb-btn" onclick="downloadJson()" style="white-space:nowrap;font-size:11px">&#8595; Descargar .json</button>
       </div>
       <div id="json-box"></div>
     </div>
@@ -678,6 +779,10 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
       <div class="serp-section">
         <h4>Local Pack</h4>
         <div class="serp-local" id="serp-local"></div>
+      </div>
+      <div class="serp-section" id="serp-service-section">
+        <h4>Service Rich Snippet</h4>
+        <div class="serp-service" id="serp-service"></div>
       </div>
       <div class="serp-section" id="serp-faq-section">
         <h4>FAQ Rich Snippet</h4>
@@ -751,6 +856,7 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
       <div class="opt-footer" id="opt-out-footer" style="display:none">
         <button class="btn-opt btn-opt-copy" onclick="copyOptimized()">Copiar JSON-LD</button>
         <button class="btn-opt btn-opt-copy" onclick="copyOptimizedScript()" style="background:#0c1f3d;color:#60a5fa;border-color:#1e3a5f">&lt;script&gt; Copiar tag</button>
+        <button class="btn-opt btn-opt-copy" onclick="downloadOptimized()" style="background:#162030;color:#7dd3fc;border-color:#1e4a70">&#8595; Descargar</button>
         <button class="btn-opt btn-opt-import" onclick="importOptimizedToEditor()">→ Cargar en editor</button>
       </div>
     </div>
@@ -778,6 +884,10 @@ const DEFAULT_PROJECT = {
   // Clinica
   clinicName:'', desc:'', phone:'', email:'', url:'', maps:'', doctoralia:'',
   founded:'', cif:'', rating:'', ratingCount:'', logo:'', image:'', license:'', college:'',
+  // Extra directories
+  topdoctors:'', colegio:'', yelp:'', tuotromedico:'',
+  // Awards/certifications
+  awards:[],
   // Contacto
   contactPoints:[],
   // Amenities
@@ -786,6 +896,7 @@ const DEFAULT_PROJECT = {
   street:'', city:'', region:'', postal:'', country:'ES', neighborhood:'',
   geo:{lat:'', lng:''},
   geoRadius:'',
+  areaServedList:[],
   // Horarios
   openingHours:[],
   // Servicios
@@ -799,7 +910,11 @@ const DEFAULT_PROJECT = {
   // FAQ
   faqs:[],
   // Config
-  lang:'es', currency:'EUR', priceMin:'', priceMax:'', specialties:'', insurance:'', social:''
+  lang:'es', currency:'EUR', priceMin:'', priceMax:'', specialties:'', insurance:'', social:'',
+  // Parent organization
+  hasParentOrg:false, parentOrgName:'', parentOrgUrl:'', parentOrgId:'',
+  // Multi-location
+  multiLocation:false, branches:[]
 };
 
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7) }
@@ -888,7 +1003,7 @@ function renderSidebar(){
   projects.forEach(p=>{
     const div=document.createElement('div');
     div.className='project-item'+(p.id===activeId?' active':'');
-    div.innerHTML=`<span class="proj-icon">🦷</span><span class="proj-name">${esc(p.name||'Sin nombre')}</span><button class="proj-del" onclick="deleteProject('${p.id}',event)" title="Eliminar">✕</button>`;
+    div.innerHTML=`<span class="proj-icon">🦷</span><span class="proj-name" title="${esc(p.name||'Sin nombre')}">${esc(p.name||'Sin nombre')}</span><button class="proj-del" onclick="deleteProject('${p.id}',event)" title="Eliminar">✕</button>`;
     div.onclick=(e)=>{ if(!e.target.classList.contains('proj-del')) switchProject(p.id) };
     list.appendChild(div);
   });
@@ -910,6 +1025,9 @@ function fillForm(){
   fs('f-founded',p.founded); fs('f-cif',p.cif); fs('f-rating',p.rating);
   fs('f-ratingCount',p.ratingCount); fs('f-logo',p.logo); fs('f-image',p.image);
   fs('f-license',p.license); fs('f-college',p.college);
+  // Extra directories
+  fs('f-topdoctors',p.topdoctors||''); fs('f-colegio',p.colegio||'');
+  fs('f-yelp',p.yelp||''); fs('f-tuotromedico',p.tuotromedico||'');
   fs('f-street',p.street); fs('f-city',p.city); fs('f-region',p.region);
   fs('f-postal',p.postal); fs('f-country',p.country||'ES'); fs('f-neighborhood',p.neighborhood);
   fs('f-lat',p.geo?.lat||''); fs('f-lng',p.geo?.lng||'');
@@ -918,6 +1036,15 @@ function fillForm(){
   fs('f-projName',p.name); fs('f-lang',p.lang||'es'); fs('f-currency',p.currency||'EUR');
   fs('f-priceMin',p.priceMin); fs('f-priceMax',p.priceMax);
   fs('f-specialties',p.specialties); fs('f-insurance',p.insurance); fs('f-social',p.social);
+  // Parent org
+  fb('f-hasParentOrg',p.hasParentOrg);
+  const pof=document.getElementById('parent-org-fields');
+  if(pof) pof.style.display=p.hasParentOrg?'block':'none';
+  fs('f-parentOrgName',p.parentOrgName||''); fs('f-parentOrgUrl',p.parentOrgUrl||''); fs('f-parentOrgId',p.parentOrgId||'');
+  // Multi-location
+  fb('f-multiLocation',p.multiLocation);
+  const mlf=document.getElementById('multi-location-fields');
+  if(mlf) mlf.style.display=p.multiLocation?'block':'none';
   // Amenities
   const am = p.amenities||{};
   document.querySelectorAll('.amenity-item').forEach(item=>{
@@ -931,6 +1058,9 @@ function fillForm(){
   renderTeam();
   renderReviews();
   renderFaqs();
+  renderAwards();
+  renderAreaTags();
+  renderBranches();
 }
 
 function collectForm(){
@@ -941,6 +1071,9 @@ function collectForm(){
   p.founded=fv('f-founded'); p.cif=fv('f-cif'); p.rating=fv('f-rating');
   p.ratingCount=fv('f-ratingCount'); p.logo=fv('f-logo'); p.image=fv('f-image');
   p.license=fv('f-license'); p.college=fv('f-college');
+  // Extra directories
+  p.topdoctors=fv('f-topdoctors'); p.colegio=fv('f-colegio');
+  p.yelp=fv('f-yelp'); p.tuotromedico=fv('f-tuotromedico');
   p.street=fv('f-street'); p.city=fv('f-city'); p.region=fv('f-region');
   p.postal=fv('f-postal'); p.country=fv('f-country'); p.neighborhood=fv('f-neighborhood');
   p.geo={lat:fv('f-lat'),lng:fv('f-lng')};
@@ -949,6 +1082,11 @@ function collectForm(){
   p.name=fv('f-projName')||p.name; p.lang=fv('f-lang'); p.currency=fv('f-currency');
   p.priceMin=fv('f-priceMin'); p.priceMax=fv('f-priceMax');
   p.specialties=fv('f-specialties'); p.insurance=fv('f-insurance'); p.social=fv('f-social');
+  // Parent org
+  p.hasParentOrg=fg('f-hasParentOrg');
+  p.parentOrgName=fv('f-parentOrgName'); p.parentOrgUrl=fv('f-parentOrgUrl'); p.parentOrgId=fv('f-parentOrgId');
+  // Multi-location
+  p.multiLocation=fg('f-multiLocation');
   // Amenities
   document.querySelectorAll('.amenity-item input[type=checkbox]').forEach(cb=>{
     const k=cb.dataset.key; if(k) p.amenities[k]=cb.checked;
@@ -1127,7 +1265,7 @@ function renderServices(){
   (p.services||[]).forEach((s,i)=>{
     const card=document.createElement('div');
     card.className='card';
-    const procTypes=['','SurgicalProcedure','TherapeuticProcedure','DiagnosticProcedure','NoninvasiveProcedure','PhysicalExam'];
+    const procTypes=['','SurgicalProcedure','TherapeuticProcedure','DiagnosticProcedure','NoninvasiveProcedure','PhysicalExam','Consultation','Checkup','Cleaning','Extraction'];
     card.innerHTML=`
       <div class="card-header">
         <h4>${esc(s.name)||'Servicio '+(i+1)}</h4>
@@ -1548,6 +1686,196 @@ function toggleSection(header){
 }
 
 // ============================================================
+// AWARDS / CERTIFICATIONS
+// ============================================================
+function addAward(){
+  const p=getProject(); if(!p) return;
+  if(!p.awards) p.awards=[];
+  p.awards.push({id:uid(),name:'',issuedBy:'',year:'',url:''});
+  renderAwards(); scheduleSave();
+}
+function removeAward(id){
+  const p=getProject(); if(!p) return;
+  p.awards=p.awards.filter(a=>a.id!==id);
+  renderAwards(); scheduleSave();
+}
+function awardField(id,field,val){
+  const p=getProject(); if(!p) return;
+  const a=p.awards.find(x=>x.id===id); if(a) a[field]=val;
+  scheduleSave();
+}
+function renderAwards(){
+  const p=getProject(); if(!p) return;
+  const list=document.getElementById('awards-list'); if(!list) return;
+  list.innerHTML='';
+  (p.awards||[]).forEach((a,i)=>{
+    const card=document.createElement('div');
+    card.className='card';
+    card.innerHTML=`
+      <div class="card-header">
+        <h4>${esc(a.name)||'Certificación '+(i+1)}</h4>
+        <button class="card-del" onclick="removeAward('${a.id}')">&#10005;</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre del certificado / premio *</label>
+          <input type="text" value="${esc(a.name)}" onchange="awardField('${a.id}','name',this.value)" placeholder="ISO 9001:2015">
+        </div>
+        <div class="form-group">
+          <label>Emitido por</label>
+          <input type="text" value="${esc(a.issuedBy)}" onchange="awardField('${a.id}','issuedBy',this.value)" placeholder="AENOR">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Año</label>
+          <input type="number" value="${esc(a.year)}" onchange="awardField('${a.id}','year',this.value)" placeholder="2023" min="1900" max="2030">
+        </div>
+        <div class="form-group">
+          <label>URL del certificado</label>
+          <input type="url" value="${esc(a.url)}" onchange="awardField('${a.id}','url',this.value)" placeholder="https://clinica.com/certificado.pdf">
+        </div>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+// ============================================================
+// AREA SERVED TAGS
+// ============================================================
+function addAreaZone(){
+  const input=document.getElementById('area-zone-input'); if(!input) return;
+  const val=input.value.trim(); if(!val) return;
+  const p=getProject(); if(!p) return;
+  if(!p.areaServedList) p.areaServedList=[];
+  if(!p.areaServedList.includes(val)) p.areaServedList.push(val);
+  input.value='';
+  renderAreaTags(); scheduleSave();
+}
+function removeAreaZone(idx){
+  const p=getProject(); if(!p) return;
+  p.areaServedList.splice(idx,1);
+  renderAreaTags(); scheduleSave();
+}
+function renderAreaTags(){
+  const p=getProject(); if(!p) return;
+  const list=document.getElementById('area-tags-list'); if(!list) return;
+  list.innerHTML=(p.areaServedList||[]).map((z,i)=>
+    `<span class="tag">${esc(z)}<button onclick="removeAreaZone(${i})">&#10005;</button></span>`
+  ).join('');
+}
+// Allow Enter key to add zone
+document.addEventListener('DOMContentLoaded',()=>{
+  const ainput=document.getElementById('area-zone-input');
+  if(ainput) ainput.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();addAreaZone();} });
+});
+
+// ============================================================
+// BRANCHES (MULTI-LOCATION)
+// ============================================================
+function addBranch(){
+  const p=getProject(); if(!p) return;
+  if(!p.branches) p.branches=[];
+  p.branches.push({id:uid(),name:'',url:''});
+  renderBranches(); scheduleSave();
+}
+function removeBranch(id){
+  const p=getProject(); if(!p) return;
+  p.branches=p.branches.filter(b=>b.id!==id);
+  renderBranches(); scheduleSave();
+}
+function branchField(id,field,val){
+  const p=getProject(); if(!p) return;
+  const b=p.branches.find(x=>x.id===id); if(b) b[field]=val;
+  scheduleSave();
+}
+function renderBranches(){
+  const p=getProject(); if(!p) return;
+  const list=document.getElementById('branches-list'); if(!list) return;
+  list.innerHTML='';
+  (p.branches||[]).forEach((b,i)=>{
+    const card=document.createElement('div');
+    card.className='card';
+    card.innerHTML=`
+      <div class="card-header">
+        <h4>Sucursal ${i+1}</h4>
+        <button class="card-del" onclick="removeBranch('${b.id}')">&#10005;</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre de la sucursal</label>
+          <input type="text" value="${esc(b.name)}" onchange="branchField('${b.id}','name',this.value)" placeholder="Clínica Dental Norte">
+        </div>
+        <div class="form-group">
+          <label>URL de la sucursal</label>
+          <input type="url" value="${esc(b.url)}" onchange="branchField('${b.id}','url',this.value)" placeholder="https://clinica.com/norte">
+        </div>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+// ============================================================
+// PARENT ORG TOGGLE / MULTI-LOCATION TOGGLE
+// ============================================================
+function toggleParentOrgFields(){
+  const p=getProject(); if(!p) return;
+  const cb=document.getElementById('f-hasParentOrg');
+  p.hasParentOrg=cb?cb.checked:false;
+  const pof=document.getElementById('parent-org-fields');
+  if(pof) pof.style.display=p.hasParentOrg?'block':'none';
+  scheduleSave();
+}
+function toggleMultiLocationFields(){
+  const p=getProject(); if(!p) return;
+  const cb=document.getElementById('f-multiLocation');
+  p.multiLocation=cb?cb.checked:false;
+  const mlf=document.getElementById('multi-location-fields');
+  if(mlf) mlf.style.display=p.multiLocation?'block':'none';
+  scheduleSave();
+}
+
+// ============================================================
+// COORDINATE PRECISION WARNING
+// ============================================================
+function checkCoordPrecision(){
+  ['lat','lng'].forEach(field=>{
+    const input=document.getElementById('f-'+field);
+    const warning=document.getElementById(field+'-warning');
+    if(!input||!warning) return;
+    const val=input.value;
+    if(!val){ warning.classList.remove('show'); return; }
+    const parts=val.split('.');
+    const decimals=parts.length>1?parts[1].length:0;
+    warning.classList.toggle('show', decimals>0 && decimals<5);
+  });
+}
+
+// ============================================================
+// DOWNLOAD JSON
+// ============================================================
+function downloadJson(){
+  const p=getProject();
+  const str=JSON.stringify(buildSchema(),null,2);
+  const blob=new Blob([str],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=(p&&p.clinicName?p.clinicName.replace(/[^a-z0-9]/gi,'-').toLowerCase():'schema')+'.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function downloadOptimized(){
+  if(!optimizedSchema){ toast('Primero analiza un schema','error'); return; }
+  const str=JSON.stringify(optimizedSchema,null,2);
+  const blob=new Blob([str],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='schema-optimizado.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ============================================================
 // SCHEMA BUILDERS
 // ============================================================
 function removeUndefined(obj){
@@ -1594,12 +1922,17 @@ function buildDentist(p){
       'longitude':p.geo.lng,
     };
   }
-  // GeoCircle areaServed
-  if(p.geoRadius && p.geo?.lat && p.geo?.lng){
+  // GeoCircle areaServed or areaServedList
+  if((p.areaServedList||[]).length>0){
+    obj.areaServed=p.areaServedList.map((z,i)=>({
+      '@type': i===0&&p.city&&z.toLowerCase()===p.city.toLowerCase()?'City':'Place',
+      'name':z
+    }));
+  } else if(p.geoRadius && p.geo?.lat && p.geo?.lng){
     obj.areaServed={
       '@type':'GeoCircle',
       'geoMidpoint':{'@type':'GeoCoordinates','latitude':p.geo.lat,'longitude':p.geo.lng},
-      'geoRadius':String(p.geoRadius)
+      'geoRadius':Number(p.geoRadius)
     };
   }
   // Opening hours
@@ -1607,7 +1940,7 @@ function buildDentist(p){
     obj.openingHoursSpecification = p.openingHours.filter(h=>(h.days||[]).length>0).map(h=>{
       const spec={
         '@type':'OpeningHoursSpecification',
-        'dayOfWeek':h.days.map(d=>'http://schema.org/'+{Mo:'Monday',Tu:'Tuesday',We:'Wednesday',Th:'Thursday',Fr:'Friday',Sa:'Saturday',Su:'Sunday'}[d]),
+        'dayOfWeek':h.days.map(d=>'https://schema.org/'+{Mo:'Monday',Tu:'Tuesday',We:'Wednesday',Th:'Thursday',Fr:'Friday',Sa:'Saturday',Su:'Sunday'}[d]),
         'opens':h.opens||'09:00',
         'closes':h.closes||'20:00',
       };
@@ -1652,7 +1985,7 @@ function buildDentist(p){
   }
   // Employees
   if((p.employees||[]).filter(e=>e.name).length){
-    obj.employee=p.employees.filter(e=>e.name).map(e=>buildEmployee(e,p));
+    obj.employee=p.employees.filter(e=>e.name).map((e,i)=>buildEmployee(e,p,i));
   }
   // Specialties
   if(p.specialties) obj.medicalSpecialty=p.specialties.split(',').map(s=>s.trim()).filter(Boolean);
@@ -1662,8 +1995,62 @@ function buildDentist(p){
   const sameAs=[];
   if(p.maps) sameAs.push(p.maps);
   if(p.doctoralia) sameAs.push(p.doctoralia);
+  if(p.topdoctors) sameAs.push(p.topdoctors);
+  if(p.colegio) sameAs.push(p.colegio);
+  if(p.yelp) sameAs.push(p.yelp);
+  if(p.tuotromedico) sameAs.push(p.tuotromedico);
   if(p.social) p.social.split(',').forEach(s=>{const v=s.trim();if(v)sameAs.push(v);});
   if(sameAs.length) obj.sameAs=sameAs;
+  // parentOrganization
+  if(p.hasParentOrg && p.parentOrgName){
+    obj.parentOrganization={
+      '@type':'Organization',
+      '@id':p.parentOrgId||undefined,
+      'name':p.parentOrgName,
+      'url':p.parentOrgUrl||undefined
+    };
+  }
+  // hasOfferCatalog
+  const validServices=(p.services||[]).filter(s=>s.name);
+  if(validServices.length){
+    obj.hasOfferCatalog={
+      '@type':'OfferCatalog',
+      'name':'Tratamientos Dentales \u2014 '+(p.clinicName||'Clínica'),
+      'itemListElement':validServices.map(s=>{
+        const item={
+          '@type':'Offer',
+          'itemOffered':{
+            '@type':'MedicalTherapy',
+            'name':s.name,
+            'url':s.url||undefined,
+            'description':s.desc||undefined
+          }
+        };
+        if(s.price){
+          item.price=s.price;
+          item.priceCurrency=p.currency||'EUR';
+          item.priceSpecification={
+            '@type':'PriceSpecification',
+            'price':s.price,
+            'priceCurrency':p.currency||'EUR'
+          };
+        }
+        return item;
+      })
+    };
+  }
+  // awards / hasCredential
+  const validAwards=(p.awards||[]).filter(a=>a.name);
+  if(validAwards.length){
+    obj.award=validAwards.map(a=>a.name+(a.issuedBy?' \u2014 '+a.issuedBy:'')+(a.year?' ('+a.year+')':''));
+    obj.hasCredential=validAwards.map(a=>removeUndefined({
+      '@type':'EducationalOccupationalCredential',
+      'name':a.name,
+      'issuedBy':a.issuedBy?{'@type':'Organization','name':a.issuedBy}:undefined,
+      'dateCreated':a.year?''+a.year:undefined,
+      'url':a.url||undefined
+    }));
+  }
   // Insurance
   if(p.insurance) obj.isAcceptingNewPatients=true;
   // PriceRange
@@ -1675,10 +2062,11 @@ function buildDentist(p){
   return removeUndefined(obj);
 }
 
-function buildEmployee(e, p){
+function buildEmployee(e, p, idx){
+  const nameSlug=e.name.toLowerCase().replace(/[^a-z0-9]/g,'-');
   const empObj={
     '@type':'Dentist',
-    '@id':(e.url||p.url||'')+'#'+e.name.replace(/\s+/g,''),
+    '@id':(e.url||p.url||'')+'#person-'+nameSlug+'-'+(idx!==undefined?idx:0),
     'name':e.name,
     'jobTitle':e.role||undefined,
     'description':e.bio||undefined,
@@ -1775,7 +2163,7 @@ function buildPersonPage(p){
   const graph=[];
   const url=p.url||'';
   if(e){
-    graph.push(buildEmployee(e,p));
+    graph.push(buildEmployee(e,p,0));
   } else {
     graph.push(removeUndefined({'@type':'Person','@id':url+'#Person','name':'Doctor/a sin nombre'}));
   }
@@ -1830,11 +2218,20 @@ function buildBlogPage(p){
 
 function buildLocationPage(p){
   const url=p.url||'';
+  const websiteNode=removeUndefined({
+    '@type':'WebSite','@id':url+'#Website','url':url||undefined,
+    'name':p.clinicName||undefined,'inLanguage':p.lang||'es'
+  });
+  // multi-location subOrganization
+  if(p.multiLocation && (p.branches||[]).filter(b=>b.name||b.url).length){
+    websiteNode.subOrganization=(p.branches||[]).filter(b=>b.name||b.url).map(b=>removeUndefined({
+      '@type':'Dentist',
+      'name':b.name||undefined,
+      'url':b.url||undefined
+    }));
+  }
   const graph=[
-    removeUndefined({
-      '@type':'WebSite','@id':url+'#Website','url':url||undefined,
-      'name':p.clinicName||undefined,'inLanguage':p.lang||'es'
-    }),
+    websiteNode,
     removeUndefined({
       '@type':'WebPage','@id':url+'#WebPage','url':url||undefined,
       'name':p.metaTitle||p.clinicName||undefined,'description':p.metaDesc||p.desc||undefined,
@@ -1921,10 +2318,29 @@ function updateValidation(p, schema){
   const passed=checks.filter(c=>c.pass).length;
   const total=checks.length;
   const score=Math.round(passed/total*10);
+  // Category breakdown
+  const cats=[
+    {label:'Identidad',ids:['name','url','phone','logo','social','founded']},
+    {label:'Ubicación',ids:['address','postal','geo','hours','geoRadius']},
+    {label:'Servicios',ids:['services','procedure']},
+    {label:'E-E-A-T',ids:['employees','review','faqs','specialty','credentials','knowsAbout','rating']}
+  ];
+  const catScores=cats.map(cat=>{
+    const catChecks=checks.filter(c=>cat.ids.includes(c.id));
+    const catPassed=catChecks.filter(c=>c.pass).length;
+    return {label:cat.label,pct:catChecks.length?Math.round(catPassed/catChecks.length*100):0};
+  });
+  const catBarsHtml=catScores.map(c=>{
+    const col=c.pct>=80?'var(--ok)':c.pct>=50?'var(--warn)':'var(--danger)';
+    return `<div class="score-cat">
+      <div class="score-cat-label"><span>${c.label}</span><span>${c.pct}%</span></div>
+      <div class="score-cat-bar"><div class="score-cat-fill" style="width:${c.pct}%;background:${col}"></div></div>
+    </div>`;
+  }).join('');
   // Score display
   const scoreBox=document.getElementById('val-score-box');
   const cls=score>=8?'good':score>=5?'ok':'bad';
-  scoreBox.innerHTML=`<div class="score-circle ${cls}">${score}/10</div><div class="score-info"><h3>${passed}/${total} verificaciones</h3><p>${score>=8?'Schema excelente. Listo para publicar.':score>=5?'Schema bueno. Añade más datos para mejorar.':'Schema incompleto. Rellena más campos.'}</p></div>`;
+  scoreBox.innerHTML=`<div class="score-circle ${cls}">${score}/10</div><div class="score-info" style="flex:1"><h3>${passed}/${total} verificaciones</h3><p>${score>=8?'Schema excelente. Listo para publicar.':score>=5?'Schema bueno. Añade más datos para mejorar.':'Schema incompleto. Rellena más campos.'}</p><div class="score-breakdown">${catBarsHtml}</div></div>`;
   // Items
   const itemsEl=document.getElementById('val-items');
   itemsEl.innerHTML=checks.map(c=>`
@@ -1966,6 +2382,25 @@ function updateSerp(p){
       <div class="serp-local-item">
         <div><div class="sli-name" style="color:#bdc1c6">Clínica Dental Competencia B</div><div class="sli-meta">Calle Ejemplo, 12 · ★ 4.4</div></div>
       </div>`;
+  }
+  // Service snippet
+  const serviceEl=document.getElementById('serp-service');
+  const serviceSection=document.getElementById('serp-service-section');
+  const firstSvc=(p.services||[]).find(s=>s.name);
+  if(serviceEl && serviceSection){
+    if(firstSvc){
+      serviceSection.style.display='block';
+      const priceHtml=firstSvc.price?`<div class="serp-service-price">${esc(firstSvc.price)}</div>`:'';
+      const descHtml=firstSvc.desc?`<div class="serp-service-desc">${esc(firstSvc.desc.slice(0,120))}${firstSvc.desc.length>120?'…':''}</div>`:'';
+      const stars=p.rating?'<span class="serp-stars">'+'&#9733;'.repeat(Math.round(parseFloat(p.rating)||0))+'</span> '+p.rating+' &nbsp;':'';
+      serviceEl.innerHTML=`
+        <div class="serp-service-title">${esc(firstSvc.name)}</div>
+        ${priceHtml}
+        ${descHtml}
+        ${p.rating?`<div class="serp-rating">${stars}</div>`:''}`;
+    } else {
+      serviceSection.style.display='none';
+    }
   }
   // FAQ
   const faqEl=document.getElementById('serp-faq');
@@ -2438,35 +2873,59 @@ function importOptimizedToEditor(){
   const nodes = optimizedSchema['@graph']||[optimizedSchema];
   const dn = nodes.find(n=>n['@type']==='Dentist'||n['@type']==='LocalBusiness')||nodes[0];
   if(!dn){ toast('No se encontró entidad para importar','error'); return; }
+  // Basic fields
   if(dn.name) p.clinicName=dn.name;
-  if(dn.legalName) p.legalName=dn.legalName;
   if(dn.description) p.desc=dn.description;
   if(dn.telephone) p.phone=dn.telephone;
   if(dn.email) p.email=dn.email;
   if(dn.url) p.url=dn.url;
-  if(dn.priceRange) p.priceRange=dn.priceRange;
-  if(typeof dn.isAcceptingNewPatients==='boolean') p.accepting=dn.isAcceptingNewPatients;
+  if(typeof dn.isAcceptingNewPatients==='boolean') p.isAcceptingNewPatients=dn.isAcceptingNewPatients;
+  // Address
   if(dn.address){
     p.street=dn.address.streetAddress||p.street;
     p.city=dn.address.addressLocality||p.city;
     p.region=dn.address.addressRegion||p.region;
     p.postal=dn.address.postalCode||p.postal;
+    p.country=dn.address.addressCountry||p.country||'ES';
   }
-  if(dn.geo){ p.geo={lat:dn.geo.latitude||'',lng:dn.geo.longitude||''}; }
+  // Geo
+  if(dn.geo){ p.geo={lat:''+( dn.geo.latitude||''),lng:''+(dn.geo.longitude||'')}; }
+  // hasMap / maps
   if(dn.hasMap) p.maps=dn.hasMap;
-  if(dn.aggregateRating){ p.rating=dn.aggregateRating.ratingValue||''; p.ratingCount=dn.aggregateRating.reviewCount||''; }
+  // aggregateRating
+  if(dn.aggregateRating){
+    p.rating=''+( dn.aggregateRating.ratingValue||'');
+    p.ratingCount=''+( dn.aggregateRating.reviewCount||'');
+  }
+  // sameAs
   if(dn.sameAs){
     const sa=Array.isArray(dn.sameAs)?dn.sameAs:[dn.sameAs];
     const maps=sa.find(u=>u.includes('google.com/maps')); if(maps) p.maps=maps;
     const doct=sa.find(u=>u.includes('doctoralia')); if(doct) p.doctoralia=doct;
+    const topd=sa.find(u=>u.includes('topdoctors')); if(topd) p.topdoctors=topd;
+    const yelp=sa.find(u=>u.includes('yelp')); if(yelp) p.yelp=yelp;
+    // remaining go to social
+    const rest=sa.filter(u=>!u.includes('google.com/maps')&&!u.includes('doctoralia')&&!u.includes('topdoctors')&&!u.includes('yelp'));
+    if(rest.length) p.social=(p.social?p.social+',':'')+rest.join(',');
   }
+  // openingHoursSpecification → reconstruct hours array
   if(dn.openingHoursSpecification){
-    p.hours = (Array.isArray(dn.openingHoursSpecification)?dn.openingHoursSpecification:[dn.openingHoursSpecification])
-      .map(h=>({ days:Array.isArray(h.dayOfWeek)?h.dayOfWeek:[h.dayOfWeek], opens:h.opens||'09:00', closes:h.closes||'18:00' }));
+    const ohArr=Array.isArray(dn.openingHoursSpecification)?dn.openingHoursSpecification:[dn.openingHoursSpecification];
+    const dayNameToShort={'Monday':'Mo','Tuesday':'Tu','Wednesday':'We','Thursday':'Th','Friday':'Fr','Saturday':'Sa','Sunday':'Su'};
+    p.openingHours=ohArr.map(h=>{
+      let days=Array.isArray(h.dayOfWeek)?h.dayOfWeek:[h.dayOfWeek];
+      // days may be full URLs like https://schema.org/Monday or plain strings
+      days=days.map(d=>{
+        if(!d) return null;
+        const name=d.replace(/^https?:\/\/schema\.org\//,'');
+        return dayNameToShort[name]||null;
+      }).filter(Boolean);
+      return {id:uid(),days,opens:h.opens||'09:00',closes:h.closes||'20:00',isException:false,validFrom:'',validThrough:''};
+    });
   }
   saveStorage(); fillForm(); updateOutput();
   closeOptimizer();
-  toast('Schema cargado en el editor ✓ — revisa los campos en amarillo','success');
+  toast('Schema cargado en el editor ✓','success');
 }
 
 // ============================================================
