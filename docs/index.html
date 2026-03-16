@@ -2168,7 +2168,7 @@ function runOptimizer(){
   let raw = document.getElementById('opt-input').value.trim();
   if(!raw){ toast('Pega un schema JSON-LD primero','error'); return; }
 
-  // Strip <script type="application/ld+json"> ... </script> wrapper if present
+  // Strip script tag wrapper if present (handles pasted full HTML blocks)
   raw = raw.replace(/^\s*<script[^>]*>\s*/i,'').replace(/\s*<\/script>\s*$/i,'').trim();
 
   let data;
