@@ -250,6 +250,13 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
 .tag-input-row button{background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:5px 10px;border-radius:var(--radius);cursor:pointer;font-size:12px;transition:all .2s}
 .tag-input-row button:hover{border-color:var(--accent);color:var(--accent)}
 .exception-fields{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px;margin-top:8px}
+.sameAs-row{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.sameAs-label{width:130px;flex-shrink:0}
+.sameAs-url{flex:1}
+.sameAs-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:3px}
+.sameAs-del:hover{color:var(--danger)}
+.checkbox-label{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer;user-select:none}
+.checkbox-label input{accent-color:var(--accent);cursor:pointer}
 .toggle-check{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text2);user-select:none;margin-bottom:8px}
 .toggle-check input{accent-color:var(--accent);cursor:pointer}
 
@@ -361,6 +368,16 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
         </div>
         <div class="form-row">
           <div class="form-group">
+            <label>Nombre alternativo <small>(alternateName)</small></label>
+            <input type="text" id="f-altname" placeholder="Nombre alternativo (ej: Dental Plus, Clínica Plus)">
+          </div>
+          <div class="form-group">
+            <label>Eslogan <small>(slogan)</small></label>
+            <input type="text" id="f-slogan" placeholder="Eslogan o tagline de la clínica">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
             <label>Descripción corta</label>
             <textarea id="f-desc" placeholder="Clínica dental en..." rows="3"></textarea>
           </div>
@@ -379,16 +396,6 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
           <div class="form-group">
             <label>URL del sitio web *</label>
             <input type="url" id="f-url" placeholder="https://clinica.com">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Perfil de Google Maps (URL)</label>
-            <input type="url" id="f-maps" placeholder="https://maps.google.com/...">
-          </div>
-          <div class="form-group">
-            <label>Perfil Doctoralia (URL)</label>
-            <input type="url" id="f-doctoralia" placeholder="https://www.doctoralia.es/...">
           </div>
         </div>
         <div class="form-row">
@@ -431,30 +438,30 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
             <input type="text" id="f-college" placeholder="Colegio de Dentistas de Madrid">
           </div>
         </div>
+        <div class="form-group" style="margin-top:8px">
+          <label class="checkbox-label">
+            <input type="checkbox" id="f-accepting" onchange="scheduleSave();updateOutput()">
+            Acepta nuevos pacientes <small>(isAcceptingNewPatients — clave para AI Overviews)</small>
+          </label>
+        </div>
       </div>
 
-      <!-- DIRECTORIES / sameAs extra -->
+      <!-- IDIOMAS -->
       <div class="section">
-        <div class="section-title">Directorios médicos (sameAs adicionales)</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Top Doctors URL</label>
-            <input type="url" id="f-topdoctors" placeholder="https://www.topdoctors.es/...">
-          </div>
-          <div class="form-group">
-            <label>Colegio de Dentistas URL</label>
-            <input type="url" id="f-colegio" placeholder="https://coem.org.es/...">
-          </div>
+        <div class="section-title">Idiomas hablados en la clínica <small>(availableLanguage)</small></div>
+        <div class="tag-list" id="clinic-lang-tags"></div>
+        <div class="tag-input-row">
+          <input type="text" id="clinic-lang-input" placeholder="Español, Inglés, Árabe…">
+          <button onclick="addClinicLang()">Añadir</button>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Yelp URL</label>
-            <input type="url" id="f-yelp" placeholder="https://www.yelp.es/biz/...">
-          </div>
-          <div class="form-group">
-            <label>Tuotromedico URL</label>
-            <input type="url" id="f-tuotromedico" placeholder="https://www.tuotromedico.com/...">
-          </div>
+      </div>
+
+      <!-- DIRECTORIOS / sameAs dinámico -->
+      <div class="section">
+        <div class="section-title">Perfiles y directorios <small>(sameAs)</small></div>
+        <div class="form-group">
+          <div id="sameAs-list"></div>
+          <button type="button" class="add-btn" onclick="addSameAs()">+ Añadir directorio / red social</button>
         </div>
       </div>
 
@@ -595,6 +602,20 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
     <div class="tab-content" id="tab-servicios">
       <div class="section">
         <div class="section-title">Tratamientos y servicios</div>
+        <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+          <button type="button" class="tb-btn" onclick="toggleServiceBulk()" style="font-size:12px">&#128203; Importar lista</button>
+        </div>
+        <div id="service-bulk-area" style="display:none;margin-bottom:12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px">
+          <p class="text-sm" style="margin-bottom:6px">Un servicio por línea. Puedes incluir URL y precio separados por | ejemplo: Implante Dental | https://clinica.es/implantes | Desde 800&#8364;</p>
+          <textarea id="service-bulk-input" rows="6" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:var(--radius);font-size:12px;font-family:inherit;resize:vertical" placeholder="Un servicio por línea:
+Implante Dental
+Ortodoncia Invisible | https://clinica.es/ortodoncia
+Blanqueamiento Dental | https://clinica.es/blanqueamiento | 150"></textarea>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button type="button" class="tb-btn primary" onclick="applyServiceBulk()">Añadir servicios</button>
+            <button type="button" class="tb-btn" onclick="toggleServiceBulk()">Cancelar</button>
+          </div>
+        </div>
         <div id="services-list"></div>
         <button class="add-btn" onclick="addService()">+ Añadir servicio</button>
       </div>
@@ -690,6 +711,12 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
         </div>
         <div class="form-row">
           <div class="form-group">
+            <label>Rango de precio <small>(priceRange)</small></label>
+            <input type="text" id="f-priceRangeStr" placeholder="€€ o €€€ o Desde 50€">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
             <label>Especialidades (separadas por coma)</label>
             <input type="text" id="f-specialties" placeholder="Implantología, Ortodoncia, Endodoncia">
           </div>
@@ -698,12 +725,6 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
           <div class="form-group">
             <label>Seguro médico aceptado (separados por coma)</label>
             <input type="text" id="f-insurance" placeholder="Adeslas, Mapfre, Sanitas">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Redes sociales (URLs, separadas por coma)</label>
-            <textarea id="f-social" placeholder="https://facebook.com/clinica, https://instagram.com/clinica" rows="3"></textarea>
           </div>
         </div>
       </div>
@@ -901,10 +922,19 @@ kbd{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padd
 const DEFAULT_PROJECT = {
   id: '', name: 'Nueva clínica',
   // Clinica
-  clinicName:'', desc:'', phone:'', email:'', url:'', maps:'', doctoralia:'',
+  clinicName:'', alternateName:'', slogan:'', desc:'', phone:'', email:'', url:'',
   founded:'', cif:'', rating:'', ratingCount:'', logo:'', image:'', license:'', college:'',
-  // Extra directories
-  topdoctors:'', colegio:'', yelp:'', tuotromedico:'',
+  isAcceptingNewPatients: true,
+  // Idiomas clínica
+  clinicLanguages:[],
+  // sameAs dynamic list (replaces maps, doctoralia, topdoctors, colegio, yelp, tuotromedico, social)
+  sameAsList:[
+    {label:'Google Maps', url:''},
+    {label:'Doctoralia', url:''},
+    {label:'Top Doctors', url:''},
+    {label:'Facebook', url:''},
+    {label:'Instagram', url:''},
+  ],
   // Awards/certifications
   awards:[],
   // Contacto
@@ -929,7 +959,7 @@ const DEFAULT_PROJECT = {
   // FAQ
   faqs:[],
   // Config
-  lang:'es', currency:'EUR', priceMin:'', priceMax:'', specialties:'', insurance:'', social:'',
+  lang:'es', currency:'EUR', priceMin:'', priceMax:'', priceRangeStr:'', specialties:'', insurance:'',
   // Parent organization
   hasParentOrg:false, parentOrgName:'', parentOrgUrl:'', parentOrgId:'',
   // Multi-location
@@ -1026,7 +1056,8 @@ function renderSidebar(){
     const scoreCls = score>=8?'good':score>=5?'mid':'low';
     const div=document.createElement('div');
     div.className='project-item'+(p.id===activeId?' active':'');
-    div.innerHTML=`<span class="proj-icon">🦷</span><span class="proj-name" title="Doble clic para renombrar&#10;${esc(p.name||'Sin nombre')}">${esc(p.name||'Sin nombre')}</span><span class="proj-score ${scoreCls}" title="Puntuación schema">${score}/10</span><div class="proj-actions"><button class="proj-ren" onclick="startRename('${p.id}',event)" title="Renombrar (F2)">✎</button><button class="proj-dup" onclick="duplicateProject('${p.id}',event)" title="Duplicar proyecto">⎘</button><button class="proj-del" onclick="deleteProject('${p.id}',event)" title="Eliminar">✕</button></div>`;
+    div.dataset.projectId=p.id;
+    div.innerHTML=`<span class="proj-icon">&#129461;</span><span class="proj-name" title="Doble clic para renombrar&#10;${esc(p.name||'Sin nombre')}">${esc(p.name||'Sin nombre')}</span><span class="proj-score ${scoreCls}" title="Puntuaci\u00f3n schema">${score}/10</span><div class="proj-actions"><button class="proj-ren" onclick="startRename('${p.id}',event)" title="Renombrar (F2)">&#9999;</button><button class="proj-dup" onclick="duplicateProject('${p.id}',event)" title="Duplicar proyecto">&#9190;</button><button class="proj-del" onclick="deleteProject('${p.id}',event)" title="Eliminar">&#10005;</button></div>`;
     div.onclick=(e)=>{
       if(e.target.classList.contains('proj-del')||e.target.classList.contains('proj-dup')||e.target.classList.contains('proj-ren')||e.target.classList.contains('proj-name-input')) return;
       if(e.target.classList.contains('proj-name')&&p.id===activeId){ startRename(p.id,e); return; }
@@ -1055,12 +1086,7 @@ function calcProjectScore(p){
 function startRename(id, e){
   if(e) e.stopPropagation();
   const list = document.getElementById('project-list');
-  const items = list.querySelectorAll('.project-item');
-  let targetItem = null;
-  items.forEach(item=>{
-    const btn = item.querySelector('.proj-ren');
-    if(btn && btn.getAttribute('onclick').includes(id)) targetItem=item;
-  });
+  const targetItem = list.querySelector('[data-project-id="'+id+'"]');
   if(!targetItem) return;
   const nameSpan = targetItem.querySelector('.proj-name');
   if(!nameSpan) return;
@@ -1153,22 +1179,21 @@ function fg(id){ const el=document.getElementById(id); return el?el.checked:fals
 function fillForm(){
   const p = getProject();
   if(!p) return;
-  fs('f-name',p.clinicName); fs('f-desc',p.desc); fs('f-phone',p.phone); fs('f-email',p.email);
-  fs('f-url',p.url); fs('f-maps',p.maps); fs('f-doctoralia',p.doctoralia);
+  fs('f-name',p.clinicName); fs('f-altname',p.alternateName||''); fs('f-slogan',p.slogan||'');
+  fs('f-desc',p.desc); fs('f-phone',p.phone); fs('f-email',p.email);
+  fs('f-url',p.url);
   fs('f-founded',p.founded); fs('f-cif',p.cif); fs('f-rating',p.rating);
   fs('f-ratingCount',p.ratingCount); fs('f-logo',p.logo); fs('f-image',p.image);
   fs('f-license',p.license); fs('f-college',p.college);
-  // Extra directories
-  fs('f-topdoctors',p.topdoctors||''); fs('f-colegio',p.colegio||'');
-  fs('f-yelp',p.yelp||''); fs('f-tuotromedico',p.tuotromedico||'');
+  fb('f-accepting', p.isAcceptingNewPatients !== false);
   fs('f-street',p.street); fs('f-city',p.city); fs('f-region',p.region);
   fs('f-postal',p.postal); fs('f-country',p.country||'ES'); fs('f-neighborhood',p.neighborhood);
   fs('f-lat',p.geo?.lat||''); fs('f-lng',p.geo?.lng||'');
   fs('f-geoRadius',p.geoRadius||'');
   fs('f-metaTitle',p.metaTitle); fs('f-metaDesc',p.metaDesc); fs('f-keywords',p.keywords);
   fs('f-projName',p.name); fs('f-lang',p.lang||'es'); fs('f-currency',p.currency||'EUR');
-  fs('f-priceMin',p.priceMin); fs('f-priceMax',p.priceMax);
-  fs('f-specialties',p.specialties); fs('f-insurance',p.insurance); fs('f-social',p.social);
+  fs('f-priceMin',p.priceMin); fs('f-priceMax',p.priceMax); fs('f-priceRangeStr',p.priceRangeStr||'');
+  fs('f-specialties',p.specialties); fs('f-insurance',p.insurance||'');
   // Parent org
   fb('f-hasParentOrg',p.hasParentOrg);
   const pof=document.getElementById('parent-org-fields');
@@ -1194,27 +1219,28 @@ function fillForm(){
   renderAwards();
   renderAreaTags();
   renderBranches();
+  renderSameAs();
+  renderClinicLangTags();
 }
 
 function collectForm(){
   const p = getProject();
   if(!p) return;
-  p.clinicName=fv('f-name'); p.desc=fv('f-desc'); p.phone=fv('f-phone'); p.email=fv('f-email');
-  p.url=fv('f-url'); p.maps=fv('f-maps'); p.doctoralia=fv('f-doctoralia');
+  p.clinicName=fv('f-name'); p.alternateName=fv('f-altname'); p.slogan=fv('f-slogan');
+  p.desc=fv('f-desc'); p.phone=fv('f-phone'); p.email=fv('f-email');
+  p.url=fv('f-url');
   p.founded=fv('f-founded'); p.cif=fv('f-cif'); p.rating=fv('f-rating');
   p.ratingCount=fv('f-ratingCount'); p.logo=fv('f-logo'); p.image=fv('f-image');
   p.license=fv('f-license'); p.college=fv('f-college');
-  // Extra directories
-  p.topdoctors=fv('f-topdoctors'); p.colegio=fv('f-colegio');
-  p.yelp=fv('f-yelp'); p.tuotromedico=fv('f-tuotromedico');
+  p.isAcceptingNewPatients=fg('f-accepting');
   p.street=fv('f-street'); p.city=fv('f-city'); p.region=fv('f-region');
   p.postal=fv('f-postal'); p.country=fv('f-country'); p.neighborhood=fv('f-neighborhood');
   p.geo={lat:fv('f-lat'),lng:fv('f-lng')};
   p.geoRadius=fv('f-geoRadius');
   p.metaTitle=fv('f-metaTitle'); p.metaDesc=fv('f-metaDesc'); p.keywords=fv('f-keywords');
   p.name=fv('f-projName')||p.name; p.lang=fv('f-lang'); p.currency=fv('f-currency');
-  p.priceMin=fv('f-priceMin'); p.priceMax=fv('f-priceMax');
-  p.specialties=fv('f-specialties'); p.insurance=fv('f-insurance'); p.social=fv('f-social');
+  p.priceMin=fv('f-priceMin'); p.priceMax=fv('f-priceMax'); p.priceRangeStr=fv('f-priceRangeStr');
+  p.specialties=fv('f-specialties'); p.insurance=fv('f-insurance')||'';
   // Parent org
   p.hasParentOrg=fg('f-hasParentOrg');
   p.parentOrgName=fv('f-parentOrgName'); p.parentOrgUrl=fv('f-parentOrgUrl'); p.parentOrgId=fv('f-parentOrgId');
@@ -1224,6 +1250,8 @@ function collectForm(){
   document.querySelectorAll('.amenity-item input[type=checkbox]').forEach(cb=>{
     const k=cb.dataset.key; if(k) p.amenities[k]=cb.checked;
   });
+  // Collect sameAs list from DOM
+  collectSameAs();
   // Collect dynamic items (they are already updated in place)
   renderSidebar();
 }
@@ -1377,7 +1405,7 @@ function hField(id,field,val){
 // ============================================================
 function addService(){
   const p=getProject(); if(!p) return;
-  p.services.push({id:uid(),name:'',url:'',desc:'',price:'',
+  p.services.push({id:uid(),name:'',url:'',desc:'',price:'',category:'',
     procedureType:'',bodyLocation:'',howPerformed:'',preparation:'',followup:''});
   renderServices(); scheduleSave();
 }
@@ -1424,6 +1452,10 @@ function renderServices(){
         <div class="form-group">
           <label>Precio (€)</label>
           <input type="text" value="${esc(s.price)}" onchange="sField('${s.id}','price',this.value)" placeholder="Desde 800€">
+        </div>
+        <div class="form-group">
+          <label>Categoría</label>
+          <input type="text" value="${esc(s.category||'')}" onchange="sField('${s.id}','category',this.value)" placeholder="Implantología, Ortodoncia…">
         </div>
       </div>
       <div class="toggle-section">
@@ -1897,11 +1929,7 @@ function renderAreaTags(){
     `<span class="tag">${esc(z)}<button onclick="removeAreaZone(${i})">&#10005;</button></span>`
   ).join('');
 }
-// Allow Enter key to add zone
-document.addEventListener('DOMContentLoaded',()=>{
-  const ainput=document.getElementById('area-zone-input');
-  if(ainput) ainput.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();addAreaZone();} });
-});
+// Allow Enter key to add zone — wired in main DOMContentLoaded below
 
 // ============================================================
 // BRANCHES (MULTI-LOCATION)
@@ -2031,6 +2059,8 @@ function buildDentist(p){
     '@type':'Dentist',
     '@id':(p.url||'')+'#Dentist',
     'name':p.clinicName||undefined,
+    'alternateName':p.alternateName||undefined,
+    'slogan':p.slogan||undefined,
     'description':p.desc||undefined,
     'url':p.url||undefined,
     'telephone':p.phone||undefined,
@@ -2095,7 +2125,7 @@ function buildDentist(p){
   if((p.contactPoints||[]).filter(c=>c.telephone).length){
     obj.contactPoint=p.contactPoints.filter(c=>c.telephone).map(c=>{
       const cp={'@type':'ContactPoint','telephone':c.telephone,'contactType':c.type||'customer service'};
-      if(c.languages) cp.availableLanguage=c.languages.split(',').map(l=>l.trim()).filter(Boolean);
+      if(c.languages && typeof c.languages === 'string') cp.availableLanguage=c.languages.split(',').map(l=>l.trim()).filter(Boolean);
       if(c.areaServed) cp.areaServed=c.areaServed;
       return cp;
     });
@@ -2124,16 +2154,20 @@ function buildDentist(p){
   if(p.specialties) obj.medicalSpecialty=p.specialties.split(',').map(s=>s.trim()).filter(Boolean);
   // Founded
   if(p.founded) obj.foundingDate=p.founded;
-  // SameAs
-  const sameAs=[];
-  if(p.maps) sameAs.push(p.maps);
-  if(p.doctoralia) sameAs.push(p.doctoralia);
-  if(p.topdoctors) sameAs.push(p.topdoctors);
-  if(p.colegio) sameAs.push(p.colegio);
-  if(p.yelp) sameAs.push(p.yelp);
-  if(p.tuotromedico) sameAs.push(p.tuotromedico);
-  if(p.social) p.social.split(',').forEach(s=>{const v=s.trim();if(v)sameAs.push(v);});
-  if(sameAs.length) obj.sameAs=sameAs;
+  // SameAs — from dynamic list
+  if(p.sameAsList?.length) obj.sameAs = p.sameAsList.filter(s=>s.url).map(s=>s.url.trim()).filter(Boolean);
+  // Fallback: legacy individual fields (for projects imported from old format)
+  if((!obj.sameAs||!obj.sameAs.length)){
+    const legacySameAs=[];
+    if(p.maps) legacySameAs.push(p.maps);
+    if(p.doctoralia) legacySameAs.push(p.doctoralia);
+    if(p.topdoctors) legacySameAs.push(p.topdoctors);
+    if(p.colegio) legacySameAs.push(p.colegio);
+    if(p.yelp) legacySameAs.push(p.yelp);
+    if(p.tuotromedico) legacySameAs.push(p.tuotromedico);
+    if(p.social && typeof p.social === 'string') p.social.split(',').forEach(s=>{const v=s.trim();if(v)legacySameAs.push(v);});
+    if(legacySameAs.length) obj.sameAs=legacySameAs;
+  }
   // parentOrganization
   if(p.hasParentOrg && p.parentOrgName){
     obj.parentOrganization={
@@ -2143,33 +2177,48 @@ function buildDentist(p){
       'url':p.parentOrgUrl||undefined
     };
   }
-  // hasOfferCatalog
+  // hasOfferCatalog — grouped by category when present
   const validServices=(p.services||[]).filter(s=>s.name);
   if(validServices.length){
+    const buildOffer=s=>{
+      const item={
+        '@type':'Offer',
+        'itemOffered':{
+          '@type':'MedicalTherapy',
+          'name':s.name,
+          'url':s.url||undefined,
+          'description':s.desc||undefined
+        }
+      };
+      if(s.price){
+        item.price=s.price;
+        item.priceCurrency=p.currency||'EUR';
+        item.priceSpecification={'@type':'PriceSpecification','price':s.price,'priceCurrency':p.currency||'EUR'};
+      }
+      return item;
+    };
+    const hasCategories=validServices.some(s=>s.category);
+    let itemListElement;
+    if(hasCategories){
+      // Group by category
+      const grouped={};
+      validServices.forEach(s=>{
+        const cat=s.category||'General';
+        if(!grouped[cat]) grouped[cat]=[];
+        grouped[cat].push(s);
+      });
+      itemListElement=Object.entries(grouped).map(([cat,svcs])=>({
+        '@type':'OfferCatalog',
+        'name':cat,
+        'itemListElement':svcs.map(buildOffer)
+      }));
+    } else {
+      itemListElement=validServices.map(buildOffer);
+    }
     obj.hasOfferCatalog={
       '@type':'OfferCatalog',
-      'name':'Tratamientos Dentales \u2014 '+(p.clinicName||'Clínica'),
-      'itemListElement':validServices.map(s=>{
-        const item={
-          '@type':'Offer',
-          'itemOffered':{
-            '@type':'MedicalTherapy',
-            'name':s.name,
-            'url':s.url||undefined,
-            'description':s.desc||undefined
-          }
-        };
-        if(s.price){
-          item.price=s.price;
-          item.priceCurrency=p.currency||'EUR';
-          item.priceSpecification={
-            '@type':'PriceSpecification',
-            'price':s.price,
-            'priceCurrency':p.currency||'EUR'
-          };
-        }
-        return item;
-      })
+      'name':'Tratamientos Dentales \u2014 '+(p.clinicName||'Cl\u00ednica'),
+      'itemListElement':itemListElement
     };
   }
   // awards / hasCredential
@@ -2184,10 +2233,18 @@ function buildDentist(p){
       'url':a.url||undefined
     }));
   }
-  // Insurance
-  if(p.insurance) obj.isAcceptingNewPatients=true;
-  // PriceRange
-  if(p.priceMin||p.priceMax) obj.priceRange=(p.priceMin?'€'+p.priceMin:'')+(p.priceMax?' - €'+p.priceMax:'');
+  // isAcceptingNewPatients
+  obj.isAcceptingNewPatients = p.isAcceptingNewPatients !== false;
+  // availableLanguage at clinic level
+  if(p.clinicLanguages?.length) obj.availableLanguage = p.clinicLanguages;
+  // PriceRange — priceRangeStr takes priority, then calculated from min/max
+  if(p.priceRangeStr){
+    obj.priceRange = p.priceRangeStr;
+  } else if(p.priceMin||p.priceMax){
+    if(p.priceMin && p.priceMax) obj.priceRange = '\u20ac'+p.priceMin+' \u2013 \u20ac'+p.priceMax;
+    else if(p.priceMin) obj.priceRange = 'Desde \u20ac'+p.priceMin;
+    else if(p.priceMax) obj.priceRange = 'Hasta \u20ac'+p.priceMax;
+  }
   // MedicalIdentifiers
   if(p.license){
     obj.medicalAffiliation={'@type':'MedicalOrganization','name':p.college||'Colegio Oficial de Dentistas','membershipNumber':p.license};
@@ -2205,7 +2262,7 @@ function buildEmployee(e, p, idx){
     'description':e.bio||undefined,
     'image':e.photo||undefined,
     'url':e.url||undefined,
-    'worksFor':{'@type':'Dentist','name':p.clinicName||undefined},
+    'worksFor':{'@type':'Dentist','@id':(p.url||'')+'#Dentist','name':p.clinicName||undefined},
   };
   if((e.credentials||[]).filter(c=>c.name).length){
     empObj.hasCredential=e.credentials.filter(c=>c.name).map(c=>{
@@ -2441,7 +2498,7 @@ function updateValidation(p, schema){
     {id:'faqs',label:'FAQ (al menos 3)',desc:'FAQPage',pass:(p.faqs||[]).filter(f=>f.question&&f.answer).length>=3},
     {id:'specialty',label:'Especialidades',desc:'medicalSpecialty',pass:!!p.specialties},
     {id:'founded',label:'Año de fundación',desc:'foundingDate',pass:!!p.founded},
-    {id:'social',label:'Redes sociales / sameAs',desc:'sameAs',pass:!!(p.maps||p.social||p.doctoralia)},
+    {id:'social',label:'Redes sociales / sameAs',desc:'sameAs',pass:!!(p.sameAsList?.some(s=>s.url)||p.maps||p.doctoralia)},
     {id:'credentials',label:'Credenciales de doctor',desc:'hasCredential[]',pass:(p.employees||[]).some(e=>(e.credentials||[]).filter(c=>c.name).length>0)},
     {id:'knowsAbout',label:'Conocimientos de doctor',desc:'knowsAbout[]',pass:(p.employees||[]).some(e=>(e.knowsAbout||[]).filter(Boolean).length>0)},
     {id:'procedure',label:'Procedimiento médico',desc:'MedicalProcedure',pass:(p.services||[]).some(s=>s.procedureType)},
@@ -2625,14 +2682,21 @@ function setupResize(handleId, panelId, reverse){
 // ============================================================
 // COPY OUTPUT
 // ============================================================
-function copyOutput(){
+async function copyOutput(){
   const schema=buildSchema();
   const text=JSON.stringify(schema,null,2);
-  navigator.clipboard.writeText(text).then(()=>toast('JSON-LD copiado al portapapeles','success')).catch(()=>{
-    const ta=document.createElement('textarea');
-    ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-    document.body.removeChild(ta); toast('JSON-LD copiado','success');
-  });
+  try{
+    await navigator.clipboard.writeText(text);
+    toast('JSON-LD copiado al portapapeles','success');
+  }catch(e){
+    try{
+      const ta=document.createElement('textarea');
+      ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      document.body.removeChild(ta);
+      toast('JSON-LD copiado','success');
+    }catch(err){ toast('Error al copiar','error'); }
+  }
 }
 
 // ============================================================
@@ -3030,16 +3094,24 @@ function importOptimizedToEditor(){
     p.rating=''+( dn.aggregateRating.ratingValue||'');
     p.ratingCount=''+( dn.aggregateRating.reviewCount||'');
   }
-  // sameAs
+  // sameAs — import into sameAsList
   if(dn.sameAs){
     const sa=Array.isArray(dn.sameAs)?dn.sameAs:[dn.sameAs];
-    const maps=sa.find(u=>u.includes('google.com/maps')); if(maps) p.maps=maps;
-    const doct=sa.find(u=>u.includes('doctoralia')); if(doct) p.doctoralia=doct;
-    const topd=sa.find(u=>u.includes('topdoctors')); if(topd) p.topdoctors=topd;
-    const yelp=sa.find(u=>u.includes('yelp')); if(yelp) p.yelp=yelp;
-    // remaining go to social
-    const rest=sa.filter(u=>!u.includes('google.com/maps')&&!u.includes('doctoralia')&&!u.includes('topdoctors')&&!u.includes('yelp'));
-    if(rest.length) p.social=(p.social?p.social+',':'')+rest.join(',');
+    if(!p.sameAsList) p.sameAsList=[];
+    sa.forEach(url=>{
+      if(!url) return;
+      let label='';
+      if(url.includes('google.com/maps')) label='Google Maps';
+      else if(url.includes('doctoralia')) label='Doctoralia';
+      else if(url.includes('topdoctors')) label='Top Doctors';
+      else if(url.includes('yelp')) label='Yelp';
+      else if(url.includes('facebook.com')) label='Facebook';
+      else if(url.includes('instagram.com')) label='Instagram';
+      else if(url.includes('twitter.com')||url.includes('x.com')) label='Twitter/X';
+      else label='Directorio';
+      // Avoid duplicate URLs
+      if(!p.sameAsList.find(s=>s.url===url)) p.sameAsList.push({label,url});
+    });
   }
   // openingHoursSpecification → reconstruct hours array
   if(dn.openingHoursSpecification){
@@ -3103,6 +3175,93 @@ function initAutoSave(){
 function esc(str){ if(!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ============================================================
+// SAMEAS DYNAMIC LIST
+// ============================================================
+function renderSameAs(){
+  const p=getProject(); if(!p) return;
+  const list=document.getElementById('sameAs-list'); if(!list) return;
+  if(!p.sameAsList) p.sameAsList=[];
+  list.innerHTML=p.sameAsList.map((s,i)=>`
+    <div class="sameAs-row">
+      <input type="text" class="sameAs-label form-group input" id="sameAs-label-${i}" value="${esc(s.label)}" placeholder="Google Maps, Doctoralia…" style="width:130px;flex-shrink:0;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:6px 8px;border-radius:var(--radius);font-size:12px;font-family:inherit">
+      <input type="url" class="sameAs-url" id="sameAs-url-${i}" value="${esc(s.url)}" placeholder="https://..." style="flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:6px 8px;border-radius:var(--radius);font-size:12px;font-family:inherit">
+      <button class="sameAs-del" onclick="removeSameAs(${i})" title="Eliminar">&#10005;</button>
+    </div>`).join('');
+}
+function collectSameAs(){
+  const p=getProject(); if(!p) return;
+  if(!p.sameAsList) p.sameAsList=[];
+  p.sameAsList=p.sameAsList.map((_,i)=>{
+    const labelEl=document.getElementById('sameAs-label-'+i);
+    const urlEl=document.getElementById('sameAs-url-'+i);
+    return {label:labelEl?labelEl.value:'', url:urlEl?urlEl.value:''};
+  });
+}
+function addSameAs(label,url){
+  const p=getProject(); if(!p) return;
+  if(!p.sameAsList) p.sameAsList=[];
+  p.sameAsList.push({label:label||'',url:url||''});
+  renderSameAs(); scheduleSave();
+}
+function removeSameAs(idx){
+  const p=getProject(); if(!p) return;
+  collectSameAs();
+  p.sameAsList.splice(idx,1);
+  renderSameAs(); scheduleSave();
+}
+
+// ============================================================
+// CLINIC LANGUAGES (availableLanguage)
+// ============================================================
+function addClinicLang(){
+  const input=document.getElementById('clinic-lang-input'); if(!input) return;
+  const val=input.value.trim(); if(!val) return;
+  const p=getProject(); if(!p) return;
+  if(!p.clinicLanguages) p.clinicLanguages=[];
+  if(!p.clinicLanguages.includes(val)) p.clinicLanguages.push(val);
+  input.value='';
+  renderClinicLangTags(); scheduleSave();
+}
+function removeClinicLang(idx){
+  const p=getProject(); if(!p) return;
+  p.clinicLanguages.splice(idx,1);
+  renderClinicLangTags(); scheduleSave();
+}
+function renderClinicLangTags(){
+  const p=getProject(); if(!p) return;
+  const list=document.getElementById('clinic-lang-tags'); if(!list) return;
+  list.innerHTML=(p.clinicLanguages||[]).map((l,i)=>
+    `<span class="tag">${esc(l)}<button onclick="removeClinicLang(${i})">&#10005;</button></span>`
+  ).join('');
+}
+
+// ============================================================
+// SERVICE BULK IMPORT
+// ============================================================
+function toggleServiceBulk(){
+  const el=document.getElementById('service-bulk-area');
+  if(el) el.style.display=el.style.display==='none'?'block':'none';
+}
+function applyServiceBulk(){
+  const p=getProject(); if(!p) return;
+  const raw=document.getElementById('service-bulk-input')?.value||'';
+  const lines=raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  if(!lines.length){ toast('No hay líneas para importar','error'); return; }
+  lines.forEach(line=>{
+    const parts=line.split('|').map(s=>s.trim());
+    const svc={id:uid(),name:parts[0]||'',url:parts[1]||'',desc:'',price:parts[2]||'',category:parts[3]||'',
+      procedureType:'',bodyLocation:'',howPerformed:'',preparation:'',followup:''};
+    if(!p.services) p.services=[];
+    p.services.push(svc);
+  });
+  saveStorage(); renderServices(); updateOutput();
+  const inputEl=document.getElementById('service-bulk-input');
+  if(inputEl) inputEl.value='';
+  toggleServiceBulk();
+  toast(lines.length+' servicios a\u00f1adidos','success');
+}
+
+// ============================================================
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded',()=>{
@@ -3114,6 +3273,15 @@ document.addEventListener('DOMContentLoaded',()=>{
   initResizable();
   initAutoSave();
   updateOutput();
+  // Fix founded year max to current year
+  const yearEl=document.getElementById('f-founded');
+  if(yearEl) yearEl.max=new Date().getFullYear();
+  // Allow Enter key for clinic languages
+  const clInput=document.getElementById('clinic-lang-input');
+  if(clInput) clInput.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();addClinicLang();} });
+  // Allow Enter key to add area zone
+  const ainput=document.getElementById('area-zone-input');
+  if(ainput) ainput.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();addAreaZone();} });
 });
 </script>
 </body>
