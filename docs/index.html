@@ -2165,8 +2165,11 @@ function scoreSchema(d){
 }
 
 function runOptimizer(){
-  const raw = document.getElementById('opt-input').value.trim();
+  let raw = document.getElementById('opt-input').value.trim();
   if(!raw){ toast('Pega un schema JSON-LD primero','error'); return; }
+
+  // Strip <script type="application/ld+json"> ... </script> wrapper if present
+  raw = raw.replace(/^\s*<script[^>]*>\s*/i,'').replace(/\s*<\/script>\s*$/i,'').trim();
 
   let data;
   try{ data = JSON.parse(raw); }
